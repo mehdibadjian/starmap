@@ -1,6 +1,8 @@
 name: Starmap sync + deploy
 
 on:
+  push:
+    branches: [main]
   schedule:
     - cron: "0 18 * * *"
   workflow_dispatch: {}
@@ -42,7 +44,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add cache/classifications.json cache/positions.json LAST_SYNC
           git diff --cached --quiet || git commit -m "chore: nightly star sync"
-          git push
+          # actions/checkout leaves a detached HEAD, so push explicitly to the
+          # branch that triggered this run rather than relying on an upstream.
+          git push origin HEAD:${{ github.ref_name }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

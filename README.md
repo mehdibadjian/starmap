@@ -11,14 +11,17 @@ See [`SPEC.md`](./SPEC.md) for the full design.
    ```yaml
    login: your-username
    ```
-3. **Settings → Pages → Source: GitHub Actions.**
-4. **Actions → "Starmap sync + deploy" → Run workflow** (manual first run).
+3. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
+4. **Settings → Actions → General → Workflow permissions → "Read and write permissions."** The nightly job commits `cache/classifications.json`, `cache/positions.json`, and `LAST_SYNC` back to the repo — without write permission that push step 403s.
+5. **Actions → "Starmap sync + deploy" → Run workflow** (manual first run — this is also what creates the `github-pages` deployment environment).
 
-That's it — no secrets required. The site classifies with the built-in rules tier and deploys to your Pages URL.
+That's it — no secrets required. `GITHUB_TOKEN` is provided automatically by Actions. The site classifies with the built-in rules tier and deploys to your Pages URL, shown afterward under Settings → Pages.
+
+The workflow also runs automatically on every push to `main` (in addition to the nightly cron and manual dispatch), so merging changes redeploys the site. Commits the workflow itself makes (the cache/`LAST_SYNC` commit above) are authored via `GITHUB_TOKEN` and — per GitHub's own behavior — do not trigger another run, so there's no push loop.
 
 ### Optional: LLM enrichment
 
-Add an `ANTHROPIC_API_KEY` repository secret to enable the LLM classification tier (blurbs, tags, better category coverage on sparse repos). Without it, the site runs rules-only with a visible "rules-only" badge in the header — nothing breaks.
+Add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables → Actions → New repository secret) to enable the LLM classification tier (blurbs, tags, better category coverage on sparse repos). Without it, the site runs rules-only with a visible "rules-only" badge in the header — nothing breaks.
 
 ## Local development
 
