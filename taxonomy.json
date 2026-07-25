@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "roots": [
+    {
+      "id": "ai-ml",
+      "label": "AI / ML",
+      "leaves": [
+        { "id": "ai-ml/llm-tooling", "label": "LLM Tooling", "topics": ["llm", "llms", "large-language-models", "prompt-engineering", "rag", "agents", "ai-agents", "langchain", "llamaindex", "chatgpt"] },
+        { "id": "ai-ml/machine-learning", "label": "Machine Learning", "topics": ["machine-learning", "ml", "scikit-learn", "xgboost", "reinforcement-learning"] },
+        { "id": "ai-ml/deep-learning", "label": "Deep Learning", "topics": ["deep-learning", "neural-network", "pytorch", "tensorflow", "jax", "keras"] },
+        { "id": "ai-ml/computer-vision", "label": "Computer Vision", "topics": ["computer-vision", "image-processing", "opencv", "object-detection", "image-generation"] },
+        { "id": "ai-ml/nlp", "label": "NLP", "topics": ["nlp", "natural-language-processing", "text-classification", "speech-recognition"] },
+        { "id": "ai-ml/mlops", "label": "MLOps", "topics": ["mlops", "model-serving", "ml-pipeline", "feature-store"] }
+      ]
+    },
+    {
+      "id": "devtools",
+      "label": "Devtools",
+      "leaves": [
+        { "id": "devtools/cli", "label": "CLI / TUI", "topics": ["cli", "command-line", "terminal", "tui", "shell"] },
+        { "id": "devtools/editor-ide", "label": "Editors / IDEs", "topics": ["editor", "ide", "vscode", "neovim", "vim", "jetbrains", "language-server"] },
+        { "id": "devtools/build-tools", "label": "Build Tools", "topics": ["build-tool", "bundler", "webpack", "vite", "esbuild", "monorepo", "compiler-tooling"] },
+        { "id": "devtools/testing", "label": "Testing", "topics": ["testing", "test", "unit-testing", "e2e", "playwright", "cypress", "test-automation"] },
+        { "id": "devtools/debugging", "label": "Debugging / Observability", "topics": ["debugger", "debugging", "profiling", "observability", "tracing"] },
+        { "id": "devtools/dotfiles", "label": "Dotfiles / Productivity", "topics": ["dotfiles", "productivity", "workflow"] }
+      ]
+    },
+    {
+      "id": "web",
+      "label": "Web",
+      "leaves": [
+        { "id": "web/frontend-framework", "label": "Frontend Frameworks", "topics": ["react", "vue", "svelte", "angular", "frontend", "spa"] },
+        { "id": "web/css-ui", "label": "CSS / UI Kits", "topics": ["css", "ui", "design-system", "component-library", "tailwindcss", "ui-components"] },
+        { "id": "web/static-site", "label": "Static Sites", "topics": ["static-site-generator", "jamstack", "ssg", "blog"] },
+        { "id": "web/browser-extension", "label": "Browser Extensions", "topics": ["browser-extension", "chrome-extension", "firefox-extension"] },
+        { "id": "web/fullstack-framework", "label": "Fullstack Frameworks", "topics": ["nextjs", "nuxt", "remix", "sveltekit", "fullstack"] }
+      ]
+    },
+    {
+      "id": "backend",
+      "label": "Backend",
+      "leaves": [
+        { "id": "backend/api-framework", "label": "API Frameworks", "topics": ["api", "rest-api", "graphql", "web-framework", "http-server"] },
+        { "id": "backend/microservices", "label": "Microservices", "topics": ["microservices", "grpc", "service-mesh", "distributed-systems"] },
+        { "id": "backend/orm-database-client", "label": "ORMs / DB Clients", "topics": ["orm", "database-client", "query-builder"] },
+        { "id": "backend/messaging-queue", "label": "Messaging / Queues", "topics": ["message-queue", "event-driven", "kafka", "rabbitmq", "pubsub"] },
+        { "id": "backend/auth", "label": "Auth", "topics": ["authentication", "authorization", "oauth", "jwt", "sso"] }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "Data",
+      "leaves": [
+        { "id": "data/database", "label": "Databases", "topics": ["database", "sql", "postgresql", "mysql", "sqlite", "nosql", "database-management"] },
+        { "id": "data/data-engineering", "label": "Data Engineering", "topics": ["data-engineering", "etl", "data-pipeline", "airflow", "streaming-data"] },
+        { "id": "data/analytics-bi", "label": "Analytics / BI", "topics": ["analytics", "business-intelligence", "dashboard", "data-visualization"] },
+        { "id": "data/data-science", "label": "Data Science", "topics": ["data-science", "jupyter", "pandas", "numpy"] },
+        { "id": "data/search-index", "label": "Search / Indexing", "topics": ["search-engine", "full-text-search", "elasticsearch", "vector-database", "embeddings"] }
+      ]
+    },
+    {
+      "id": "infra-devops",
+      "label": "Infra / DevOps",
+      "leaves": [
+        { "id": "infra-devops/containers", "label": "Containers", "topics": ["docker", "kubernetes", "containers", "k8s", "helm"] },
+        { "id": "infra-devops/iac", "label": "Infra as Code", "topics": ["terraform", "infrastructure-as-code", "ansible", "pulumi", "iac"] },
+        { "id": "infra-devops/ci-cd", "label": "CI/CD", "topics": ["ci-cd", "continuous-integration", "continuous-deployment", "github-actions"] },
+        { "id": "infra-devops/cloud", "label": "Cloud", "topics": ["aws", "gcp", "azure", "serverless", "cloud-native"] },
+        { "id": "infra-devops/monitoring", "label": "Monitoring / Logging", "topics": ["monitoring", "logging", "metrics", "prometheus", "grafana"] }
+      ]
+    },
+    {
+      "id": "security",
+      "label": "Security",
+      "leaves": [
+        { "id": "security/appsec", "label": "AppSec", "topics": ["security", "appsec", "vulnerability-scanner", "sast", "dast"] },
+        { "id": "security/pentesting", "label": "Pentesting / Red Team", "topics": ["pentesting", "penetration-testing", "exploit", "red-team", "ctf"] },
+        { "id": "security/crypto", "label": "Cryptography", "topics": ["cryptography", "encryption", "crypto"] },
+        { "id": "security/network-security", "label": "Network Security", "topics": ["network-security", "firewall", "vpn", "proxy"] },
+        { "id": "security/secrets-management", "label": "Secrets Management", "topics": ["secrets-management", "vault", "secret-scanning"] }
+      ]
+    },
+    {
+      "id": "mobile-desktop",
+      "label": "Mobile / Desktop",
+      "leaves": [
+        { "id": "mobile-desktop/mobile", "label": "Mobile", "topics": ["android", "ios", "react-native", "flutter", "mobile", "swiftui"] },
+        { "id": "mobile-desktop/desktop", "label": "Desktop Apps", "topics": ["electron", "tauri", "desktop-app", "gtk", "qt"] },
+        { "id": "mobile-desktop/game-dev", "label": "Game Dev", "topics": ["game-development", "gamedev", "game-engine", "unity", "godot"] }
+      ]
+    },
+    {
+      "id": "languages-compilers",
+      "label": "Languages / Compilers",
+      "leaves": [
+        { "id": "languages-compilers/language-design", "label": "Language Design", "topics": ["programming-language", "compiler", "interpreter", "language-design"] },
+        { "id": "languages-compilers/runtime", "label": "Runtimes / VMs", "topics": ["runtime", "virtual-machine", "jit"] },
+        { "id": "languages-compilers/package-manager", "label": "Package Managers", "topics": ["package-manager", "dependency-management"] },
+        { "id": "languages-compilers/wasm", "label": "WebAssembly", "topics": ["webassembly", "wasm"] }
+      ]
+    },
+    {
+      "id": "learning-reference",
+      "label": "Learning / Reference",
+      "leaves": [
+        { "id": "learning-reference/awesome-lists", "label": "Awesome Lists", "topics": ["awesome", "awesome-list", "curated-list", "list"] },
+        { "id": "learning-reference/books-courses", "label": "Books / Courses", "topics": ["book", "course", "tutorial", "learning", "education"] },
+        { "id": "learning-reference/algorithms", "label": "Algorithms / DS", "topics": ["algorithms", "data-structures", "leetcode", "competitive-programming"] },
+        { "id": "learning-reference/interview-prep", "label": "Interview Prep", "topics": ["interview", "interview-questions", "interview-preparation"] }
+      ]
+    },
+    {
+      "id": "design-media",
+      "label": "Design / Media",
+      "leaves": [
+        { "id": "design-media/graphics-design", "label": "Graphics / Design", "topics": ["design", "graphic-design", "figma", "icons", "typography"] },
+        { "id": "design-media/audio-video", "label": "Audio / Video", "topics": ["video", "audio", "media", "ffmpeg", "streaming", "video-processing"] },
+        { "id": "design-media/3d-graphics", "label": "3D / Graphics", "topics": ["3d", "graphics", "rendering", "opengl", "webgl", "shader"] }
+      ]
+    },
+    {
+      "id": "misc",
+      "label": "Misc",
+      "leaves": [
+        { "id": "misc/productivity", "label": "Productivity", "topics": ["productivity", "note-taking", "pkm", "personal-knowledge-management"] },
+        { "id": "misc/finance", "label": "Finance", "topics": ["finance", "cryptocurrency", "trading", "blockchain"] },
+        { "id": "misc/hardware-iot", "label": "Hardware / IoT", "topics": ["iot", "hardware", "embedded", "raspberry-pi", "arduino"] },
+        { "id": "misc/other", "label": "Other", "topics": [] }
+      ]
+    }
+  ]
+}

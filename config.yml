@@ -1,0 +1,7 @@
+login: mb
+title: "Starmap"
+theme: dark
+taxonomy: default        # or ./my-taxonomy.json
+classifier: auto         # auto | rules | llm
+schedule: "0 18 * * *"
+exclude_forks: false
