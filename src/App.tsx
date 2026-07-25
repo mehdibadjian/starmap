@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronRight, GitFork, Network, Rows3, Skull, Star } from "lucide-react";
 import { fetchGraph, fetchMeta, fetchSearchIndexRaw, loadAllRepos } from "./lib/data";
 import { loadSearchIndex, search } from "./lib/search";
 import { buildHash, parseHash } from "./lib/url";
@@ -9,12 +10,17 @@ import Timeline from "./components/Timeline";
 import Graveyard from "./components/Graveyard";
 import RepoPanel from "./components/RepoPanel";
 import SearchBox from "./components/SearchBox";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-const VIEWS: { id: View; label: string; key: string }[] = [
-  { id: "graph", label: "Graph", key: "g" },
-  { id: "list", label: "List", key: "l" },
-  { id: "timeline", label: "Timeline", key: "t" },
-  { id: "graveyard", label: "Graveyard", key: "v" },
+const VIEWS: { id: View; label: string; icon: typeof Network }[] = [
+  { id: "graph", label: "Graph", icon: Network },
+  { id: "list", label: "List", icon: Rows3 },
+  { id: "timeline", label: "Timeline", icon: Star },
+  { id: "graveyard", label: "Graveyard", icon: Skull },
 ];
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -117,80 +123,103 @@ export default function App() {
   const selectedRepo = appState.selected ? reposById.get(Number(appState.selected)) ?? null : null;
 
   const breadcrumb = ["Home", ...appState.path];
+  const showBreadcrumb = appState.view === "graph" || appState.view === "list";
 
   return (
-    <div className="flex h-screen flex-col">
-      <header className="flex flex-wrap items-center gap-4 border-b border-border px-4 py-2">
-        <h1 className="font-mono text-sm font-semibold">{meta?.title ?? "Starmap"}</h1>
-        <nav className="flex gap-1 text-xs">
-          {VIEWS.map((v) => (
-            <button
-              key={v.id}
-              className={`rounded px-2 py-1 ${
-                appState.view === v.id ? "bg-accent text-bg" : "text-text-dim hover:bg-surface"
-              }`}
-              onClick={() => navigate({ view: v.id })}
-            >
-              {v.label}
-            </button>
-          ))}
-        </nav>
-        <SearchBox ref={searchInputRef} value={appState.query} onChange={(query) => navigate({ query })} />
-        <div className="ml-auto flex items-center gap-3 font-mono text-[11px] text-text-dim">
-          {meta?.llm_degraded && (
-            <span className="rounded border border-border px-1.5 py-0.5 text-[10px]" title="LLM classification unavailable; using rules-only categories.">
-              rules-only
-            </span>
-          )}
-          {meta && <span>{meta.total.toLocaleString()} repos</span>}
-          {meta && <span>synced {meta.last_sync.slice(0, 10)}</span>}
-        </div>
-      </header>
+    <TooltipProvider delayDuration={150}>
+      <div className="flex h-screen flex-col bg-background text-foreground">
+        <header className="flex flex-wrap items-center gap-3 border-b border-border bg-card px-4 py-2">
+          <div className="flex items-center gap-1.5 font-mono text-sm font-semibold">
+            <Star className="h-4 w-4 text-primary" />
+            {meta?.title ?? "Starmap"}
+          </div>
 
-      {appState.view !== "timeline" && appState.view !== "graveyard" && (
-        <div className="flex items-center gap-1 border-b border-border px-4 py-1.5 font-mono text-xs text-text-dim">
-          {breadcrumb.map((seg, i) => (
-            <span key={i} className="flex items-center gap-1">
-              {i > 0 && <span className="text-text-dim">/</span>}
-              <button
-                className="hover:text-accent"
-                onClick={() => navigate({ path: appState.path.slice(0, i) })}
-              >
-                {seg}
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
+          <Tabs value={appState.view} onValueChange={(v) => navigate({ view: v as View })}>
+            <TabsList>
+              {VIEWS.map((v) => (
+                <TabsTrigger key={v.id} value={v.id} className="gap-1.5">
+                  <v.icon className="h-3.5 w-3.5" />
+                  {v.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
-      <main className="relative min-h-0 flex-1">
-        {!graph || !meta ? (
-          <div className="flex h-full items-center justify-center text-text-dim">Loading…</div>
-        ) : appState.view === "graph" ? (
-          <GraphView
-            graph={graph}
-            reposById={reposById}
-            path={appState.path}
-            searchHitIds={searchHitIds ?? new Set()}
-            selectedRepoId={appState.selected ? Number(appState.selected) : null}
-            onNavigate={(path) => navigate({ path })}
-            onSelect={(id) => navigate({ selected: id === null ? null : String(id) })}
-            onOpenList={(leafPath) => navigate({ view: "list", path: leafPath })}
-          />
-        ) : appState.view === "list" ? (
-          <ListView
-            repos={repos}
-            path={appState.path}
-            searchHitIds={searchHitIds}
-            onSelect={(id) => navigate({ selected: String(id) })}
-          />
-        ) : appState.view === "timeline" ? (
-          <Timeline repos={repos} onSelectMonth={() => {}} />
-        ) : (
-          <Graveyard repos={repos} onSelect={(id) => navigate({ selected: String(id) })} />
+          <SearchBox ref={searchInputRef} value={appState.query} onChange={(query) => navigate({ query })} />
+
+          <div className="ml-auto flex items-center gap-2">
+            {meta?.llm_degraded && (
+              <Badge variant="outline" title="LLM classification unavailable; using rules-only categories.">
+                rules-only
+              </Badge>
+            )}
+            {meta && (
+              <Badge variant="muted" className="gap-1 font-mono">
+                <GitFork className="h-3 w-3" />
+                {meta.total.toLocaleString()}
+              </Badge>
+            )}
+            {meta && (
+              <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
+                synced {meta.last_sync.slice(0, 10)}
+              </span>
+            )}
+          </div>
+        </header>
+
+        {showBreadcrumb && (
+          <div className="flex items-center gap-1 border-b border-border bg-card/60 px-4 py-1.5 font-mono text-xs text-muted-foreground">
+            {breadcrumb.map((seg, i) => (
+              <span key={i} className="flex items-center gap-1">
+                {i > 0 && <ChevronRight className="h-3 w-3" />}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-5 px-1.5 font-mono text-xs text-muted-foreground hover:text-primary",
+                    i === breadcrumb.length - 1 && "text-foreground",
+                  )}
+                  onClick={() => navigate({ path: appState.path.slice(0, i) })}
+                >
+                  {seg}
+                </Button>
+              </span>
+            ))}
+          </div>
         )}
-        <RepoPanel repo={selectedRepo} onClose={() => navigate({ selected: null })} />
-      </main>
-    </div>
+
+        <main className="relative min-h-0 flex-1">
+          {!graph || !meta ? (
+            <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+              Loading…
+            </div>
+          ) : appState.view === "graph" ? (
+            <GraphView
+              graph={graph}
+              reposById={reposById}
+              path={appState.path}
+              searchHitIds={searchHitIds ?? new Set()}
+              selectedRepoId={appState.selected ? Number(appState.selected) : null}
+              onNavigate={(path) => navigate({ path })}
+              onSelect={(id) => navigate({ selected: id === null ? null : String(id) })}
+              onOpenList={(leafPath) => navigate({ view: "list", path: leafPath })}
+            />
+          ) : appState.view === "list" ? (
+            <ListView
+              repos={repos}
+              path={appState.path}
+              searchHitIds={searchHitIds}
+              onSelect={(id) => navigate({ selected: String(id) })}
+            />
+          ) : appState.view === "timeline" ? (
+            <Timeline repos={repos} />
+          ) : (
+            <Graveyard repos={repos} onSelect={(id) => navigate({ selected: String(id) })} />
+          )}
+          <RepoPanel repo={selectedRepo} onClose={() => navigate({ selected: null })} />
+        </main>
+      </div>
+    </TooltipProvider>
   );
 }

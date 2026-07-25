@@ -1,5 +1,10 @@
+import type { ReactNode } from "react";
+import { ExternalLink, GitFork, Globe, Star } from "lucide-react";
 import type { RepoRecord } from "../lib/types";
 import { healthColor } from "../lib/palette";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 interface Props {
   repo: RepoRecord | null;
@@ -7,70 +12,110 @@ interface Props {
 }
 
 export default function RepoPanel({ repo, onClose }: Props) {
-  if (!repo) return null;
-
   return (
-    <aside className="absolute right-0 top-0 h-full w-80 overflow-y-auto border-l border-border bg-surface p-4 shadow-xl">
-      <button
-        className="mb-3 text-xs text-text-dim hover:text-text"
-        onClick={onClose}
-        aria-label="Close panel"
-      >
-        Esc · close
-      </button>
-      <a
-        href={`https://github.com/${repo.nwo}`}
-        target="_blank"
-        rel="noreferrer"
-        className="block break-all font-mono text-base text-accent hover:underline"
-      >
-        {repo.nwo}
-      </a>
-      <p className="mt-2 text-sm text-text-dim">{repo.blurb}</p>
+    <Sheet open={!!repo} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent className="flex flex-col gap-0">
+        {repo && (
+          <>
+            <SheetHeader>
+              <SheetTitle className="break-all pr-6">{repo.nwo}</SheetTitle>
+              <p className="text-sm text-muted-foreground">{repo.blurb}</p>
+            </SheetHeader>
 
-      <dl className="mt-4 grid grid-cols-2 gap-y-1 text-xs">
-        <dt className="text-text-dim">stars</dt>
-        <dd className="tabular-nums">{repo.stars.toLocaleString()}</dd>
-        <dt className="text-text-dim">forks</dt>
-        <dd className="tabular-nums">{repo.forks.toLocaleString()}</dd>
-        <dt className="text-text-dim">lang</dt>
-        <dd>{repo.lang ?? "—"}</dd>
-        <dt className="text-text-dim">license</dt>
-        <dd>{repo.license ?? "—"}</dd>
-        <dt className="text-text-dim">health</dt>
-        <dd className="flex items-center gap-1">
-          <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{ background: healthColor(repo.health.state) }}
-          />
-          {repo.health.state}
-        </dd>
-        <dt className="text-text-dim">pushed</dt>
-        <dd>{repo.pushed_at.slice(0, 10)}</dd>
-        <dt className="text-text-dim">starred</dt>
-        <dd>{repo.starred_at.slice(0, 10)}</dd>
-      </dl>
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+              <a
+                href={`https://github.com/${repo.nwo}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                Open on GitHub
+                <ExternalLink className="h-3 w-3" />
+              </a>
 
-      {repo.topics.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1">
-          {repo.topics.map((t) => (
-            <span key={t} className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-text-dim">
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <Stat icon={Star} label="stars" value={repo.stars.toLocaleString()} />
+                <Stat icon={GitFork} label="forks" value={repo.forks.toLocaleString()} />
+                <Stat label="lang" value={repo.lang ?? "—"} />
+                <Stat label="license" value={repo.license ?? "—"} />
+                <Stat
+                  label="health"
+                  value={
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block h-2 w-2 rounded-full"
+                        style={{ background: healthColor(repo.health.state) }}
+                      />
+                      {repo.health.state}
+                    </span>
+                  }
+                />
+                <Stat label="pushed" value={repo.pushed_at.slice(0, 10)} />
+                <Stat label="starred" value={repo.starred_at.slice(0, 10)} />
+              </div>
 
-      {repo.homepage && (
-        <a
-          href={repo.homepage}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 block text-xs text-accent hover:underline"
-        >
-          {repo.homepage}
-        </a>
-      )}
-    </aside>
+              {repo.cat.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="mb-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">categories</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {repo.cat.map((c) => (
+                        <Badge key={c} variant="secondary" className="font-mono">
+                          {c}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {repo.topics.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="mb-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">topics</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {repo.topics.map((t) => (
+                        <Badge key={t} variant="outline" className="font-mono">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {repo.homepage && (
+                <>
+                  <Separator />
+                  <a
+                    href={repo.homepage}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    <Globe className="h-3 w-3" />
+                    {repo.homepage}
+                  </a>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function Stat({ icon: Icon, label, value }: { icon?: typeof Star; label: string; value: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="flex items-center gap-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+        {Icon && <Icon className="h-3 w-3" />}
+        {label}
+      </span>
+      <span className="font-mono text-foreground">{value}</span>
+    </div>
   );
 }

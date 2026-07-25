@@ -2,34 +2,85 @@
 :root {
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --radius: 0.5rem;
 }
 
 .dark {
   --color-bg: #0b0d10;
   --color-surface: #14171b;
+  --color-surface-2: #191d22;
   --color-border: #262b31;
   --color-text: #e6e9ec;
   --color-text-dim: #8a929c;
   --color-accent: #5eead4;
+  --color-accent-ink: #06211d;
+  --color-danger: #f87171;
+  --color-danger-ink: #2b0a0a;
 
   --health-active: #5eead4;
   --health-slowing: #eab308;
   --health-stale: #f97316;
   --health-dead: #6b7280;
   --health-archived: #4b5563;
+
+  /* shadcn/ui semantic aliases — kept in lockstep with the tokens above so
+     there is still exactly one place to restyle. */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface-2);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-accent-ink);
+  --secondary: var(--color-surface-2);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surface);
+  --muted-foreground: var(--color-text-dim);
+  --accent: var(--color-surface-2);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-danger-ink);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-accent);
 }
 
 .light {
   --color-bg: #f7f7f8;
   --color-surface: #ffffff;
+  --color-surface-2: #f0f1f3;
   --color-border: #dcdfe3;
   --color-text: #14171b;
   --color-text-dim: #5b6470;
   --color-accent: #0d9488;
+  --color-accent-ink: #ecfdf9;
+  --color-danger: #dc2626;
+  --color-danger-ink: #fef2f2;
 
   --health-active: #0d9488;
   --health-slowing: #b45309;
   --health-stale: #c2410c;
   --health-dead: #9ca3af;
   --health-archived: #d1d5db;
+
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-accent-ink);
+  --secondary: var(--color-surface-2);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surface-2);
+  --muted-foreground: var(--color-text-dim);
+  --accent: var(--color-surface-2);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-danger-ink);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-accent);
 }

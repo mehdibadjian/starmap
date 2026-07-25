@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Frame, GitFork, Minus, Plus, Star } from "lucide-react";
 import type { GraphData, GraphNode, RepoRecord } from "../lib/types";
 import { colorForHubIndex, healthColor } from "../lib/palette";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const MAX_VISIBLE_REPOS = 200;
 
@@ -47,6 +50,7 @@ export default function GraphView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, zoom: 1 });
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const dragState = useRef<{ startX: number; startY: number; camX: number; camY: number; moved: boolean } | null>(
     null,
   );
@@ -68,7 +72,8 @@ export default function GraphView({
     return map;
   }, [graph]);
 
-  const hubOrder = useMemo(() => graph.nodes.filter((n) => n.kind === "hub").map((n) => n.id), [graph]);
+  const hubs = useMemo(() => graph.nodes.filter((n) => n.kind === "hub"), [graph]);
+  const hubOrder = useMemo(() => hubs.map((n) => n.id), [hubs]);
 
   const colorForNode = useCallback(
     (node: GraphNode): string => {
@@ -83,19 +88,25 @@ export default function GraphView({
     [nodesById, hubOrder],
   );
 
-  const { visibleNodes, visibleEdges, overflow } = useMemo(() => {
+  const { visibleNodes, visibleEdges, overflow, focusNodes } = useMemo(() => {
     const visible = new Set<string>(["root", ...hubOrder]);
     const overflowNodes: OverflowNode[] = [];
+    // What the camera fits to — narrows as you drill in, so repos aren't
+    // dwarfed by the distance back to root and unrelated hubs.
+    let focus = new Set<string>(["root", ...hubOrder]);
 
     if (path[0]) {
       const hubId = `hub:${path[0]}`;
-      for (const leaf of childrenByParent.get(hubId) ?? []) visible.add(leaf.id);
+      const leaves = childrenByParent.get(hubId) ?? [];
+      for (const leaf of leaves) visible.add(leaf.id);
+      focus = new Set([hubId, ...leaves.map((l) => l.id)]);
 
       if (path[1]) {
         const leafId = `leaf:${path[0]}/${path[1]}`;
         const repos = childrenByParent.get(leafId) ?? [];
         const shown = repos.slice(0, MAX_VISIBLE_REPOS);
         for (const r of shown) visible.add(r.id);
+        focus = new Set([leafId, ...shown.map((r) => r.id)]);
         if (repos.length > MAX_VISIBLE_REPOS) {
           const hidden = repos.slice(MAX_VISIBLE_REPOS);
           const avgX = hidden.reduce((s, r) => s + r.x, 0) / hidden.length;
@@ -107,14 +118,16 @@ export default function GraphView({
 
     const edges = graph.edges.filter((e) => visible.has(e.s) && visible.has(e.t));
     const nodes = graph.nodes.filter((n) => visible.has(n.id));
-    return { visibleNodes: nodes, visibleEdges: edges, overflow: overflowNodes };
+    const focusList = nodes.filter((n) => focus.has(n.id));
+    return { visibleNodes: nodes, visibleEdges: edges, overflow: overflowNodes, focusNodes: focusList };
   }, [graph, path, hubOrder, childrenByParent]);
 
   const fitToView = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || visibleNodes.length === 0) return;
-    const xs = visibleNodes.map((n) => n.x);
-    const ys = visibleNodes.map((n) => n.y);
+    const target = focusNodes.length > 0 ? focusNodes : visibleNodes;
+    if (!canvas || target.length === 0) return;
+    const xs = target.map((n) => n.x);
+    const ys = target.map((n) => n.y);
     const minX = Math.min(...xs);
     const maxX = Math.max(...xs);
     const minY = Math.min(...ys);
@@ -124,7 +137,7 @@ export default function GraphView({
     const rect = canvas.getBoundingClientRect();
     const zoom = Math.min(rect.width / (w + 160), rect.height / (h + 160), 2.5);
     setCamera({ x: (minX + maxX) / 2, y: (minY + maxY) / 2, zoom: Math.max(zoom, 0.05) });
-  }, [visibleNodes]);
+  }, [focusNodes, visibleNodes]);
 
   useEffect(() => {
     fitToView();
@@ -143,14 +156,6 @@ export default function GraphView({
     (wx: number, wy: number, rect: DOMRect): [number, number] => [
       rect.width / 2 + (wx - camera.x) * camera.zoom,
       rect.height / 2 + (wy - camera.y) * camera.zoom,
-    ],
-    [camera],
-  );
-
-  const unproject = useCallback(
-    (sx: number, sy: number, rect: DOMRect): [number, number] => [
-      camera.x + (sx - rect.width / 2) / camera.zoom,
-      camera.y + (sy - rect.height / 2) / camera.zoom,
     ],
     [camera],
   );
@@ -259,16 +264,11 @@ export default function GraphView({
           ctx.stroke();
         }
 
-        if ((node.kind === "hub" || node.kind === "leaf" || node.kind === "root" || showLabels || node.id === hoverId) && node.kind !== "repo") {
+        if (node.kind !== "repo" && (node.kind === "hub" || node.kind === "leaf" || node.kind === "root" || showLabels || node.id === hoverId)) {
           ctx.fillStyle = styles.getPropertyValue("--color-text").trim() || "#e6e9ec";
           ctx.font = node.kind === "hub" ? "600 12px var(--font-sans)" : "11px var(--font-sans)";
           ctx.textAlign = "center";
           ctx.fillText(node.label, px, py - radius - 6);
-        } else if (node.id === hoverId && repo) {
-          ctx.fillStyle = styles.getPropertyValue("--color-text").trim() || "#e6e9ec";
-          ctx.font = "11px var(--font-mono)";
-          ctx.textAlign = "center";
-          ctx.fillText(repo.nwo, px, py - radius - 6);
         }
       }
 
@@ -312,8 +312,11 @@ export default function GraphView({
       }
       return;
     }
-    const id = hitTest(e.clientX - rect.left, e.clientY - rect.top, rect);
+    const localX = e.clientX - rect.left;
+    const localY = e.clientY - rect.top;
+    const id = hitTest(localX, localY, rect);
     setHoverId(id);
+    setHoverPos(id ? { x: localX, y: localY } : null);
   };
 
   const onPointerUp = (e: React.PointerEvent) => {
@@ -340,8 +343,13 @@ export default function GraphView({
     setCamera((c) => ({ ...c, zoom: Math.min(6, Math.max(0.05, c.zoom * (1 - e.deltaY * 0.001))) }));
   };
 
+  const zoomBy = (factor: number) => setCamera((c) => ({ ...c, zoom: Math.min(6, Math.max(0.05, c.zoom * factor)) }));
+
+  const hoverRepo =
+    hoverId?.startsWith("repo:") ? reposById.get(Number(hoverId.slice("repo:".length))) ?? null : null;
+
   return (
-    <div ref={containerRef} className="relative h-full w-full cursor-grab active:cursor-grabbing">
+    <div ref={containerRef} className="relative h-full w-full cursor-grab overflow-hidden bg-background active:cursor-grabbing">
       <canvas
         ref={canvasRef}
         className="h-full w-full"
@@ -350,6 +358,58 @@ export default function GraphView({
         onPointerUp={onPointerUp}
         onWheel={onWheel}
       />
+
+      {hoverRepo && hoverPos && (
+        <Card
+          className="pointer-events-none absolute z-10 w-64 gap-1 p-3 text-xs shadow-lg"
+          style={{
+            left: Math.min(hoverPos.x + 16, (containerRef.current?.clientWidth ?? 0) - 272),
+            top: Math.min(hoverPos.y + 16, (containerRef.current?.clientHeight ?? 0) - 140),
+          }}
+        >
+          <p className="truncate font-mono text-sm font-semibold text-foreground">{hoverRepo.nwo}</p>
+          <p className="mt-1 line-clamp-2 text-muted-foreground">{hoverRepo.blurb}</p>
+          <div className="mt-2 flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
+            {hoverRepo.lang && <span>{hoverRepo.lang}</span>}
+            <span className="flex items-center gap-1">
+              <Star className="h-3 w-3" />
+              {hoverRepo.stars.toLocaleString()}
+            </span>
+            <span className="flex items-center gap-1">
+              <GitFork className="h-3 w-3" />
+              {hoverRepo.forks.toLocaleString()}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: healthColor(hoverRepo.health.state) }} />
+              {hoverRepo.pushed_at.slice(0, 10)}
+            </span>
+          </div>
+        </Card>
+      )}
+
+      <div className="absolute bottom-3 right-3 flex flex-col gap-1">
+        <Button variant="secondary" size="icon" onClick={() => zoomBy(1.3)} title="Zoom in">
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Button variant="secondary" size="icon" onClick={() => zoomBy(1 / 1.3)} title="Zoom out">
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Button variant="secondary" size="icon" onClick={fitToView} title="Fit to view (f)">
+          <Frame className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <Card className="absolute bottom-3 left-3 max-w-[220px] gap-1 p-2.5">
+        <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">categories</p>
+        <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+          {hubs.map((hub, i) => (
+            <span key={hub.id} className="flex items-center gap-1.5 truncate text-[11px] text-muted-foreground">
+              <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: colorForHubIndex(i) }} />
+              <span className="truncate">{hub.label}</span>
+            </span>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }
