@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
-import { ExternalLink, GitFork, Globe, Star } from "lucide-react";
-import type { RepoRecord } from "../lib/types";
+import { type ReactNode, useMemo } from "react";
+import { ArrowLeftRight, ExternalLink, GitFork, Globe, Star } from "lucide-react";
+import type { GraphData, RepoRecord } from "../lib/types";
 import { healthColor } from "../lib/palette";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -8,13 +8,31 @@ import { Separator } from "@/components/ui/separator";
 
 interface Props {
   repo: RepoRecord | null;
+  graph: GraphData | null;
+  reposById: Map<number, RepoRecord>;
   onClose: () => void;
+  onSelectRelated: (id: number) => void;
 }
 
-export default function RepoPanel({ repo, onClose }: Props) {
+export default function RepoPanel({ repo, graph, reposById, onClose, onSelectRelated }: Props) {
+  const related = useMemo(() => {
+    if (!repo || !graph) return [];
+    const nodeId = `repo:${repo.id}`;
+    return graph.edges
+      .filter((e) => e.kind === "assoc" && (e.s === nodeId || e.t === nodeId))
+      .map((e) => ({ id: Number((e.s === nodeId ? e.t : e.s).slice("repo:".length)), w: e.w ?? 0 }))
+      .map((r) => ({ ...r, repo: reposById.get(r.id) }))
+      .filter((r): r is { id: number; w: number; repo: RepoRecord } => !!r.repo)
+      .sort((a, b) => b.w - a.w);
+  }, [repo, graph, reposById]);
+
   return (
     <Sheet open={!!repo} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="flex flex-col gap-0">
+      <SheetContent
+        className="flex flex-col gap-0"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         {repo && (
           <>
             <SheetHeader>
@@ -27,7 +45,7 @@ export default function RepoPanel({ repo, onClose }: Props) {
                 href={`https://github.com/${repo.nwo}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+                className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-link hover:text-link"
               >
                 Open on GitHub
                 <ExternalLink className="h-3 w-3" />
@@ -86,6 +104,29 @@ export default function RepoPanel({ repo, onClose }: Props) {
                 </>
               )}
 
+              {related.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="mb-1.5 flex items-center gap-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <ArrowLeftRight className="h-3 w-3" />
+                      related ({related.length})
+                    </p>
+                    <div className="flex flex-col">
+                      {related.slice(0, 20).map((r) => (
+                        <button
+                          key={r.id}
+                          onClick={() => onSelectRelated(r.id)}
+                          className="truncate rounded px-1 py-1 text-left font-mono text-xs text-link transition-colors hover:bg-accent hover:text-primary"
+                        >
+                          {r.repo.nwo}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
               {repo.homepage && (
                 <>
                   <Separator />
@@ -93,7 +134,7 @@ export default function RepoPanel({ repo, onClose }: Props) {
                     href={repo.homepage}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs text-link hover:underline"
                   >
                     <Globe className="h-3 w-3" />
                     {repo.homepage}

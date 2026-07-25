@@ -6,22 +6,23 @@
 }
 
 .dark {
-  --color-bg: #0b0d10;
-  --color-surface: #14171b;
-  --color-surface-2: #191d22;
-  --color-border: #262b31;
-  --color-text: #e6e9ec;
-  --color-text-dim: #8a929c;
-  --color-accent: #5eead4;
-  --color-accent-ink: #06211d;
-  --color-danger: #f87171;
-  --color-danger-ink: #2b0a0a;
+  --color-bg: #1e1e1e;
+  --color-surface: #252526;
+  --color-surface-2: #2d2d2d;
+  --color-border: #3a3a3a;
+  --color-text: #d4d4d4;
+  --color-text-dim: #8a8a8a;
+  --color-accent: #cc785c;
+  --color-accent-ink: #1e1e1e;
+  --color-link: #5ba0e0;
+  --color-danger: #e5484d;
+  --color-danger-ink: #200606;
 
-  --health-active: #5eead4;
-  --health-slowing: #eab308;
-  --health-stale: #f97316;
-  --health-dead: #6b7280;
-  --health-archived: #4b5563;
+  --health-active: #6bb85a;
+  --health-slowing: #d3a44b;
+  --health-stale: #d97a3f;
+  --health-dead: #6e6e6e;
+  --health-archived: #4a4a4a;
 
   /* shadcn/ui semantic aliases — kept in lockstep with the tokens above so
      there is still exactly one place to restyle. */
@@ -47,22 +48,23 @@
 }
 
 .light {
-  --color-bg: #f7f7f8;
+  --color-bg: #f5f4f1;
   --color-surface: #ffffff;
-  --color-surface-2: #f0f1f3;
-  --color-border: #dcdfe3;
-  --color-text: #14171b;
-  --color-text-dim: #5b6470;
-  --color-accent: #0d9488;
-  --color-accent-ink: #ecfdf9;
-  --color-danger: #dc2626;
+  --color-surface-2: #ece9e3;
+  --color-border: #ddd8cf;
+  --color-text: #2a2724;
+  --color-text-dim: #74706a;
+  --color-accent: #b8603f;
+  --color-accent-ink: #fdf6f2;
+  --color-link: #2b6cb0;
+  --color-danger: #c0322f;
   --color-danger-ink: #fef2f2;
 
-  --health-active: #0d9488;
-  --health-slowing: #b45309;
-  --health-stale: #c2410c;
-  --health-dead: #9ca3af;
-  --health-archived: #d1d5db;
+  --health-active: #4d7a3a;
+  --health-slowing: #9c6f1e;
+  --health-stale: #b05a24;
+  --health-dead: #9a958c;
+  --health-archived: #c7c2b8;
 
   --background: var(--color-bg);
   --foreground: var(--color-text);

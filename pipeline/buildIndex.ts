@@ -6,17 +6,19 @@ import type { Config, GraphData, HistoryEntry, MetaJson, RepoRecord } from "./ty
 const SHARD_SIZE = 500;
 
 function buildSearchIndex(repos: RepoRecord[]): string {
-  const mini = new MiniSearch<RepoRecord>({
+  const mini = new MiniSearch({
     idField: "id",
-    fields: ["nwo", "desc", "blurb", "topics", "tags"],
+    // Index shadow text fields so array values (topics/tags) tokenize into
+    // multiple searchable words. storeFields below reference the original
+    // properties directly, so cat/tags/health stay real arrays/objects for
+    // the frontend — MiniSearch's field extraction runs for stored fields
+    // too, so joining topics/tags in place (rather than via a custom
+    // extractField) would otherwise collapse those arrays into strings.
+    fields: ["nwo", "desc", "blurb", "topicsText", "tagsText"],
     storeFields: ["nwo", "stars", "lang", "cat", "tags", "health", "archived", "pushed_at", "blurb"],
-    extractField: (doc, field) => {
-      const value = (doc as unknown as Record<string, unknown>)[field];
-      if (Array.isArray(value)) return value.join(" ");
-      return (value as string) ?? "";
-    },
   });
-  mini.addAll(repos);
+  const docs = repos.map((r) => ({ ...r, topicsText: r.topics.join(" "), tagsText: r.tags.join(" ") }));
+  mini.addAll(docs);
   return JSON.stringify(mini);
 }
 

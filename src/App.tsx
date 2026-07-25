@@ -88,6 +88,19 @@ export default function App() {
     return new Set(search(appState.query, 500).map((h) => h.id));
   }, [searchReady, appState.query]);
 
+  const searchDropdownResults = useMemo(() => {
+    if (!searchReady || !appState.query.trim()) return [];
+    return search(appState.query, 8);
+  }, [searchReady, appState.query]);
+
+  const pickSearchResult = useCallback(
+    (id: number) => {
+      const repo = reposById.get(id);
+      navigate({ selected: String(id), path: repo?.cat[0] ? repo.cat[0].split("/") : appState.path });
+    },
+    [reposById, navigate, appState.path],
+  );
+
   // Search drives the graph: auto-expand path to the top hit.
   useEffect(() => {
     if (!searchHitIds || searchHitIds.size === 0 || appState.view !== "graph") return;
@@ -145,7 +158,13 @@ export default function App() {
             </TabsList>
           </Tabs>
 
-          <SearchBox ref={searchInputRef} value={appState.query} onChange={(query) => navigate({ query })} />
+          <SearchBox
+            ref={searchInputRef}
+            value={appState.query}
+            onChange={(query) => navigate({ query })}
+            results={searchDropdownResults}
+            onPick={pickSearchResult}
+          />
 
           <div className="ml-auto flex items-center gap-2">
             {meta?.llm_degraded && (
@@ -217,7 +236,13 @@ export default function App() {
           ) : (
             <Graveyard repos={repos} onSelect={(id) => navigate({ selected: String(id) })} />
           )}
-          <RepoPanel repo={selectedRepo} onClose={() => navigate({ selected: null })} />
+          <RepoPanel
+            repo={selectedRepo}
+            graph={graph}
+            reposById={reposById}
+            onClose={() => navigate({ selected: null })}
+            onSelectRelated={pickSearchResult}
+          />
         </main>
       </div>
     </TooltipProvider>

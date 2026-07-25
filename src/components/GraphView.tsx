@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const MAX_VISIBLE_REPOS = 200;
+const FLY_DURATION_MS = 450;
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
 
 interface Camera {
   x: number;
@@ -51,9 +56,39 @@ export default function GraphView({
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, zoom: 1 });
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [showAssoc, setShowAssoc] = useState(true);
   const dragState = useRef<{ startX: number; startY: number; camX: number; camY: number; moved: boolean } | null>(
     null,
   );
+  const flyRaf = useRef(0);
+  // Mirrors `camera` synchronously so flyTo can read the current value
+  // immediately — setState's functional updater form only resolves on
+  // React's next commit, which is too late for the first animation frame.
+  const cameraRef = useRef(camera);
+  useEffect(() => {
+    cameraRef.current = camera;
+  }, [camera]);
+
+  const flyTo = useCallback((target: Camera, duration = FLY_DURATION_MS) => {
+    cancelAnimationFrame(flyRaf.current);
+    const start = performance.now();
+    const from = cameraRef.current;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const e = easeInOutCubic(t);
+      const next = {
+        x: from.x + (target.x - from.x) * e,
+        y: from.y + (target.y - from.y) * e,
+        zoom: from.zoom + (target.zoom - from.zoom) * e,
+      };
+      cameraRef.current = next;
+      setCamera(next);
+      if (t < 1) flyRaf.current = requestAnimationFrame(step);
+    };
+    flyRaf.current = requestAnimationFrame(step);
+  }, []);
+
+  useEffect(() => () => cancelAnimationFrame(flyRaf.current), []);
 
   const nodesById = useMemo(() => {
     const map = new Map<string, GraphNode>();
@@ -135,9 +170,9 @@ export default function GraphView({
     const w = Math.max(maxX - minX, 100);
     const h = Math.max(maxY - minY, 100);
     const rect = canvas.getBoundingClientRect();
-    const zoom = Math.min(rect.width / (w + 160), rect.height / (h + 160), 2.5);
-    setCamera({ x: (minX + maxX) / 2, y: (minY + maxY) / 2, zoom: Math.max(zoom, 0.05) });
-  }, [focusNodes, visibleNodes]);
+    const zoom = Math.min(rect.width / (w + 160), rect.height / (h + 160), 10);
+    flyTo({ x: (minX + maxX) / 2, y: (minY + maxY) / 2, zoom: Math.max(zoom, 0.05) });
+  }, [focusNodes, visibleNodes, flyTo]);
 
   useEffect(() => {
     fitToView();
@@ -215,6 +250,7 @@ export default function GraphView({
 
       // edges
       for (const edge of visibleEdges) {
+        if (edge.kind === "assoc" && !showAssoc) continue;
         const s = nodesById.get(edge.s);
         const t = nodesById.get(edge.t);
         if (!s || !t) continue;
@@ -287,13 +323,49 @@ export default function GraphView({
         ctx.fillText(`+${o.count}`, px, py + 3);
       }
 
+      // Focus edges: incident associative edges of the hovered/selected repo,
+      // redrawn in accent on top so the connection is legible at a glance.
+      const focusId = hoverId ?? (selectedRepoId ? `repo:${selectedRepoId}` : null);
+      if (focusId) {
+        const incident = visibleEdges.filter((e) => e.kind === "assoc" && (e.s === focusId || e.t === focusId));
+        if (incident.length > 0) {
+          ctx.strokeStyle = "var(--color-accent)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (const edge of incident) {
+            const s = nodesById.get(edge.s);
+            const t = nodesById.get(edge.t);
+            if (!s || !t) continue;
+            const [sx, sy] = project(s.x, s.y, rect);
+            const [tx, ty] = project(t.x, t.y, rect);
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(tx, ty);
+          }
+          ctx.stroke();
+        }
+      }
+
       if (searchHitIds.size > 0) raf = requestAnimationFrame(draw);
     };
 
     draw();
     if (searchHitIds.size === 0) return undefined;
     return () => cancelAnimationFrame(raf);
-  }, [visibleNodes, visibleEdges, overflow, camera, hoverId, selectedRepoId, searchHitIds, reposById, nodesById, colorForNode, radiusForNode, project]);
+  }, [
+    visibleNodes,
+    visibleEdges,
+    overflow,
+    camera,
+    hoverId,
+    selectedRepoId,
+    searchHitIds,
+    reposById,
+    nodesById,
+    colorForNode,
+    radiusForNode,
+    project,
+    showAssoc,
+  ]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     dragState.current = { startX: e.clientX, startY: e.clientY, camX: camera.x, camY: camera.y, moved: false };
@@ -340,10 +412,10 @@ export default function GraphView({
 
   const onWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    setCamera((c) => ({ ...c, zoom: Math.min(6, Math.max(0.05, c.zoom * (1 - e.deltaY * 0.001))) }));
+    setCamera((c) => ({ ...c, zoom: Math.min(10, Math.max(0.05, c.zoom * (1 - e.deltaY * 0.001))) }));
   };
 
-  const zoomBy = (factor: number) => setCamera((c) => ({ ...c, zoom: Math.min(6, Math.max(0.05, c.zoom * factor)) }));
+  const zoomBy = (factor: number) => setCamera((c) => ({ ...c, zoom: Math.min(10, Math.max(0.05, c.zoom * factor)) }));
 
   const hoverRepo =
     hoverId?.startsWith("repo:") ? reposById.get(Number(hoverId.slice("repo:".length))) ?? null : null;
@@ -399,7 +471,7 @@ export default function GraphView({
         </Button>
       </div>
 
-      <Card className="absolute bottom-3 left-3 max-w-[220px] gap-1 p-2.5">
+      <Card className="absolute left-3 top-3 max-w-[220px] gap-1 p-2.5">
         <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">categories</p>
         <div className="grid grid-cols-2 gap-x-2 gap-y-1">
           {hubs.map((hub, i) => (
@@ -409,7 +481,21 @@ export default function GraphView({
             </span>
           ))}
         </div>
+        <label className="mt-2 flex cursor-pointer items-center gap-1.5 border-t border-border pt-2 text-[11px] text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={showAssoc}
+            onChange={(e) => setShowAssoc(e.target.checked)}
+            className="h-3 w-3 accent-[var(--color-accent)]"
+          />
+          <span className="inline-block h-[2px] w-3.5 shrink-0 rounded-full bg-muted-foreground/50" />
+          related repos
+        </label>
       </Card>
+
+      <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-card px-3 py-1 font-mono text-[11px] text-muted-foreground shadow-sm">
+        scroll to zoom · drag to pan · click a node · / to search · esc to go back
+      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ export default {
         bg: "var(--color-bg)",
         surface: "var(--color-surface)",
         "text-dim": "var(--color-text-dim)",
+        link: "var(--color-link)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
