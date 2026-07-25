@@ -1,4 +1,32 @@
 {
   "taxonomy_version": 1,
-  "entries": {}
+  "entries": {
+    "295774370": {
+      "id": 295774370,
+      "hash": "4668a75cf2b573ef3ac82410df3955ed67455290",
+      "cat": [
+        "web/css-ui"
+      ],
+      "tags": [
+        "css",
+        "documentation",
+        "html",
+        "http",
+        "javascript",
+        "learning"
+      ],
+      "blurb": "The official source for MDN Web Docs content. Home to over 14,000 pages of documentatio...",
+      "source": "rules"
+    },
+    "835510315": {
+      "id": 835510315,
+      "hash": "ed3499075112a51f4ccbc05c1756fa614317f939",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "The official repository of Mozilla's Firefox web browser.",
+      "source": "rules"
+    }
+  }
 }
