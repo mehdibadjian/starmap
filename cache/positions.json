@@ -1,282 +1,282 @@
 {
   "root": {
-    "x": 447.8,
-    "y": -96.8
+    "x": 455.9,
+    "y": -99.4
   },
   "hub:ai-ml": {
-    "x": 1435.9,
-    "y": -312.6
+    "x": 1466.9,
+    "y": -319.6
   },
   "leaf:ai-ml/llm-tooling": {
-    "x": 2062.6,
-    "y": -1487.6
+    "x": 2106.9,
+    "y": -1522.9
   },
   "leaf:ai-ml/machine-learning": {
-    "x": 2240.5,
-    "y": -1078.3
+    "x": 2289.9,
+    "y": -1102.1
   },
   "leaf:ai-ml/deep-learning": {
-    "x": 1929.7,
-    "y": -692.8
+    "x": 1965.6,
+    "y": -707
   },
   "leaf:ai-ml/computer-vision": {
-    "x": 2464.7,
-    "y": -556
+    "x": 2520.8,
+    "y": -570.7
   },
   "leaf:ai-ml/nlp": {
-    "x": 2221.7,
-    "y": 141.4
+    "x": 2266.3,
+    "y": 145.6
   },
   "leaf:ai-ml/mlops": {
-    "x": 1959.2,
-    "y": 634.7
+    "x": 1998.3,
+    "y": 647.3
   },
   "hub:devtools": {
-    "x": 1081.7,
-    "y": 688.2
+    "x": 1103.6,
+    "y": 703.6
   },
   "leaf:devtools/cli": {
-    "x": 2300.2,
-    "y": -196.8
+    "x": 2349.1,
+    "y": -202.5
   },
   "leaf:devtools/editor-ide": {
-    "x": 2453.1,
-    "y": 492.6
+    "x": 2510.1,
+    "y": 504.8
   },
   "leaf:devtools/build-tools": {
-    "x": 2295.7,
-    "y": 1085.1
+    "x": 2348.3,
+    "y": 1109.3
   },
   "leaf:devtools/testing": {
-    "x": 1559.3,
-    "y": 946.6
+    "x": 1590.7,
+    "y": 966.1
   },
   "leaf:devtools/debugging": {
-    "x": 1477.9,
-    "y": 1511.8
+    "x": 1508.6,
+    "y": 1544
   },
   "leaf:devtools/dotfiles": {
-    "x": 1589.5,
-    "y": 2128.9
+    "x": 1625.2,
+    "y": 2175.8
   },
   "hub:web": {
-    "x": 430.1,
-    "y": -34.7
+    "x": 438.1,
+    "y": -37.5
   },
   "leaf:web/frontend-framework": {
-    "x": 2048,
-    "y": 1553.9
+    "x": 2092.6,
+    "y": 1589.1
   },
   "leaf:web/css-ui": {
-    "x": 412.6,
-    "y": 26.5
+    "x": 420.6,
+    "y": 23.7
   },
   "leaf:web/static-site": {
-    "x": 813.5,
-    "y": 1252.7
+    "x": 827,
+    "y": 1275.8
   },
   "leaf:web/browser-extension": {
-    "x": 1115.6,
-    "y": 2104.6
+    "x": 1138.8,
+    "y": 2153.5
   },
   "leaf:web/fullstack-framework": {
-    "x": 485.2,
-    "y": 2006.1
+    "x": 495,
+    "y": 2050.1
   },
   "hub:backend": {
-    "x": -134.6,
-    "y": 942.8
+    "x": -137.4,
+    "y": 963.7
   },
   "leaf:backend/api-framework": {
-    "x": 768.1,
-    "y": 1748.3
+    "x": 784.6,
+    "y": 1781.8
   },
   "leaf:backend/microservices": {
-    "x": 373.3,
-    "y": 2490.1
+    "x": 382.7,
+    "y": 2548.5
   },
   "leaf:backend/orm-database-client": {
-    "x": 67.4,
-    "y": 1914
+    "x": 68.5,
+    "y": 1951.1
   },
   "leaf:backend/messaging-queue": {
-    "x": -205,
-    "y": 2430.8
+    "x": -210.3,
+    "y": 2487.9
   },
   "leaf:backend/auth": {
-    "x": -649.3,
-    "y": 2166.2
+    "x": -662.6,
+    "y": 2215
   },
   "hub:data": {
-    "x": -632.3,
-    "y": 683
+    "x": -645.7,
+    "y": 697.1
   },
   "leaf:data/database": {
-    "x": -353.9,
-    "y": 1788.1
+    "x": -360.4,
+    "y": 1820
   },
   "leaf:data/data-engineering": {
-    "x": -1043.1,
-    "y": 2236
+    "x": -1068.3,
+    "y": 2288.9
   },
   "leaf:data/analytics-bi": {
-    "x": -876.2,
-    "y": 1497.9
+    "x": -890.8,
+    "y": 1525.2
   },
   "leaf:data/data-science": {
-    "x": -1323.8,
-    "y": 1861.6
+    "x": -1351.7,
+    "y": 1901
   },
   "leaf:data/search-index": {
-    "x": -1330.6,
-    "y": 1185
+    "x": -1355.3,
+    "y": 1207.1
   },
   "hub:infra-devops": {
-    "x": -944.6,
-    "y": 277.7
+    "x": -964.6,
+    "y": 283.1
   },
   "leaf:infra-devops/containers": {
-    "x": -1742.8,
-    "y": 1845.1
+    "x": -1782.6,
+    "y": 1886.8
   },
   "leaf:infra-devops/iac": {
-    "x": -2059.2,
-    "y": 1460
+    "x": -2104.5,
+    "y": 1492.9
   },
   "leaf:infra-devops/ci-cd": {
-    "x": -1705.1,
-    "y": 945.6
+    "x": -1738.4,
+    "y": 965
   },
   "leaf:infra-devops/cloud": {
-    "x": -2346.4,
-    "y": 964.8
+    "x": -2401.5,
+    "y": 986.3
   },
   "leaf:infra-devops/monitoring": {
-    "x": -1935,
-    "y": 258.5
+    "x": -1969.8,
+    "y": 260.7
   },
   "hub:security": {
-    "x": -1063.5,
-    "y": -205.8
+    "x": -1084.9,
+    "y": -210.1
   },
   "leaf:security/appsec": {
-    "x": -1994,
-    "y": 622
+    "x": -2036.3,
+    "y": 636.1
   },
   "leaf:security/pentesting": {
-    "x": -2509.5,
-    "y": 188.9
+    "x": -2568.2,
+    "y": 194.8
   },
   "leaf:security/crypto": {
-    "x": -2136.6,
-    "y": -136.1
+    "x": -2179.2,
+    "y": -139.9
   },
   "leaf:security/network-security": {
-    "x": -2436,
-    "y": -463.2
+    "x": -2492.7,
+    "y": -474.8
   },
   "leaf:security/secrets-management": {
-    "x": -1881.8,
-    "y": -587.7
+    "x": -1915.4,
+    "y": -599.2
   },
   "hub:mobile-desktop": {
-    "x": -955.1,
-    "y": -687.7
+    "x": -974.7,
+    "y": -702.2
   },
   "leaf:mobile-desktop/mobile": {
-    "x": -2303.5,
-    "y": -989
+    "x": -2355.8,
+    "y": -1012
   },
   "leaf:mobile-desktop/desktop": {
-    "x": -1744.4,
-    "y": -1055.6
+    "x": -1774.9,
+    "y": -1077.1
   },
   "leaf:mobile-desktop/game-dev": {
-    "x": -2018.3,
-    "y": -1487.9
+    "x": -2065.2,
+    "y": -1521.4
   },
   "hub:languages-compilers": {
-    "x": -625.8,
-    "y": -1036.2
+    "x": -639.3,
+    "y": -1057.9
   },
   "leaf:languages-compilers/language-design": {
-    "x": -1669,
-    "y": -1640.5
+    "x": -1704.7,
+    "y": -1675.8
   },
   "leaf:languages-compilers/runtime": {
-    "x": -1365.8,
-    "y": -1785.9
+    "x": -1390.9,
+    "y": -1821.2
   },
   "leaf:languages-compilers/package-manager": {
-    "x": -1240.2,
-    "y": -2167.6
+    "x": -1267.9,
+    "y": -2219
   },
   "leaf:languages-compilers/wasm": {
-    "x": -836.4,
-    "y": -1909.4
+    "x": -850.8,
+    "y": -1942.5
   },
   "hub:learning-reference": {
-    "x": -154.5,
-    "y": -1240.6
+    "x": -157.6,
+    "y": -1266.6
   },
   "leaf:learning-reference/awesome-lists": {
-    "x": -683.2,
-    "y": -2341.4
+    "x": -699.2,
+    "y": -2396
   },
   "leaf:learning-reference/books-courses": {
-    "x": -323.5,
-    "y": -2119.7
+    "x": -328.7,
+    "y": -2158.4
   },
   "leaf:learning-reference/algorithms": {
-    "x": -82.8,
-    "y": -2477.2
+    "x": -85.4,
+    "y": -2536.6
   },
   "leaf:learning-reference/interview-prep": {
-    "x": 211.3,
-    "y": -2257.5
+    "x": 215.2,
+    "y": -2304.7
   },
   "hub:design-media": {
-    "x": 424,
-    "y": -1234.9
+    "x": 434.1,
+    "y": -1261.3
   },
   "leaf:design-media/graphics-design": {
-    "x": 507.9,
-    "y": -2111.1
+    "x": 519.7,
+    "y": -2150.6
   },
   "leaf:design-media/audio-video": {
-    "x": 867.3,
-    "y": -2323.8
+    "x": 887.9,
+    "y": -2379
   },
   "leaf:design-media/3d-graphics": {
-    "x": 977.1,
-    "y": -1858.3
+    "x": 995.6,
+    "y": -1892.5
   },
   "hub:misc": {
-    "x": 465.4,
-    "y": -158.8
+    "x": 473.7,
+    "y": -161.4
   },
   "leaf:misc/productivity": {
-    "x": 1420.1,
-    "y": -2053.1
+    "x": 1452.2,
+    "y": -2101.4
   },
   "leaf:misc/finance": {
-    "x": 1524.3,
-    "y": -1657.4
+    "x": 1556.8,
+    "y": -1691.7
   },
   "leaf:misc/hardware-iot": {
-    "x": 1496.1,
-    "y": -1224
+    "x": 1522.8,
+    "y": -1245.3
   },
   "leaf:misc/other": {
-    "x": 483,
-    "y": -220
+    "x": 491.2,
+    "y": -222.6
   },
   "repo:835510315": {
-    "x": 500.6,
-    "y": -280.2
+    "x": 508.6,
+    "y": -282.9
   },
   "repo:295774370": {
-    "x": 395.4,
-    "y": 86.9
+    "x": 403.3,
+    "y": 83.9
   }
 }
