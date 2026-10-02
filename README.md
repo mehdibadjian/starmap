@@ -45,9 +45,11 @@ Add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables
 npm install
 GITHUB_TOKEN=<a token with public repo read access> npm run sync   # populates public/data/
 npm run dev                                                        # frontend at localhost:5173
+npm test                                                           # 27 node:test cases, no test framework
+npm run typecheck                                                  # src + pipeline + tests
 ```
 
-`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly.
+`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly. Neither `npm test` nor `npm run typecheck` is wired into the workflow yet — see [Known Gaps](./docs/Known-Gaps.md).
 
 ## How it stays in sync
 

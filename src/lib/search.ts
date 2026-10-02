@@ -1,4 +1,5 @@
 import MiniSearch from "minisearch";
+import { SEARCH_OPTIONS, SEARCH_QUERY_OPTIONS } from "@shared/searchSchema";
 import type { RepoRecord } from "./types";
 
 export interface SearchHit {
@@ -14,18 +15,20 @@ export interface SearchHit {
 
 let index: MiniSearch<RepoRecord> | null = null;
 
-export async function loadSearchIndex(raw: string): Promise<void> {
-  index = MiniSearch.loadJSON<RepoRecord>(raw, {
-    idField: "id",
-    fields: ["nwo", "desc", "blurb", "topics", "tags"],
-    storeFields: ["nwo", "stars", "lang", "cat", "tags", "blurb"],
-  });
+/**
+ * `loadJSON` restores the field-name → field-id map from the payload itself,
+ * so a mismatch here fails silently: the offending field simply stops
+ * producing matches. Sharing SEARCH_OPTIONS with the indexer is what keeps the
+ * two ends honest — see `shared/searchSchema.ts`.
+ */
+export function loadSearchIndex(raw: string): void {
+  index = MiniSearch.loadJSON<RepoRecord>(raw, SEARCH_OPTIONS);
 }
 
 export function search(query: string, limit = 100): SearchHit[] {
   if (!index || !query.trim()) return [];
   return index
-    .search(query, { prefix: true, fuzzy: 0.2, boost: { nwo: 3, tags: 2 } })
+    .search(query, SEARCH_QUERY_OPTIONS)
     .slice(0, limit)
     .map((r) => ({
       id: r.id as number,

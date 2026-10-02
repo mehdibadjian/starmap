@@ -45,7 +45,7 @@ The nightly job commits `cache/classifications.json`, `cache/positions.json`, an
 6. Commit and push the caches (below)
 7. `actions/upload-pages-artifact@v3` with `path: dist`
 
-Step 5 also runs `tsc -p tsconfig.json --noEmit` — a type error in `src` fails the deploy. Note it checks only `src`; `pipeline/**` is type-checked by `npm run typecheck`, which the workflow never calls.
+Step 5 also runs `tsc -p tsconfig.json --noEmit` — a type error in `src` fails the deploy. Note it checks only `src`: `pipeline/**` and `tests/**` are type-checked by `npm run typecheck`, and the suite runs under `npm test`; the workflow calls neither, so a broken cache rule or a failed regression test still deploys. See [Known Gaps](Known-Gaps.md).
 
 The `sync` step happens **before** `build`, which is what puts `public/data/` on disk so Vite copies it into `dist/`. Swap those two and you publish an empty dataset with no error.
 

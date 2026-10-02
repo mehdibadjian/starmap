@@ -12,6 +12,17 @@ npm run dev                                                     # http://localho
 
 For the token, a classic PAT with no scopes beyond public read, or `gh auth token`, is enough: the pipeline only calls `GET /users/{login}/starred`.
 
+## Without a token
+
+The frontend reads only `public/data/`, so you can develop the UI against a synthetic dataset instead of a real star list. Build one by driving the pipeline's own functions — `loadTaxonomy`/`leafIds`, `computeHealth`, `buildGraph`, `buildOutputs` — over a hand-written array of ~75 fake repos, and write the result to `public/data/`. Doing it that way matters: a hand-authored JSON blob won't exercise the shard splitting, the search-index serialization, or the graph's node IDs, and those are exactly the seams that break.
+
+Whatever you generate lands in `public/data/`, which is gitignored — so the repo never carries a fake dataset, and `npm run sync` overwrites it with a real one.
+
+Two traps worth knowing before you write the generator:
+
+- **Keep the fixture's words distinct.** If every fake description contains the string you later search for, a "topics are indexed too" test proves nothing. Give each record a topic that appears nowhere else in it.
+- **Derive `cat` from real leaf IDs.** A `cat: [null]` from an off-by-one in the generator is the fastest way to conclude the SPA is broken when the data is. The client now filters such rows out rather than blanking, but you'll be debugging the wrong thing.
+
 ## Scripts
 
 | Command | What it does |
@@ -20,9 +31,18 @@ For the token, a classic PAT with no scopes beyond public read, or `gh auth toke
 | `npm run build` | `tsc -p tsconfig.json --noEmit` then `vite build` → `dist/`. |
 | `npm run preview` | Serve `dist/` locally, closest thing to the real Pages deploy. |
 | `npm run sync` | Run the whole pipeline once. |
-| `npm run typecheck` | Type-check `src` (DOM) **and** `pipeline` (Node) separately. |
+| `npm test` | `node --import tsx --test "tests/*.test.ts"` — 27 tests, no test framework. |
+| `npm run typecheck` | Type-checks `src` (DOM), `pipeline` (Node), and `tests` as three separate projects. |
 
-There is no test runner and no linter configured — see [Known Gaps](Known-Gaps.md). `npm run typecheck` is the only automated correctness gate.
+The test runner is Node 22's built-in `node:test` with `tsx` as a loader, so there is nothing new to install and no config file. Notes on making it work:
+
+- Pass the quoted glob, `node --test "tests/*.test.ts"`. A bare directory argument makes Node treat it as a module and fail with `ERR_MODULE_NOT_FOUND`.
+- `tests/tsconfig.json` is its own project: Node globals for the runner, DOM lib for the browser-facing code under test, `allowImportingTsExtensions` because the suite imports `.ts` sources directly. It needs no `jsx` — the tests exercise functions, not components.
+- Tests import from `@/` and `@shared/`, which resolve via the `paths` mirrors — the same aliases Vite uses, so a test and the browser agree on what a module is.
+
+What the suite covers, in order of the harm it prevents: the MiniSearch serialize → rehydrate → query round trip (gap 1), `readCanvasTheme()` against the real `tokens.css` (gap 2 and the `<html>` scope), `planClassifications`' pending-hash retry rule (gap 4), `computeHealth` threshold edges, `parseHash`/`buildHash` round trips, and the shard row guard. None of them need a browser or a network.
+
+There is still no linter configured — see [Known Gaps](Known-Gaps.md). `npm run typecheck` and `npm test` are the automated correctness gates, and neither runs in CI yet.
 
 ## Working on the pipeline
 

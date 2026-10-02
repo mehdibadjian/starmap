@@ -8,7 +8,8 @@
     "build": "tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "sync": "tsx pipeline/sync.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p pipeline/tsconfig.json --noEmit"
+    "test": "node --import tsx --test \"tests/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p pipeline/tsconfig.json --noEmit && tsc -p tests/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

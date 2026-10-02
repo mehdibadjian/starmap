@@ -63,4 +63,4 @@ Not in `config.yml`, all read from the process environment:
 
 `vite.config.ts` sets `base: "./"` — this is load-bearing, not a style choice. Project Pages sites serve from `/<repo>/`, and any absolute asset path breaks every fork under a different name. The frontend fetches data with relative paths (`./data/graph.json`) for the same reason. Do not change `base` without also checking the deploy.
 
-`pipeline/tsconfig.json` and `tsconfig.json` are separate: `src` compiles against DOM, `pipeline` against Node. `npm run typecheck` runs both.
+`pipeline/tsconfig.json`, `tsconfig.json`, and `tests/tsconfig.json` are three separate projects: `src` compiles against the DOM, `pipeline` against Node, `tests` against both (it runs on Node but imports browser-facing modules). `npm run typecheck` runs all three.
