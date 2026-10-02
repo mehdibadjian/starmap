@@ -1,8 +1,14 @@
-# Starmap Wiki
+# Starmap Documentation
 
 Starmap turns one GitHub account's stars into a browsable, searchable, categorized library that runs entirely from static files. A nightly GitHub Action fetches, classifies, lays out, and publishes flat JSON; the browser does all filtering and searching locally. No server, no database, no runtime API calls.
 
-If you are reading this in the repository rather than the GitHub wiki, these files live in `wiki/` and the cross-page links below work as-is. In the wiki, navigate between pages from this index. `SPEC.md` in the repository root is the original design document; where the spec and the code disagree, the pages here describe the code and record the difference in [Known Gaps](Known-Gaps.md).
+These pages are the documentation set that lives in the repository, next to the code it describes — browse [`docs/`](.) in the file tree and GitHub renders this file as the folder landing page. Three sources, deliberately separate:
+
+- **This directory** — how the system is built *today*. Describes the code, not the intention.
+- **[`SPEC.md`](../SPEC.md)** — the original design document, including goals and milestones the code has not reached. Where the two disagree, the disagreement is recorded in [Known Gaps](Known-Gaps.md).
+- **[`README.md`](../README.md)** — the short front door for someone forking the template.
+
+Linking convention: page-to-page links are bare relative filenames (`Views.md`), so they resolve in a cloned checkout, in GitHub's file view, and in a wiki export alike. Source files are cited as inline code with a `file.ts:line` reference rather than as hyperlinks — that keeps the prose readable and survives a page moving between the repo and a wiki. The line numbers are a locator, not a contract: they were accurate when written and will drift as the code changes, so treat a mismatch as "read a little further along the file" rather than "this doc is wrong". The only upward links are the two to repository-root files above; if you publish this set as a GitHub wiki, copy `_Sidebar.md` into the wiki repo for the navigation rail and expect those two to need retargeting.
 
 ## Start here
 

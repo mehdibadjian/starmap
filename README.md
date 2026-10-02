@@ -2,7 +2,23 @@
 
 A static, forkable site that turns a GitHub account's stars into a browsable, searchable, categorized library. No server, no database, no runtime API calls — a nightly GitHub Action fetches, classifies, and publishes flat JSON; the browser does everything else locally.
 
-See [`SPEC.md`](./SPEC.md) for the full design.
+## Documentation
+
+Full documentation lives in [`docs/`](./docs), rendered from the current code:
+
+| I want to… | Read |
+|---|---|
+| understand how it fits together | [Architecture](./docs/Architecture.md) |
+| publish my own copy | [Forking a New Site](./docs/Forking-a-New-Site.md) |
+| change categories or behaviour | [Configuration](./docs/Configuration.md), [Classification and Taxonomy](./docs/Classification-and-Taxonomy.md) |
+| hack on it locally | [Local Development](./docs/Local-Development.md) |
+| follow the data | [Data Pipeline](./docs/Data-Pipeline.md), [Output Data Format](./docs/Output-Data-Format.md), [Graph Construction](./docs/Graph-Construction.md) |
+| understand CI | [CI and Deployment](./docs/CI-and-Deployment.md) |
+| work on the UI | [Frontend](./docs/Frontend.md), [Views](./docs/Views.md), [Theming and Tokens](./docs/Theming-and-Tokens.md) |
+| fix something that broke | [Troubleshooting](./docs/Troubleshooting.md) |
+| see what's still wrong | [Known Gaps](./docs/Known-Gaps.md) |
+
+The index is [`docs/README.md`](./docs/README.md). See [`SPEC.md`](./SPEC.md) for the original design document; where spec and code disagree, the docs pages describe the code and log the difference.
 
 ## Fork checklist (~2 minutes)
 

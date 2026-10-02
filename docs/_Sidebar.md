@@ -1,6 +1,6 @@
 ## Starmap
 
-[Home](Home.md)
+[Home](README.md)
 
 ### Getting started
 
