@@ -50,4 +50,5 @@ Everything that costs time or money happens in CI. The client only reads flat fi
 - **Frontend:** Vite + React 18 + Tailwind + Radix UI, graph rendered on Canvas
 - **CI:** one workflow, two sequential jobs (`build` → `deploy`); nightly cron + push + manual dispatch
 - **Size:** 11 pipeline modules (~980 lines); graph/list/timeline/graveyard/panel/search components (~1.9k); `App.tsx` shell + entry (~295); `lib/` (~350); `ui/` primitives (~480); `shared/` contracts (~53); tests (~454); styles (~110)
-- **Verification:** 27 `node:test` cases via `npm test`, plus `npm run typecheck` over three projects. No linter, no `LICENSE`, and neither command runs in CI yet — see [Known Gaps](Known-Gaps.md).
+- **Verification:** 27 `node:test` cases via `npm test`, plus `npm run typecheck` over three projects. No linter, and neither command runs in CI yet — see [Known Gaps](Known-Gaps.md).
+- **License:** MIT (`LICENSE`, `package.json`). Forking is the intended use.

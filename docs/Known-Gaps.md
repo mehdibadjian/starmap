@@ -57,7 +57,6 @@ In `classifyAll`, every cache miss was pre-populated with a rules result carryin
 ## Missing entirely
 
 - **No lint or format config.** Two `// eslint-disable-next-line react-hooks/exhaustive-deps` suppressions exist (`App.tsx:120`, `GraphView.tsx:265`), each deliberate — they key an effect on a derived string rather than a fresh array — but with no ESLint installed nothing verifies they are still the right call.
-- **No `LICENSE` file**, despite README/SPEC promising a forkable template — "Use this template" needs one. Not a decision to make on someone else's behalf: it needs the owner's choice.
 - **CI runs neither `npm test` nor `npm run typecheck`.** The workflow calls `npm run build`, which type-checks `src` only. Twenty-seven unit tests exist and would catch a regression in minutes, and `pipeline/**` type errors still surface only as a mid-run `tsx` failure. Adding a step is a two-line change.
 - **No webfont delivery** — see [Theming and Tokens](Theming-and-Tokens.md).
 - **No CI job runs the browser checks.** The phone-first layout, canvas painting, and keyboard path were verified by driving headless Chromium over CDP against a built site with a synthetic dataset. That harness is not in the repo and not in the pipeline; it is a strong candidate for a `playwright` job on the workflow, since these are precisely the bugs type-checking cannot see.

@@ -80,3 +80,7 @@ exclude_forks: false
 ## Taxonomy
 
 `taxonomy.json` is versioned (`version` field). Bump it to force a full reclassification — otherwise the LLM cache treats existing classifications as still valid. Fork your own by pointing `config.yml`'s `taxonomy` at a different file.
+
+## License
+
+MIT — see [LICENSE](./LICENSE). Forking and reusing this is the point of it: keep the copyright and permission notice, do whatever you like with the rest. Your star list, your copy.

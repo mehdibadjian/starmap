@@ -31,6 +31,7 @@ A third directory, `shared/`, is deliberately outside both halves: it holds the 
 | Path | Tracked in git | Purpose |
 |---|---|---|
 | `config.yml` | yes | The only file a forker must edit. |
+| `LICENSE` | yes | MIT. The site is a template; reuse needs no permission ask. |
 | `taxonomy.json` | yes | Versioned category tree + rules-tier keyword lists. |
 | `pipeline/*.ts` | yes | The nightly batch job. |
 | `shared/*.ts` | yes | Contracts both halves import — currently the MiniSearch schema. |
