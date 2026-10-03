@@ -120,8 +120,8 @@ Run `npm run fixture` first. `data/` is gitignored, so a fresh clone has nothing
 **`npm run smoke` refuses to run: `dist/ is stale relative to public/data`.**
 The harness byte-compares `public/data/graph.json` against `dist/data/graph.json` and stops if they differ, because a green run against an old bundle proves nothing. Run `npm run build`.
 
-**`npm run smoke` can't find a browser.**
-It looks for `chromium`, `chromium-browser`, `google-chrome`, and `google-chrome-stable`. If yours is named something else, `CHROME_PATH=/path/to/browser npm run smoke`.
+**`npm run smoke` reports `none of … exposed a debugging port`.**
+It tries `google-chrome-stable`, `google-chrome`, `chromium`, `chromium-browser` in that order and keeps the first that actually binds the DevTools port, printing why each rejection happened. A `spawn <name> ENOENT` line is just "not installed under that name"; a line quoting the browser's own output means it launched and refused the port — on Linux that is usually a snap-confined Chromium, so `CHROME_PATH=/path/to/browser npm run smoke` with a plain (non-snap) binary. If CI shows this flaking between runs on the same commit, the environment is the suspect, not the code — see [Known Gaps](Known-Gaps.md).
 
 **`npm run smoke` passes locally but fails in CI (or the reverse) at `vite preview is not serving …`.**
 The harness only starts its own preview server when nothing already answers `SMOKE_BASE`, so a stray `npm run preview` left on 4173 makes the local run test a server it didn't start. `pkill -f "vite preview"` and re-run before believing a green. The failure message now quotes the server's own output, which distinguishes a missing `dist/` from a port clash from a slow machine.

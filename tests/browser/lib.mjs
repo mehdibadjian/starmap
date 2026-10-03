@@ -8,6 +8,9 @@
  * drawn.
  */
 import { spawn } from "node:child_process";
+import { mkdtempSync, rmSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { connect as cdpConnect, closeTab } from "./cdp.mjs";
 
 export const BASE = process.env.SMOKE_BASE ?? "http://127.0.0.1:4173";
@@ -16,26 +19,26 @@ const PORT = process.env.CDP_PORT ?? "9222";
 let spawnFailure = null;
 
 /**
- * GitHub's runners ship `google-chrome` but not `chromium`; most dev machines
- * have the reverse. Resolve whichever exists rather than hard-coding one name
- * and failing on the other platform. `CHROME_PATH` still wins.
+ * Browsers this harness will try, in order.
+ *
+ * `google-chrome*` first because that is what GitHub's Ubuntu images install as
+ * a real package; the `chromium*` aliases are what most Linux dev machines have,
+ * and on the runner image `chromium` is commonly a snap, whose confinement is one
+ * plausible reason a debugging port may not bind.
+ *
+ * That last point is a hypothesis, not a finding: the same commit ran green in
+ * one CI job and failed with "chromium did not expose a debugging port" in
+ * another, so the flake is real and its cause was not reproduced locally. What
+ * the harness therefore does is refuse to bet on one binary — resolution happens
+ * by *launching* and keeping the first browser that answers, rather than by
+ * `--version`, because a browser can print a version and still not bind. That
+ * failure shape is exactly what a name-only lookup reports as "no browser".
  */
-const CANDIDATES = ["chromium", "chromium-browser", "google-chrome", "google-chrome-stable"];
+const CANDIDATES = ["google-chrome-stable", "google-chrome", "chromium", "chromium-browser"];
 
-async function findChrome() {
-  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
-  const { execFile } = await import("node:child_process");
-  const { promisify } = await import("node:util");
-  const run = promisify(execFile);
-  for (const bin of CANDIDATES) {
-    try {
-      await run(bin, ["--version"], { timeout: 8000 });
-      return bin;
-    } catch {
-      /* not installed under this name */
-    }
-  }
-  throw new Error(`no Chromium found — looked for ${CANDIDATES.join(", ")}; set CHROME_PATH`);
+function browserCandidates() {
+  if (process.env.CHROME_PATH) return [process.env.CHROME_PATH];
+  return CANDIDATES;
 }
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -49,6 +52,7 @@ export { closeTab };
  * debug port or a static-server port behind.
  * ------------------------------------------------------------------ */
 const children = [];
+const scratchDirs = [];
 
 function track(kind, proc) {
   children.push({ kind, proc });
@@ -68,7 +72,13 @@ function reap(signal, kind) {
       /* already gone */
     }
   }
-  if (!kind) children.length = 0;
+  // Drop what we just signalled, so a retry loop reaping "chrome" doesn't
+  // re-kill an earlier attempt's process group on every pass.
+  if (kind) {
+    for (let i = children.length - 1; i >= 0; i--) if (children[i].kind === kind) children.splice(i, 1);
+  } else {
+    children.length = 0;
+  }
 }
 
 async function alive() {
@@ -80,11 +90,24 @@ async function alive() {
   }
 }
 
-export async function ensureBrowser() {
-  if (await alive()) return;
-  const chrome = await findChrome();
+/**
+ * Launch each candidate in turn and keep the first that actually exposes a
+ * DevTools port. Not "find one that exists": a browser can print `--version`
+ * perfectly and still refuse to bind the debugging port, and that is the
+ * failure shape this suite has hit twice — a snap-confined `chromium` on a
+ * GitHub runner, and a leftover profile lock from an earlier crashed run.
+ *
+ * A private `--user-data-dir` per attempt is what makes the retry honest: two
+ * Chromium processes sharing one profile directory will not both start, and the
+ * second one exits before it ever tries the port, which looks exactly like a
+ * broken binary.
+ */
+async function launchBrowser(bin) {
+  const dir = mkdtempSync(path.join(os.tmpdir(), "starmap-cdp-"));
+  scratchDirs.push(dir);
+  spawnFailure = null;
   const proc = spawn(
-    chrome,
+    bin,
     [
       "--headless=new",
       "--no-sandbox",
@@ -92,18 +115,46 @@ export async function ensureBrowser() {
       "--disable-dev-shm-usage",
       "--disable-background-networking",
       "--no-first-run",
+      `--user-data-dir=${dir}`,
       `--remote-debugging-port=${PORT}`,
       "--remote-allow-origins=*",
       "about:blank",
     ],
-    { stdio: "ignore", detached: true },
+    { stdio: ["ignore", "pipe", "pipe"], detached: true },
   );
   track("chrome", proc);
-  for (let i = 0; i < 60; i++) {
-    if (await alive()) return;
+
+  let output = "";
+  proc.stdout.on("data", (b) => (output += b));
+  proc.stderr.on("data", (b) => (output += b));
+  proc.on("exit", (code, signal) => {
+    spawnFailure = `exited with ${signal ?? `code ${code}`}`;
+  });
+
+  // ~6s, then decide. A browser that will bind usually does so in under a second.
+  for (let i = 0; i < 24; i++) {
+    if (await alive()) return true;
+    if (spawnFailure) break;
     await sleep(250);
   }
-  throw new Error(`${chrome} did not expose a debugging port${spawnFailure ? `: ${spawnFailure}` : ""}`);
+  const why = output.trim().split("\n").slice(-2).join(" / ") || spawnFailure || "no output";
+  reap("SIGTERM", "chrome");
+  await sleep(300);
+  reap("SIGKILL", "chrome");
+  console.error(`  (${bin} did not expose a debugging port: ${why})`);
+  return false;
+}
+
+export async function ensureBrowser() {
+  if (await alive()) return;
+  const tried = browserCandidates();
+  for (const bin of tried) {
+    if (await launchBrowser(bin)) return;
+  }
+  throw new Error(
+    `none of ${tried.join(", ")} exposed a debugging port on ${PORT}` +
+      (process.env.CHROME_PATH ? "" : "; set CHROME_PATH to a headless-capable binary"),
+  );
 }
 
 export async function killBrowser() {
@@ -172,7 +223,18 @@ export async function stopServer() {
   reap("SIGTERM", "preview");
 }
 
-process.on("exit", () => reap("SIGKILL"));
+process.on("exit", () => {
+  reap("SIGKILL");
+  // Chromium's temp profiles are the harness's only writes outside the repo,
+  // and a few MB each — sweep them even when the run throws.
+  for (const dir of scratchDirs) {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+      /* best effort */
+    }
+  }
+});
 process.on("uncaughtException", (err) => {
   console.error(err);
   process.exit(1);
