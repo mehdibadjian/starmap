@@ -17,7 +17,7 @@ Written first in importance: the client reads it to know how many shards to load
 
 ```json
 {
-  "login": "mb",
+  "login": "your-username",
   "title": "Starmap",
   "theme": "dark",
   "total": 1204,
@@ -35,9 +35,9 @@ Written first in importance: the client reads it to know how many shards to load
 | `login`, `title`, `theme` | From `config.yml`; the only place the account name reaches the UI. `login` is also the merge-baseline guard — see [Data Pipeline](Data-Pipeline.md). |
 | `total` | Repo count after merge. Shown as the header badge. |
 | `last_sync` | ISO timestamp of this build; shown as `synced YYYY-MM-DD`. |
-| `taxonomy_version` | From `taxonomy.json`. |
-| `unsorted_pct` | Share of repos in `misc/other` or with no category, to one decimal. The M3 target is under 10. |
-| `shard_count`, `shard_size` | Drives shard loading and reassembly of the baseline. |
+| `taxonomy_version` | From `taxonomy.json`, and the cache-invalidation key: `classify.ts:28` discards the whole classification cache when it changes. Written for provenance; the UI does not read it. |
+| `unsorted_pct` | Share of repos in `misc/other` or with no category, to one decimal. The M3 target is under 10. At or above it, the header shows `N% uncategorised` with a tooltip naming both fixes (`src/lib/metaBadges.ts`); below it, nothing is shown — a metric that is meeting its target does not need a badge. |
+| `shard_count`, `shard_size` | `shard_count` drives shard loading and reassembly of the baseline; `shard_size` documents the sharding for a fork reading the output. |
 | `llm_degraded` | `true` when no `ANTHROPIC_API_KEY` or any LLM batch failed → renders the `rules-only` badge. |
 
 ## `repos/NNN.json`
@@ -103,7 +103,7 @@ Repo nodes carry no metadata — the client joins them against shard data by `re
 
 `[{ "date": "2026-10-01", "total": 1204, "added": 7, "removed": 0 }]`, one entry per day, appended each run with any existing entry for today replaced.
 
-Two things to know: it is **not** committed, so it survives only by being scraped off the live site at the start of the next run — a failed baseline fetch silently restarts it from one entry. And no UI consumes it yet; `fetchHistory()` in `src/lib/data.ts` is currently unused because the Timeline view aggregates `starred_at` from the shards instead.
+Two things to know: it is **not** committed, so it survives only by being scraped off the live site at the start of the next run — a failed baseline fetch silently restarts it from one entry. And no UI consumes it: `Timeline` aggregates `starred_at` from the shards instead, which is why `src/lib/data.ts` has no `fetchHistory()`. It is still worth writing, because `starred_at` cannot reconstruct an unstar — `history.json` is the only record of churn. See [Known Gaps](Known-Gaps.md).
 
 ## Reading order in the browser
 

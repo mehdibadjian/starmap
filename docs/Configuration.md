@@ -40,9 +40,11 @@ Not in `config.yml`, all read from the process environment:
 |---|---|---|---|
 | `GITHUB_TOKEN` | `sync.ts` | **yes** (throws) | Fetch stars. In CI it is the built-in `secrets.GITHUB_TOKEN`; locally, any token with public read access. |
 | `ANTHROPIC_API_KEY` | `classify.ts` | no | Enables the LLM tier. Absent → rules-only + `llm_degraded: true`. |
-| `FORCE_FULL` | `sync.ts` | no | `1` forces a full pass — the manual "pick up unstars now" switch. |
+| `FORCE_FULL` | `sync.ts` | no | `1` forces a full pass — the manual "pick up unstars now" switch. Also reachable without editing YAML: the **full_pass** checkbox on *Starmap sync + deploy → Run workflow* sets it. |
 | `GITHUB_REPOSITORY` | `previousData.ts` | implicit in CI | Used to derive the Pages URL for the merge baseline. |
 | `PAGES_URL` | `previousData.ts` | no | Overrides the derived Pages URL. Useful for custom domains or after a rename. |
+| `CHROME_PATH` | `tests/browser/lib.mjs` | no | Points the smoke test at a specific browser when none of the four usual names resolve. |
+| `SMOKE_BASE` / `CDP_PORT` | `tests/browser/` | no | Which URL to drive (default `http://127.0.0.1:4173`) and, for `CDP_PORT`, the fixed port of a DevTools browser you started yourself. With `CDP_PORT` set the harness attaches to it instead of launching one; unset, it launches its own on an ephemeral port (see [CI and Deployment](CI-and-Deployment.md)). Set `SMOKE_BASE` to drive a site you already have running. |
 
 ## `taxonomy.json`
 

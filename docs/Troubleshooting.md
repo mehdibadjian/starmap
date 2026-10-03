@@ -39,7 +39,7 @@ Expected the first time after you change `login` in `config.yml`. The merge base
 Neither `PAGES_URL` nor `GITHUB_REPOSITORY` is set. Locally: `PAGES_URL=https://<owner>.github.io/<repo> npm run sync`.
 
 **Repos I unstarred are still listed.**
-Unstars are only removed by a **full pass**, which runs on Sunday (UTC) or when the baseline is unreachable. To force it now, add `FORCE_FULL: "1"` to the sync step's env, or trigger a run on a Sunday.
+Unstars are only removed by a **full pass**, which runs on Sunday (UTC) or when the baseline is unreachable. To force it now, use **Run workflow** on *Starmap sync + deploy* and tick **full_pass**; locally, `FORCE_FULL=1 npm run sync`. Editing the workflow YAML is no longer the only way.
 
 **`Sync failed, aborting without publishing`.**
 The run bailed before writing output — by design, so the previous night's site stays live. The message above it names the cause; a fetch failure usually means the retry budget (5 attempts) was exhausted, i.e. genuine rate limiting or an API outage rather than a bug.
@@ -74,7 +74,7 @@ If a specific term still misses, check what field it lives in: search covers `nw
 Two distinct causes. If the *health rings* are all the same colour, that is the `var()`-on-canvas bug — fixed, and `src/lib/canvasTheme.ts` now resolves tokens to literals; a fork carrying hand-merged changes should check nothing assigns `ctx.fillStyle = "var(…)"`. If the whole palette is wrong, the theme class is probably on `<body>` instead of `<html>`: canvas reads `getComputedStyle(document.documentElement)`, so a class on `<body>` leaves every token unresolved and the fallbacks show through.
 
 **Colours or sizes don't update after changing the theme, or after rotating the phone.**
-The canvas only repaints when a React dependency changes. `GraphView`'s `themeTick` effect (`:106`) covers the three things that don't: a class change on `<html>`, a `prefers-color-scheme` switch, and `window.resize`. If you replace that effect, keep all three — the resize case in particular has no other trigger.
+The canvas only repaints when a React dependency changes. `GraphView`'s `themeTick` effect (`:107`) covers the three things that don't: a class change on `<html>`, a `prefers-color-scheme` switch, and `window.resize`. If you replace that effect, keep all three — the resize case in particular has no other trigger.
 
 **Pinching the map zooms the whole page, or one finger scrolls the list instead of panning.**
 `touch-action: none` on the canvas is what hands those gestures to the pointer handlers. It is on the element's class list (`touch-none`) — losing it makes both gestures fall through to the browser.
@@ -91,6 +91,12 @@ Two separate requirements. The shell is `h-[100dvh]` — `100vh` on iOS is the *
 **Something is wider than the screen and the page scrolls sideways.**
 The header wraps to two rows below `sm` rather than squeezing four tab labels and a search box into 390px; the breadcrumb row scrolls horizontally inside its own container instead of pushing the document wide. When adding chrome, check `document.documentElement.scrollWidth === innerWidth` at 390px — that's the assertion the layout is held to.
 
+**Tapping a category shows nothing.**
+Three different causes, now distinguishable at a glance:
+- *The category is genuinely empty.* Empty leaves are pruned from `graph.json`, so a dot you can tap should always have repos. If the view says **"Nothing in this category"**, you reached it by a stale bookmark or a hand-typed hash — that message is the fix working, not failing.
+- *You tapped a hub and only leaf dots drew.* That was the bug: the hub view rendered its children but not their repos, so a category with hundreds of stars looked exactly like an empty one. `GraphView.tsx:233` now draws the hub's repos up to the touch cap. If you are on a fork with hand-merged changes and it is back, check that the `else` branch of that memo exists.
+- *The shards haven't landed yet.* See the next entry.
+
 **A category shows "no repos" right after loading.**
 Repo shards load during browser idle time, so `reposById` fills gradually. Wait for the shards, or check that `shard_count` in `meta.json` matches the files actually served.
 
@@ -101,7 +107,26 @@ Repo shards load during browser idle time, so `reposById` fills gradually. Wait 
 Same cause — the graph needs only `graph.json`; the list needs shards. If shards 404, your `data/` is stale relative to `meta.json`: re-run `npm run sync` and rebuild.
 
 **Pressing Enter on the map opens two GitHub tabs.**
-It shouldn't: the canvas owns Enter while its node cursor is active and marks the event so the window-level handler in `App.tsx:140` stands down. If you see the doubling again, the mark or the check was lost in a merge.
+It shouldn't: the canvas owns Enter while its node cursor is active and marks the event so the window-level handler in `App.tsx:141` stands down. If you see the doubling again, the mark or the check was lost in a merge.
 
 **Clicking `+N more` goes to a list that seems unfiltered.**
 That is by design: the cap is per leaf and the List view has no cap, so you see every repo in that leaf. Facets in the List header narrow it from there.
+
+## Local checks
+
+**`npm run smoke` refuses to run: `no dataset found`.**
+Run `npm run fixture` first. `data/` is gitignored, so a fresh clone has nothing to serve — this is the same reason the CI browser job generates a fixture before it builds.
+
+**`npm run smoke` refuses to run: `dist/ is stale relative to public/data`.**
+The harness byte-compares `public/data/graph.json` against `dist/data/graph.json` and stops if they differ, because a green run against an old bundle proves nothing. Run `npm run build`.
+
+**`npm run smoke` reports `none of … exposed a working DevTools endpoint`.**
+It tries `google-chrome-stable`, `google-chrome`, `chromium`, `chromium-browser` in that order and keeps the first that exposes a usable endpoint, printing why each rejection happened. A `spawn <name> ENOENT` line is just "not installed under that name". A line quoting the browser's own output — often a D-Bus complaint — means it launched and never wrote the port file within the wait; on Linux that is usually a snap-confined Chromium, so `CHROME_PATH=/path/to/browser npm run smoke` with a plain (non-snap) binary. A line saying `exited with …` means the browser died on its own, which on a laptop is normally a profile problem — each attempt uses a fresh `--user-data-dir`, so check `TMPDIR` is writable and not shared with another concurrent run. If CI shows this flaking between runs on the same commit, the environment is the suspect, not the code — see [Known Gaps](Known-Gaps.md).
+
+To drive a browser you started yourself, set `CDP_PORT` to its fixed port; the harness attaches instead of launching.
+
+**`npm run smoke` passes locally but fails in CI (or the reverse) at `vite preview is not serving …`.**
+The harness only starts its own preview server when nothing already answers `SMOKE_BASE`, so a stray `npm run preview` left on 4173 makes the local run test a server it didn't start. `pkill -f "vite preview"` and re-run before believing a green. The failure message now quotes the server's own output, which distinguishes a missing `dist/` from a port clash from a slow machine.
+
+**A check fails that passed yesterday.**
+Every check in the suite can fail — there is no advisory tier, because each "report but don't fail" line that ever existed turned out to describe a real defect. Read the `—` detail after the failing name: it quotes what the page actually reported (`visible=0`, `55 emitted / 55 in taxonomy`), which is usually enough to tell a data change from a code regression.

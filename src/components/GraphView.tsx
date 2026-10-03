@@ -170,6 +170,9 @@ export default function GraphView({
 
   const hubs = useMemo(() => graph.nodes.filter((n) => n.kind === "hub"), [graph]);
   const hubOrder = useMemo(() => hubs.map((n) => n.id), [hubs]);
+  // Hoisted so effects can depend on the drill path without an inline
+  // expression in the dependency array, which the linter cannot check.
+  const pathKey = path.join("/");
   const maxVisible = coarse ? MAX_VISIBLE_REPOS_COARSE : MAX_VISIBLE_REPOS_FINE;
 
   const colorForHub = useCallback(
@@ -188,7 +191,7 @@ export default function GraphView({
     [nodesById],
   );
 
-  const { visibleNodes, visibleEdges, overflow, focusNodes, activeHubId } = useMemo(() => {
+  const { visibleNodes, visibleEdges, overflow, focusNodes, activeHubId, pathMissing } = useMemo(() => {
     const visible = new Set<string>(["root", ...hubOrder]);
     const overflowNodes: OverflowNode[] = [];
     // What the camera fits to — narrows as you drill in, so repos aren't
@@ -196,30 +199,51 @@ export default function GraphView({
     let focus = new Set<string>(["root", ...hubOrder]);
     let activeHub: string | undefined;
 
+    /** Largest first: the cap exists for legibility, so the small dots drop out. */
+    const byStars = (nodes: GraphNode[]) =>
+      nodes.slice().sort((a, b) => {
+        const ra = reposById.get(Number(a.id.slice("repo:".length)));
+        const rb = reposById.get(Number(b.id.slice("repo:".length)));
+        return (rb?.stars ?? 0) - (ra?.stars ?? 0);
+      });
+
+    /** One `+N` circle per leaf, parked at the mean position of what it hides. */
+    const hideOverflow = (leafId: string, hidden: GraphNode[]) => {
+      if (hidden.length === 0) return;
+      const avgX = hidden.reduce((s, r) => s + r.x, 0) / hidden.length;
+      const avgY = hidden.reduce((s, r) => s + r.y, 0) / hidden.length;
+      overflowNodes.push({ id: `more:${leafId}`, x: avgX, y: avgY, count: hidden.length, leafId });
+    };
+
     if (path[0]) {
       const hubId = `hub:${path[0]}`;
       activeHub = hubId;
       const leaves = childrenByParent.get(hubId) ?? [];
+      const leafIds = leaves.map((l) => l.id);
       for (const leaf of leaves) visible.add(leaf.id);
-      focus = new Set([hubId, ...leaves.map((l) => l.id)]);
 
       if (path[1]) {
         const leafId = `leaf:${path[0]}/${path[1]}`;
-        // Show the largest, most-maintained repos when the leaf overflows the
-        // cap, rather than whatever happens to be newest-starred in shard order.
-        const repos = (childrenByParent.get(leafId) ?? []).slice().sort((a, b) => {
-          const ra = reposById.get(Number(a.id.slice("repo:".length)));
-          const rb = reposById.get(Number(b.id.slice("repo:".length)));
-          return (rb?.stars ?? 0) - (ra?.stars ?? 0);
-        });
+        const repos = byStars(childrenByParent.get(leafId) ?? []);
         const shown = repos.slice(0, maxVisible);
         for (const r of shown) visible.add(r.id);
         focus = new Set([leafId, ...shown.map((r) => r.id)]);
-        if (repos.length > maxVisible) {
-          const hidden = repos.slice(maxVisible);
-          const avgX = hidden.reduce((s, r) => s + r.x, 0) / hidden.length;
-          const avgY = hidden.reduce((s, r) => s + r.y, 0) / hidden.length;
-          overflowNodes.push({ id: `more:${leafId}`, x: avgX, y: avgY, count: hidden.length, leafId });
+        hideOverflow(leafId, repos.slice(maxVisible));
+      } else {
+        // A hub is a *group* of repos, not just a row of leaf dots. Showing only
+        // the leaves made tapping a category with 383 repos look identical to
+        // tapping an empty one, so the map read as broken. Repos under every
+        // leaf of the hub join the view, capped for legibility.
+        const repos = byStars(leafIds.flatMap((id) => childrenByParent.get(id) ?? []));
+        const shown = repos.slice(0, maxVisible);
+        for (const r of shown) visible.add(r.id);
+        focus = new Set([hubId, ...leafIds, ...shown.map((r) => r.id)]);
+        const shownIds = new Set(shown.map((r) => r.id));
+        for (const id of leafIds) {
+          hideOverflow(
+            id,
+            (childrenByParent.get(id) ?? []).filter((r) => !shownIds.has(r.id)),
+          );
         }
       }
     }
@@ -227,8 +251,19 @@ export default function GraphView({
     const edges = graph.edges.filter((e) => visible.has(e.s) && visible.has(e.t));
     const nodes = graph.nodes.filter((n) => visible.has(n.id));
     const focusList = nodes.filter((n) => focus.has(n.id));
-    return { visibleNodes: nodes, visibleEdges: edges, overflow: overflowNodes, focusNodes: focusList, activeHubId: activeHub };
-  }, [graph, path, hubOrder, childrenByParent, reposById, maxVisible]);
+    // Empty categories are pruned from the graph, so a drilled path can name
+    // something that has no node at all — a stale bookmark, or a hand-typed
+    // URL. That used to render a blank canvas with no explanation.
+    const wanted = path[1] ? `leaf:${path[0]}/${path[1]}` : path[0] ? `hub:${path[0]}` : null;
+    return {
+      visibleNodes: nodes,
+      visibleEdges: edges,
+      overflow: overflowNodes,
+      focusNodes: focusList,
+      activeHubId: activeHub,
+      pathMissing: wanted !== null && !nodesById.has(wanted),
+    };
+  }, [graph, path, hubOrder, childrenByParent, reposById, maxVisible, nodesById]);
 
   /**
    * Everything the keyboard can walk to, in a stable order. The root view holds
@@ -262,8 +297,10 @@ export default function GraphView({
 
   useEffect(() => {
     fitToView();
+    // Refit only when the drill path changes, not every time the visible set
+    // is rebuilt — panning or hovering must not snap the camera back.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path.join("/")]);
+  }, [pathKey]);
 
   const project = useCallback(
     (wx: number, wy: number, rect: DOMRect): [number, number] => [
@@ -605,11 +642,16 @@ export default function GraphView({
     zoomAboutPoint(camera.zoom * (1 - e.deltaY * 0.001), e.clientX, e.clientY);
   };
 
-  const zoomBy = (factor: number) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    zoomAboutPoint(camera.zoom * factor, rect.left + rect.width / 2, rect.top + rect.height / 2);
-  };
+  // Stable identity, and it reads the camera through the ref the same way pinch
+  // does: as a `useEffect` dependency this must not change on every render.
+  const zoomBy = useCallback(
+    (factor: number) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      zoomAboutPoint(cameraRef.current.zoom * factor, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    },
+    [zoomAboutPoint],
+  );
 
   /* ------------------------------------------------------------------ *
    * Keyboard: the canvas is a focusable surface, not a dead region.
@@ -698,7 +740,7 @@ export default function GraphView({
   // node that just left the screen.
   useEffect(() => {
     setNavIndex(-1);
-  }, [path.join("/")]);
+  }, [pathKey]);
 
   const hoverRepo =
     hoverId?.startsWith("repo:") ? reposById.get(Number(hoverId.slice("repo:".length))) ?? null : null;
@@ -736,6 +778,24 @@ export default function GraphView({
       <p className="sr-only" aria-live="polite">
         {announce}
       </p>
+
+      {pathMissing && (
+        // The canvas is legitimately empty here — this path names a category
+        // with no repos, so say so and offer a way out instead of showing a
+        // blank panel that looks like a failure.
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-6">
+          <Card className="pointer-events-auto max-w-xs gap-2 p-4 text-center">
+            <p className="font-mono text-sm font-semibold text-foreground">Nothing in this category</p>
+            <p className="text-xs text-muted-foreground">
+              <span className="font-mono">{path.join(" / ")}</span> has no starred repos yet, so there is nothing to
+              place on the map.
+            </p>
+            <Button size="sm" variant="outline" onClick={() => onNavigate([])}>
+              Back to all categories
+            </Button>
+          </Card>
+        </div>
+      )}
 
       {hoverRepo && hoverPos && (
         <Card

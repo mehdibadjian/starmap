@@ -1,4 +1,4 @@
-import type { GraphData, HistoryEntry, MetaJson, RepoRecord } from "./types";
+import type { GraphData, MetaJson, RepoRecord } from "./types";
 
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(path);
@@ -14,9 +14,12 @@ export function fetchGraph(): Promise<GraphData> {
   return getJson<GraphData>("./data/graph.json");
 }
 
-export function fetchHistory(): Promise<HistoryEntry[]> {
-  return getJson<HistoryEntry[]>("./data/history.json");
-}
+/**
+ * There is deliberately no `fetchHistory()`. `data/history.json` is written for
+ * the *next* run's growth series, and `Timeline` derives stars-per-month from
+ * `starred_at` across the loaded shards instead (docs/Views.md) — so a browser
+ * reader for it would be dead code.
+ */
 
 export function fetchSearchIndexRaw(): Promise<string> {
   return fetch("./data/search.json").then((r) => r.text());

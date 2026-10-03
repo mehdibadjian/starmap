@@ -17,7 +17,7 @@ Linking convention: page-to-page links are bare relative filenames (`Views.md`),
 | [Architecture](Architecture.md) | You want the one-screen mental model of CI → JSON → SPA. |
 | [Forking a New Site](Forking-a-New-Site.md) | You are setting up your own copy. ~2 minutes, no secrets. |
 | [Configuration](Configuration.md) | You need to change `config.yml` or the taxonomy. |
-| [Local Development](Local-Development.md) | You want the pipeline and site running on your laptop. |
+| [Local Development](Local-Development.md) | You want the pipeline and site running on your laptop, or need to know what the tests cover. |
 | [Troubleshooting](Troubleshooting.md) | Something failed: a 403, a blank page, a full pass every night. |
 
 ## The pipeline
@@ -48,7 +48,7 @@ Everything that costs time or money happens in CI. The client only reads flat fi
 - **Repo:** `mehdibadjian/starmap` · static template, fork-and-run
 - **Pipeline:** TypeScript + `tsx`, Octokit, MiniSearch, `d3-force` (headless), Anthropic SDK (opt-in)
 - **Frontend:** Vite + React 18 + Tailwind + Radix UI, graph rendered on Canvas
-- **CI:** one workflow, two sequential jobs (`build` → `deploy`); nightly cron + push + manual dispatch
-- **Size:** 11 pipeline modules (~980 lines); graph/list/timeline/graveyard/panel/search components (~1.9k); `App.tsx` shell + entry (~295); `lib/` (~350); `ui/` primitives (~480); `shared/` contracts (~53); tests (~454); styles (~110)
-- **Verification:** 31 `node:test` cases via `npm test`, plus `npm run typecheck` over three projects. No linter, and neither command runs in CI yet — see [Known Gaps](Known-Gaps.md).
+- **CI:** two workflows. `ci.yml` validates only (checks + a browser job); `nightly.yml` runs the pipeline and deploys, gated on the same checks. Nightly cron + push + manual dispatch.
+- **Size:** 11 pipeline modules (~970 lines); graph/list/timeline/graveyard/panel/search components (~1.5k); `ui/` primitives (~480); `lib/` (~340); `App.tsx` shell + entry (~310); `shared/` contracts (~140); tests (~640 unit, ~1,030 browser harness); styles (~160)
+- **Verification:** 40 `node:test` cases via `npm test`, `npm run lint` (ESLint flat config over TS and the `.mjs` harness), `npm run typecheck` over three projects, and a 47-check browser smoke test (`npm run smoke`) that drives headless Chromium over CDP. All four run in CI.
 - **License:** MIT (`LICENSE`, `package.json`). Forking is the intended use.

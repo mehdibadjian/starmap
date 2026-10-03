@@ -48,13 +48,15 @@ Health colours are a five-step ramp from green to grey, so decay reads as a fade
 
 `--font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace` and `--font-sans: "IBM Plex Sans", system-ui, sans-serif`.
 
-**No webfont is loaded.** There is no `<link>` in `index.html` and no `@font-face`, so IBM Plex renders only if the visitor has it installed; everyone else silently gets `SFMono-Regular`/Consolas and `system-ui`. That is a defensible choice for a zero-third-party-request static site, but if the typographic look matters, add the fonts to `public/` and `@font-face` them — don't reach for a CDN, which reintroduces an external dependency.
+**The webfonts ship in the repo.** `src/styles/fonts.css` declares three `@font-face` rules and `src/assets/fonts/` holds the files: IBM Plex Sans as one variable font covering 400–600, and Plex Mono at the two weights actually used — about 74 kB together, latin `unicode-range` subsets only. There is deliberately no `<link>` to Google's CDN: the site's rule is no runtime requests to another origin, and a fork shouldn't inherit a third-party dependency or a render-blocking fetch for a typeface. `fonts.css` is imported from `index.css`, so Vite hashes the woff2 files into `assets/` and the paths rewrite themselves — which is why the `url()`s are relative (`../assets/fonts/…`) rather than `/fonts/…`: the site deploys under a project-page subpath with `base: "./"`, and an absolute path 404s. `font-display: swap` means a slow first paint shows the system fallback rather than invisible text.
+
+The `npm run smoke` suite asserts this rather than trusting it: three declared `FontFace` objects with an IBM Plex family, and each one `loaded`/`fetched` before the shell checks pass. A `@font-face` that points at a path Vite didn't emit is exactly the kind of defect a static-site rule set hides until someone looks at the deployed page.
 
 Mono is used for identifiers everywhere (`nwo`, category badges, counts, timestamps, the header title); sans for prose (blurbs, empty states).
 
 ## Applying a theme
 
-`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx:52` swaps the class on **`document.documentElement`**:
+`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx:54` swaps the class on **`document.documentElement`**:
 
 ```ts
 const root = document.documentElement;
@@ -76,7 +78,7 @@ root.classList.add(m.theme);
 
 So a light-preferring phone gets a light first frame rather than a dark flash, and `meta.json`'s explicit choice still wins once it arrives. `tailwind.config.js` uses `darkMode: ["class"]`.
 
-To add a third theme: define a `.yourtheme` block in `tokens.css`, add its token names to `TOKENS`/`FALLBACK` in `src/lib/canvasTheme.ts`, allow the value in `Config["theme"]` and `MetaJson["theme"]` in both `pipeline/types.ts` and `src/lib/types.ts`, and validate it in `pipeline/config.ts`.
+To add a third theme: define a `.yourtheme` block in `tokens.css`, add its token names to `TOKENS`/`FALLBACK` in `src/lib/canvasTheme.ts`, allow the value in `Config["theme"]` (`pipeline/types.ts`) and in `MetaJson["theme"]` (`shared/dataSchema.ts`, which both sides of the app import), and validate it in `pipeline/config.ts`.
 
 ## Canvas: the gotcha that shaped this
 

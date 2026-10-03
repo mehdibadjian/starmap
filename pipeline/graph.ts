@@ -1,6 +1,6 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from "d3-force";
 import type { GraphData, GraphEdge, GraphNode, RepoRecord, Taxonomy } from "./types.js";
-import { rootOfLeaf } from "./taxonomyRules.js";
+import { rootOfLeaf, UNSORTED } from "./taxonomyRules.js";
 
 const ASSOC_THRESHOLD = 0.15;
 const ASSOC_TOP_K = 6;
@@ -110,23 +110,48 @@ export function buildGraph(
   const rootPos = seed("root", 0, 0);
   nodes.push({ id: "root", kind: "root", label: login, x: rootPos.x, y: rootPos.y });
 
-  const hubCount = taxonomy.roots.length;
-  taxonomy.roots.forEach((root, i) => {
+  const hubCountOf = (rootId: string) =>
+    repos.filter((r) => r.cat.some((c) => rootOfLeaf(taxonomy, c) === rootId)).length;
+  const leafCountOf = (leafId: string) => repos.filter((r) => r.cat.includes(leafId)).length;
+  /**
+   * Repos attach to their *primary* category only, so a leaf that is everyone's
+   * second category would advertise a count yet have nothing under it. Prune on
+   * attachment, not on the displayed count, or the empty dot comes straight back.
+   */
+  const attachedOf = (leafId: string) => repos.filter((r) => (r.cat[0] ?? UNSORTED) === leafId).length;
+  const leafIsReachable = (leafId: string) => attachedOf(leafId) > 0;
+
+  /**
+   * Only categories that actually hold repos become nodes. The taxonomy is a
+   * fixed tree, so most forks leave several leaves empty; emitting them anyway
+   * produced tappable dots that navigated to a genuinely empty view, which reads
+   * as a broken map rather than an unused category.
+   */
+  const populatedRoots = taxonomy.roots.filter((root) => root.leaves.some((l) => leafIsReachable(l.id)));
+  const hubCount = populatedRoots.length;
+  populatedRoots.forEach((root, i) => {
     const angle = (i / hubCount) * 2 * Math.PI;
     const pos = seed(`hub:${root.id}`, Math.cos(angle) * 300, Math.sin(angle) * 300);
-    const count = repos.filter((r) => r.cat.some((c) => rootOfLeaf(taxonomy, c) === root.id)).length;
-    nodes.push({ id: `hub:${root.id}`, kind: "hub", label: root.label, parent: "root", count, x: pos.x, y: pos.y });
+    nodes.push({
+      id: `hub:${root.id}`,
+      kind: "hub",
+      label: root.label,
+      parent: "root",
+      count: hubCountOf(root.id),
+      x: pos.x,
+      y: pos.y,
+    });
 
-    root.leaves.forEach((leaf, j) => {
-      const leafAngle = angle + ((j - root.leaves.length / 2) * 0.15);
+    const populatedLeaves = root.leaves.filter((leaf) => leafIsReachable(leaf.id));
+    populatedLeaves.forEach((leaf, j) => {
+      const leafAngle = angle + ((j - populatedLeaves.length / 2) * 0.15);
       const pos2 = seed(`leaf:${leaf.id}`, Math.cos(leafAngle) * 450, Math.sin(leafAngle) * 450);
-      const leafCount = repos.filter((r) => r.cat.includes(leaf.id)).length;
       nodes.push({
         id: `leaf:${leaf.id}`,
         kind: "leaf",
         label: leaf.label,
         parent: `hub:${root.id}`,
-        count: leafCount,
+        count: leafCountOf(leaf.id),
         x: pos2.x,
         y: pos2.y,
       });
@@ -134,12 +159,10 @@ export function buildGraph(
   });
 
   const structEdges: GraphEdge[] = [];
-  taxonomy.roots.forEach((root) => {
-    const hubCount2 = repos.filter((r) => r.cat.some((c) => rootOfLeaf(taxonomy, c) === root.id)).length;
-    if (hubCount2 > 0) structEdges.push({ s: "root", t: `hub:${root.id}`, kind: "struct" });
+  populatedRoots.forEach((root) => {
+    structEdges.push({ s: "root", t: `hub:${root.id}`, kind: "struct" });
     root.leaves.forEach((leaf) => {
-      const leafCount = repos.filter((r) => r.cat.includes(leaf.id)).length;
-      if (leafCount > 0) structEdges.push({ s: `hub:${root.id}`, t: `leaf:${leaf.id}`, kind: "struct" });
+      if (leafIsReachable(leaf.id)) structEdges.push({ s: `hub:${root.id}`, t: `leaf:${leaf.id}`, kind: "struct" });
     });
   });
 
