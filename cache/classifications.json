@@ -7492,6 +7492,20 @@
       "blurb": "Lightning-Fast, On-Device, Multilingual TTS — running natively via ONNX.",
       "source": "rules"
     },
+    "1099328966": {
+      "id": 1099328966,
+      "hash": "41b92d6e93182df3b44d0d0e185431a825c3ae28",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "claude-code",
+        "claude-code-system-prompts",
+        "system-prompts"
+      ],
+      "blurb": "All parts of Claude Code's system prompt, 27 builtin tool descriptions, sub agent promp...",
+      "source": "rules"
+    },
     "1099811418": {
       "id": 1099811418,
       "hash": "fe14959828ddf867e4ada2a8932f749b7b9de469",
@@ -7538,6 +7552,23 @@
         "fastapi"
       ],
       "blurb": "🎭 AI Avatar / digital human platform — upload a photo, clone a voice, talk to any face...",
+      "source": "rules"
+    },
+    "1110874991": {
+      "id": 1110874991,
+      "hash": "b1f0ed94a3d2a095269969fc930b7f51e74b81a8",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai",
+        "ai-gateway",
+        "ai-proxy",
+        "anthropic",
+        "go",
+        "golang"
+      ],
+      "blurb": "AI gateway / AI control plane / AI proxy written in Go. Unified OpenAI-compatible and A...",
       "source": "rules"
     },
     "1123338559": {
@@ -8731,6 +8762,33 @@
       ],
       "tags": [],
       "blurb": "No description provided.",
+      "source": "rules"
+    },
+    "1396117711": {
+      "id": 1396117711,
+      "hash": "2f3ac759c2d3f3654884f14c8447e2fd8a08c784",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Your always-on AI coworkers that move between text, calls, and Slack.",
+      "source": "rules"
+    },
+    "1398492185": {
+      "id": 1398492185,
+      "hash": "30dedfa445cd5d961c5b5903922568205acba92d",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "claude-code",
+        "codex",
+        "developer-tools",
+        "llm"
+      ],
+      "blurb": "A free pit crew for your expensive coding agent: the superpowers development workflow, ...",
       "source": "rules"
     }
   }
