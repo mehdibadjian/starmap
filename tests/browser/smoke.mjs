@@ -13,8 +13,8 @@
  *
  * Environment:
  *   SMOKE_BASE   site under test           (default http://127.0.0.1:4173)
- *   CHROME_PATH  browser binary            (default chromium)
- *   CDP_PORT     debug port                (default 9222)
+ *   CHROME_PATH  browser binary            (default: try four known names)
+ *   CDP_PORT     attach to a browser you started, instead of launching one
  */
 import { readFileSync, statSync } from "node:fs";
 import {

@@ -5,10 +5,20 @@
  * `npm install`, so they stay in the repo instead of rotting in a scratch dir.
  *
  * Only the handful of methods the smoke tests need are wired up.
+ *
+ * The endpoint is injected by `ensureBrowser()` because the port is chosen by
+ * the browser, not by us — see `setEndpoint`. Guessing one here would reintroduce
+ * exactly the fixed-port dependency that made this suite flake in CI.
  */
-const BROWSER = `http://127.0.0.1:${process.env.CDP_PORT ?? 9222}`;
+let BROWSER = null;
+
+/** Point the driver at the browser that actually started. */
+export function setEndpoint(url) {
+  BROWSER = url;
+}
 
 export async function connect(url) {
+  if (!BROWSER) throw new Error("connect() called before ensureBrowser() set an endpoint");
   const res = await fetch(`${BROWSER}/json/new?${encodeURIComponent(url)}`, { method: "PUT" });
   if (!res.ok) throw new Error(`could not open a tab: HTTP ${res.status}`);
   const tab = await res.json();
@@ -73,6 +83,7 @@ export async function connect(url) {
 }
 
 export async function closeTab(tabId) {
+  if (!BROWSER) return;
   try {
     await fetch(`${BROWSER}/json/close/${tabId}`);
   } catch {

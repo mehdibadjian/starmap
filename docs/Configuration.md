@@ -44,7 +44,7 @@ Not in `config.yml`, all read from the process environment:
 | `GITHUB_REPOSITORY` | `previousData.ts` | implicit in CI | Used to derive the Pages URL for the merge baseline. |
 | `PAGES_URL` | `previousData.ts` | no | Overrides the derived Pages URL. Useful for custom domains or after a rename. |
 | `CHROME_PATH` | `tests/browser/lib.mjs` | no | Points the smoke test at a specific browser when none of the four usual names resolve. |
-| `SMOKE_BASE` / `CDP_PORT` | `tests/browser/` | no | Which URL to drive (default `http://127.0.0.1:4173`) and where DevTools listens (default `9222`). Set `SMOKE_BASE` to drive a site you already have running. |
+| `SMOKE_BASE` / `CDP_PORT` | `tests/browser/` | no | Which URL to drive (default `http://127.0.0.1:4173`) and, for `CDP_PORT`, the fixed port of a DevTools browser you started yourself. With `CDP_PORT` set the harness attaches to it instead of launching one; unset, it launches its own on an ephemeral port (see [CI and Deployment](CI-and-Deployment.md)). Set `SMOKE_BASE` to drive a site you already have running. |
 
 ## `taxonomy.json`
 

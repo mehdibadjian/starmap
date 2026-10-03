@@ -120,14 +120,13 @@ Run `npm run fixture` first. `data/` is gitignored, so a fresh clone has nothing
 **`npm run smoke` refuses to run: `dist/ is stale relative to public/data`.**
 The harness byte-compares `public/data/graph.json` against `dist/data/graph.json` and stops if they differ, because a green run against an old bundle proves nothing. Run `npm run build`.
 
-**`npm run smoke` reports `none of … exposed a debugging port`.**
-It tries `google-chrome-stable`, `google-chrome`, `chromium`, `chromium-browser` in that order and keeps the first that actually binds the DevTools port, printing why each rejection happened. A `spawn <name> ENOENT` line is just "not installed under that name"; a line quoting the browser's own output means it launched and refused the port — on Linux that is usually a snap-confined Chromium, so `CHROME_PATH=/path/to/browser npm run smoke` with a plain (non-snap) binary. If CI shows this flaking between runs on the same commit, the environment is the suspect, not the code — see [Known Gaps](Known-Gaps.md).
+**`npm run smoke` reports `none of … exposed a working DevTools endpoint`.**
+It tries `google-chrome-stable`, `google-chrome`, `chromium`, `chromium-browser` in that order and keeps the first that exposes a usable endpoint, printing why each rejection happened. A `spawn <name> ENOENT` line is just "not installed under that name". A line quoting the browser's own output — often a D-Bus complaint — means it launched and never wrote the port file within the wait; on Linux that is usually a snap-confined Chromium, so `CHROME_PATH=/path/to/browser npm run smoke` with a plain (non-snap) binary. A line saying `exited with …` means the browser died on its own, which on a laptop is normally a profile problem — each attempt uses a fresh `--user-data-dir`, so check `TMPDIR` is writable and not shared with another concurrent run. If CI shows this flaking between runs on the same commit, the environment is the suspect, not the code — see [Known Gaps](Known-Gaps.md).
+
+To drive a browser you started yourself, set `CDP_PORT` to its fixed port; the harness attaches instead of launching.
 
 **`npm run smoke` passes locally but fails in CI (or the reverse) at `vite preview is not serving …`.**
 The harness only starts its own preview server when nothing already answers `SMOKE_BASE`, so a stray `npm run preview` left on 4173 makes the local run test a server it didn't start. `pkill -f "vite preview"` and re-run before believing a green. The failure message now quotes the server's own output, which distinguishes a missing `dist/` from a port clash from a slow machine.
-
-**`npm run smoke` reports `no Chromium found` on a machine that clearly has Chrome.**
-Check it can actually launch: the harness needs `--headless=new --remote-debugging-port`, and a sandboxed or snap-confined build refuses the debugging port. In CI this is not a concern; on a locked-down laptop, point `CHROME_PATH` at a plain binary.
 
 **A check fails that passed yesterday.**
 Every check in the suite can fail — there is no advisory tier, because each "report but don't fail" line that ever existed turned out to describe a real defect. Read the `—` detail after the failing name: it quotes what the page actually reported (`visible=0`, `55 emitted / 55 in taxonomy`), which is usually enough to tell a data change from a code regression.

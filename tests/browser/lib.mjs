@@ -8,37 +8,184 @@
  * drawn.
  */
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { connect as cdpConnect, closeTab } from "./cdp.mjs";
+import { connect as cdpConnect, closeTab, setEndpoint } from "./cdp.mjs";
 
 export const BASE = process.env.SMOKE_BASE ?? "http://127.0.0.1:4173";
 export const ROOT = new URL("../../", import.meta.url).pathname;
-const PORT = process.env.CDP_PORT ?? "9222";
-let spawnFailure = null;
+/**
+ * Fixed port is now an opt-in for *attaching* to a browser you started yourself;
+ * when the harness launches one it asks for port 0 and reads back whatever the
+ * browser chose. See `launchBrowser`.
+ */
+const FIXED_PORT = process.env.CDP_PORT ?? null;
+
+/**
+ * The endpoint of the browser this process launched, so `ensureBrowser()` is
+ * idempotent.
+ *
+ * This used to be free: a fixed 9222 meant a second call could just probe the
+ * port and find the browser from the first call. With port 0 there is nothing
+ * predictable to probe, so the answer has to be remembered — otherwise every
+ * tab group in the suite launches its own browser.
+ */
+let launched = null;
 
 /**
  * Browsers this harness will try, in order.
  *
  * `google-chrome*` first because that is what GitHub's Ubuntu images install as
- * a real package; the `chromium*` aliases are what most Linux dev machines have,
- * and on the runner image `chromium` is commonly a snap, whose confinement is one
- * plausible reason a debugging port may not bind.
+ * a real package; the `chromium*` aliases are what most Linux dev machines have.
  *
- * That last point is a hypothesis, not a finding: the same commit ran green in
- * one CI job and failed with "chromium did not expose a debugging port" in
- * another, so the flake is real and its cause was not reproduced locally. What
- * the harness therefore does is refuse to bet on one binary — resolution happens
- * by *launching* and keeping the first browser that answers, rather than by
- * `--version`, because a browser can print a version and still not bind. That
- * failure shape is exactly what a name-only lookup reports as "no browser".
+ * Resolution happens by *launching*, not by `--version`, and a candidate that
+ * fails moves on to the next rather than failing the run. Both of those are
+ * responses to the same CI flake: one runner VM could not get any browser to
+ * expose a working endpoint while the identical commit passed on another, same
+ * image version, and it was never reproduced locally. The cause is unknown —
+ * slow headless startup under contention is as good a guess as snap confinement
+ * — so the harness stops depending on knowing it: an ephemeral port means there
+ * is nothing to collide with, a readiness signal that is the browser's own
+ * output means a slow machine is not a failure, and four candidates mean one bad
+ * binary is a log line rather than a red build.
  */
 const CANDIDATES = ["google-chrome-stable", "google-chrome", "chromium", "chromium-browser"];
 
 function browserCandidates() {
   if (process.env.CHROME_PATH) return [process.env.CHROME_PATH];
   return CANDIDATES;
+}
+
+async function alive(base) {
+  try {
+    const res = await fetch(`${base}/json/version`, { signal: AbortSignal.timeout(3000) });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Read the port a browser picked for itself. With `--remote-debugging-port=0`
+ * Chromium writes `<user-data-dir>/DevToolsActivePort` — first line the port,
+ * second the websocket path — and it does this once the listener is actually
+ * up, so the file appearing *is* the readiness signal.
+ *
+ * The loop stops early if the child already told us it failed. A name that isn't
+ * installed reports ENOENT without ever touching the profile directory, and
+ * making four of those candidates each wait out the full timeout would turn a
+ * normal run on a laptop with only `chromium` into a two-minute one.
+ */
+async function readPortFile(dir) {
+  const file = path.join(dir, "DevToolsActivePort");
+  for (let i = 0; i < 120; i++) {
+    let text = "";
+    try {
+      text = readFileSync(file, "utf8");
+    } catch {
+      /* not written yet */
+    }
+    const port = text.split("\n")[0]?.trim();
+    if (port && /^\d+$/.test(port)) {
+      const base = `http://127.0.0.1:${port}`;
+      // The file lands a moment before the endpoint answers every query, and a
+      // browser that answers nothing is the failure we are trying to avoid.
+      for (let j = 0; j < 20; j++) {
+        if (await alive(base)) return base;
+        await sleep(250);
+      }
+      return null;
+    }
+    if (spawnFailure) return null;
+    await sleep(250);
+  }
+  return null;
+}
+
+/**
+ * Launch one candidate and, if it exposes a working DevTools endpoint, point the
+ * driver at it.
+ *
+ * Two things here are load-bearing rather than tidy:
+ *
+ * - Port 0, not 9222. A fixed port is a shared resource: it can already be
+ *   taken, and two jobs on the same runner can collide. Letting the browser pick
+ *   removes the failure mode entirely, which is what CI needed — one runner VM
+ *   got no browser to answer on 9222 while the identical commit passed on
+ *   another, and that was never reproduced locally.
+ * - A private `--user-data-dir` per attempt. Two Chromium processes sharing one
+ *   profile will not both start, and the second exits before it ever binds a
+ *   port, which looks exactly like a broken binary. It is also where the port
+ *   file lives, so the attempt needs one anyway.
+ */
+async function launchBrowser(bin) {
+  const dir = mkdtempSync(path.join(os.tmpdir(), "starmap-cdp-"));
+  scratchDirs.push(dir);
+  spawnFailure = null;
+  const proc = spawn(
+    bin,
+    [
+      "--headless=new",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-background-networking",
+      "--no-first-run",
+      `--user-data-dir=${dir}`,
+      "--remote-debugging-port=0",
+      "--remote-allow-origins=*",
+      "about:blank",
+    ],
+    { stdio: ["ignore", "pipe", "pipe"], detached: true },
+  );
+  track("chrome", proc);
+
+  let output = "";
+  proc.stdout.on("data", (b) => (output += b));
+  proc.stderr.on("data", (b) => (output += b));
+  proc.on("exit", (code, signal) => {
+    spawnFailure = `exited with ${signal ?? `code ${code}`}`;
+  });
+
+  const base = await readPortFile(dir);
+  if (base) {
+    launched = base;
+    setEndpoint(base);
+    return true;
+  }
+  const why = output.trim().split("\n").slice(-2).join(" / ") || spawnFailure || "no output";
+  reap("SIGTERM", "chrome");
+  await sleep(300);
+  reap("SIGKILL", "chrome");
+  console.error(`  (${bin}: no usable debugging endpoint — ${why})`);
+  return false;
+}
+
+/**
+ * Launch a browser if this process hasn't already, then point the driver at it.
+ */
+export async function ensureBrowser() {
+  // An explicit CDP_PORT means "drive the browser I already started".
+  if (FIXED_PORT) {
+    const base = `http://127.0.0.1:${FIXED_PORT}`;
+    if (await alive(base)) {
+      setEndpoint(base);
+      return;
+    }
+  }
+  if (launched && (await alive(launched))) {
+    setEndpoint(launched);
+    return;
+  }
+  const tried = browserCandidates();
+  for (const bin of tried) {
+    if (await launchBrowser(bin)) return;
+  }
+  throw new Error(
+    `none of ${tried.join(", ")} exposed a working DevTools endpoint` +
+      (process.env.CHROME_PATH ? "" : "; set CHROME_PATH to a headless-capable binary"),
+  );
 }
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -53,6 +200,8 @@ export { closeTab };
  * ------------------------------------------------------------------ */
 const children = [];
 const scratchDirs = [];
+/** Why the current browser attempt died, if the child told us before it did. */
+let spawnFailure = null;
 
 function track(kind, proc) {
   children.push({ kind, proc });
@@ -79,82 +228,6 @@ function reap(signal, kind) {
   } else {
     children.length = 0;
   }
-}
-
-async function alive() {
-  try {
-    const res = await fetch(`http://127.0.0.1:${PORT}/json/version`, { signal: AbortSignal.timeout(2000) });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Launch each candidate in turn and keep the first that actually exposes a
- * DevTools port. Not "find one that exists": a browser can print `--version`
- * perfectly and still refuse to bind the debugging port, and that is the
- * failure shape this suite has hit twice — a snap-confined `chromium` on a
- * GitHub runner, and a leftover profile lock from an earlier crashed run.
- *
- * A private `--user-data-dir` per attempt is what makes the retry honest: two
- * Chromium processes sharing one profile directory will not both start, and the
- * second one exits before it ever tries the port, which looks exactly like a
- * broken binary.
- */
-async function launchBrowser(bin) {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "starmap-cdp-"));
-  scratchDirs.push(dir);
-  spawnFailure = null;
-  const proc = spawn(
-    bin,
-    [
-      "--headless=new",
-      "--no-sandbox",
-      "--disable-gpu",
-      "--disable-dev-shm-usage",
-      "--disable-background-networking",
-      "--no-first-run",
-      `--user-data-dir=${dir}`,
-      `--remote-debugging-port=${PORT}`,
-      "--remote-allow-origins=*",
-      "about:blank",
-    ],
-    { stdio: ["ignore", "pipe", "pipe"], detached: true },
-  );
-  track("chrome", proc);
-
-  let output = "";
-  proc.stdout.on("data", (b) => (output += b));
-  proc.stderr.on("data", (b) => (output += b));
-  proc.on("exit", (code, signal) => {
-    spawnFailure = `exited with ${signal ?? `code ${code}`}`;
-  });
-
-  // ~6s, then decide. A browser that will bind usually does so in under a second.
-  for (let i = 0; i < 24; i++) {
-    if (await alive()) return true;
-    if (spawnFailure) break;
-    await sleep(250);
-  }
-  const why = output.trim().split("\n").slice(-2).join(" / ") || spawnFailure || "no output";
-  reap("SIGTERM", "chrome");
-  await sleep(300);
-  reap("SIGKILL", "chrome");
-  console.error(`  (${bin} did not expose a debugging port: ${why})`);
-  return false;
-}
-
-export async function ensureBrowser() {
-  if (await alive()) return;
-  const tried = browserCandidates();
-  for (const bin of tried) {
-    if (await launchBrowser(bin)) return;
-  }
-  throw new Error(
-    `none of ${tried.join(", ")} exposed a debugging port on ${PORT}` +
-      (process.env.CHROME_PATH ? "" : "; set CHROME_PATH to a headless-capable binary"),
-  );
 }
 
 export async function killBrowser() {
