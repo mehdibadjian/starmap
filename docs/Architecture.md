@@ -22,7 +22,7 @@ Starmap is two programs that talk only through JSON files.
 
 **Pipeline (`pipeline/`, 11 modules, ~970 lines, Node 22 + `tsx`).** Runs in CI. Reads the star list, classifies new repos, computes health, builds the graph and its coordinates, and writes a directory of flat JSON. It is a batch job with no UI and no server state.
 
-**Frontend (`src/`, ~1.5k lines of view code plus ~480 lines of `ui/` primitives, ~340 of `lib/`, and ~160 of styles, Vite + React + Tailwind).** A plain SPA. It fetches `meta.json`, `graph.json`, and the prebuilt search index first, then loads repo shards during browser idle time. Every interaction — search, facet, drill-down, selection — is local computation over data already in memory.
+**Frontend (`src/`, ~1,480 lines of view code plus ~478 lines of `ui/` primitives, ~424 of `lib/`, and ~157 of styles, Vite + React + Tailwind).** A plain SPA. It fetches `meta.json`, `graph.json`, and the prebuilt search index first, then loads repo shards during browser idle time. Every interaction — search, facet, drill-down, selection — is local computation over data already in memory. There is no write path back to a server; the one thing it stores is your chosen view in `localStorage`, which never leaves the device.
 
 A third directory, `shared/`, is deliberately outside both halves: it holds the contracts that only work if CI and the browser agree on them. That is `searchSchema.ts` (the MiniSearch field list and query options) and `dataSchema.ts` (every shape in the published JSON). Both are re-exported by `src/lib/types.ts` and `pipeline/types.ts`, so neither side owns a private copy — see [Known Gaps](Known-Gaps.md), gap 1 for the first and gap 6 for the second.
 

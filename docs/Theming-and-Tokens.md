@@ -56,7 +56,7 @@ Mono is used for identifiers everywhere (`nwo`, category badges, counts, timesta
 
 ## Applying a theme
 
-`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx:54` swaps the class on **`document.documentElement`**:
+`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx:65` swaps the class on **`document.documentElement`**:
 
 ```ts
 const root = document.documentElement;

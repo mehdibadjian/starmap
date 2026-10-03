@@ -18,6 +18,7 @@
  */
 import { readFileSync, statSync } from "node:fs";
 import {
+  BASE,
   census,
   check,
   closeTab,
@@ -37,6 +38,7 @@ import {
   sweepForNode,
   tokens,
   visibleCount,
+  waitCanvas,
   watchErrors,
 } from "./lib.mjs";
 
@@ -88,7 +90,9 @@ await ensureSite();
  * ================================================================== */
 section("phone shell");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 3 });
+  // seed "graph": these checks are about the graph surface, and a fresh phone no
+  // longer opens there. See the landing-view section for what it does open on.
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, "");
 
@@ -141,11 +145,86 @@ section("phone shell");
 }
 
 /* ================================================================== *
+ * 1b. Landing view — a phone opens on List, and nobody is trapped there
+ * ================================================================== */
+section("landing view follows the device, not the habit");
+{
+  // seed "none": a browser that has never picked a view. Everything the other
+  // sections assert on the canvas for, this one asserts on the choice itself.
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "none" });
+  const errors = watchErrors(on);
+  const active = () =>
+    evaluate(`document.querySelector('[role="tab"][aria-selected="true"]')?.getAttribute("aria-label") ?? ""`);
+
+  await goto(send, evaluate, "", { settle: 1800, expectCanvas: false });
+  check("a fresh phone opens on List", (await active()) === "List", await active());
+  /* Not "rows are visible": the repo shards load during idle time, so an empty
+   * `<tbody>` this early is correct behaviour, and asserting on it would make the
+   * suite depend on network timing. What proves the view is List is the table
+   * being mounted and the canvas *not* being there. */
+  check("the List landing view is mounted, with no canvas", (await evaluate(`!!document.querySelector("table")`)) === true && (await evaluate(`!!document.querySelector("canvas")`)) === false);
+  /* The property is "the landing view never rewrites the URL to name itself".
+   * On a cold open the app has not navigated yet, so the hash is genuinely empty
+   * — `""` and `#/` are the same thing here, and asserting `=== "#/"` was the
+   * mistake, not the code. What would be a bug is `#/list`, which would make the
+   * device default leak into every link a user copies off the address bar. */
+  const openedHash = await evaluate(`location.hash`);
+  check("opening on List does not rewrite the URL to name a view", openedHash === "" || openedHash === "#/", JSON.stringify(openedHash));
+
+  /* A shared drill is the safety property of the whole feature. It names a graph
+   * position, so the device default must not intercept it — otherwise every
+   * "look at my misc category" link sent to a friend opens the wrong surface on
+   * their phone. */
+  await goto(send, evaluate, `#/${bigHub.id.slice("hub:".length)}`);
+  check("a shared drill on a phone still opens the graph", (await active()) === "Graph", await active());
+  check("and it really is the graph, painting repos", visibleCount(await graphLabel(evaluate)()) > 0);
+
+  /* Back to a bare home, then the round trip a preference has to support: `l`
+   * moves List → Graph, which on a phone leaves the URL at `#/` (graph is the
+   * prefix-less view), so the *only* thing that can carry that choice across a
+   * reload is storage. Reload-and-still-Graph is the check that the write path
+   * is not decorative. */
+  await send("Page.navigate", { url: `${BASE}/#/` });
+  await sleep(1500);
+  check("a bare home is List again until the user says otherwise", (await active()) === "List", await active());
+
+  const key = async (k, code, vk) => {
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code, windowsVirtualKeyCode: vk });
+  };
+  await key("l", "KeyL", 76);
+  await sleep(1500);
+  check("the l toggle moves a phone to Graph", (await active()) === "Graph", await active());
+  const stored = await evaluate(`localStorage.getItem("starmap.view")`);
+  check("choosing Graph writes the preference", stored === "graph", JSON.stringify(stored));
+  const homeStill = (await evaluate(`location.hash`)) === "#/";
+  check("the graph choice stays on the home hash", homeStill, await evaluate(`location.hash`));
+
+  await send("Page.reload", { ignoreCache: true });
+  await waitCanvas(evaluate);
+  await sleep(1800);
+  check("after a reload the chosen view survives, on the same URL", (await active()) === "Graph", await active());
+
+  check("no console errors while switching landing views", errors.length === 0, errors.slice(0, 2).join(" | "));
+  await closeTab(tabId);
+}
+
+{
+  // A cursor device, also fresh. This is the half that must not regress: the
+  // graph is still what a desktop gets, exactly as the SPEC's §5.1 says.
+  const { send, evaluate, tabId } = await desktop({ dpr: 1, seed: "none" });
+  await goto(send, evaluate, "");
+  const active = await evaluate(`document.querySelector('[role="tab"][aria-selected="true"]')?.getAttribute("aria-label") ?? ""`);
+  check("a fresh desktop still opens on Graph", active === "Graph", JSON.stringify(active));
+  await closeTab(tabId);
+}
+
+/* ================================================================== *
  * 2. The canvas paints resolved tokens, not var() strings
  * ================================================================== */
 section("canvas paints tokens, not var()");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 3 });
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, "");
 
@@ -179,7 +258,7 @@ section("canvas paints tokens, not var()");
  * ================================================================== */
 section("drilling into a category shows its repos");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 3 });
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "graph" });
   const errors = watchErrors(on);
 
   check("fixture has a hub over the phone visibility cap", !!bigHub && bigHub.count > 60, `${bigHub?.id.slice(4)}=${bigHub?.count}`);
@@ -211,7 +290,7 @@ section("drilling into a category shows its repos");
  * ================================================================== */
 section("empty categories explain themselves");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 3 });
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "graph" });
   const errors = watchErrors(on);
 
   if (prunedLeaf) {
@@ -243,7 +322,7 @@ section("empty categories explain themselves");
  * ================================================================== */
 section("keyboard");
 {
-  const { send, evaluate, on, tabId } = await desktop({ dpr: 1 });
+  const { send, evaluate, on, tabId } = await desktop({ dpr: 1, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, "");
 
@@ -304,7 +383,7 @@ section("keyboard");
  * ================================================================== */
 section("search round trip");
 {
-  const { send, evaluate, on, tabId } = await desktop({ dpr: 1 });
+  const { send, evaluate, on, tabId } = await desktop({ dpr: 1, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, "");
 
@@ -355,7 +434,7 @@ section("search round trip");
  * ================================================================== */
 section("touch");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 3 });
+  const { send, evaluate, on, tabId } = await phone({ dpr: 3, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, `#/${bigHub.id.slice("hub:".length)}`);
 
@@ -398,7 +477,7 @@ section("touch");
  * ================================================================== */
 section("hit-testing matches the paint");
 {
-  const { send, evaluate, on, tabId } = await desktop({ dpr: 1 });
+  const { send, evaluate, on, tabId } = await desktop({ dpr: 1, seed: "graph" });
   const errors = watchErrors(on);
   await goto(send, evaluate, `#/${bigHub.id.slice("hub:".length)}`);
 
@@ -438,7 +517,7 @@ section("hit-testing matches the paint");
  * ================================================================== */
 section("degradation");
 {
-  const { send, evaluate, on, tabId } = await phone({ dpr: 2 });
+  const { send, evaluate, on, tabId } = await phone({ dpr: 2, seed: "graph" });
   const errors = watchErrors(on);
   await send("Network.enable");
   await send("Network.setBlockedURLs", { urls: ["**/data/search.json"] });

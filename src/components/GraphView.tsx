@@ -3,6 +3,7 @@ import { Frame, Minus, Plus } from "lucide-react";
 import type { GraphData, GraphNode, RepoRecord } from "../lib/types";
 import { colorForHubIndex } from "../lib/palette";
 import { readCanvasTheme } from "../lib/canvasTheme";
+import { isCoarsePointer } from "../lib/pointer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -31,10 +32,6 @@ function easeInOutCubic(t: number): number {
  */
 function prefersReducedMotion(): boolean {
   return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function isCoarsePointer(): boolean {
-  return typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches;
 }
 
 interface Camera {

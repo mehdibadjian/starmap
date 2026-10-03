@@ -2,16 +2,29 @@ import type { AppState, View } from "./types";
 
 const VIEWS: View[] = ["graph", "list", "timeline", "graveyard"];
 
-export function parseHash(hash: string): AppState {
+/**
+ * Read the view out of a hash.
+ *
+ * `homeView` is what an *unnamed* home (`#/`, or `#/?q=…`) means on this device;
+ * it defaults to `graph` so the pure round trip keeps its old behaviour and so a
+ * `#/` link stays a graph on a desktop.
+ *
+ * It is deliberately not consulted when the hash drills a path. `#/web/frameworks`
+ * names a graph position, and a shared link has to show what its author saw —
+ * which is why the phone default for the landing view cannot leak into deep links.
+ */
+export function parseHash(hash: string, homeView: View = "graph"): AppState {
   const raw = hash.startsWith("#") ? hash.slice(1) : hash;
   const [pathPart, queryPart] = raw.split("?");
   const segments = pathPart.split("/").filter(Boolean);
 
-  let view: View = "graph";
+  let view: View = homeView;
   let pathSegments = segments;
   if (segments.length > 0 && (VIEWS as string[]).includes(segments[0]) && segments[0] !== "graph") {
     view = segments[0] as View;
     pathSegments = segments.slice(1);
+  } else if (pathSegments.length > 0) {
+    view = "graph";
   }
 
   const params = new URLSearchParams(queryPart ?? "");

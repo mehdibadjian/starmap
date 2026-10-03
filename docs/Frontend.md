@@ -25,7 +25,9 @@ src/
     search.ts             MiniSearch loadJSON + query
     canvasTheme.ts        Resolves theme tokens to literals for canvas
     metaBadges.ts         Header badge rules derived from meta.json (uncategorised rate)
-    url.ts                Hash ↔ state
+    url.ts                Hash ↔ state (takes the device's home view as an argument)
+    pointer.ts            `matchMedia("(pointer: coarse)")`, the one phone/desktop signal
+    viewPref.ts           Landing view by device, plus the stored choice in localStorage
     types.ts              Re-exports @shared/dataSchema + the frontend-only view/state types
     palette.ts            12 categorical colours + health `var()` strings (DOM only)
     styles/
@@ -41,7 +43,7 @@ tests/
 
 ## Boot sequence
 
-`App.tsx:49`:
+`App.tsx:58`:
 
 ```ts
 useEffect(() => {
@@ -67,7 +69,7 @@ Three things fetch concurrently on mount; shard loading waits for `meta.shard_co
 
 The two failure paths are deliberately different: a missing `meta.json`/`graph.json` is fatal and renders a recovery screen, a missing `search.json` is not and renders a `search off` badge. Details in [Views](Views.md).
 
-The header badges that report *data quality* rather than load failure all come from `meta.json`, and `src/lib/metaBadges.ts` owns their rules. `rules-only` appears when `meta.llm_degraded`; `N% uncategorised` appears only at or above `UNSORTED_TARGET_PCT` (10, the SPEC's M3 target) and its tooltip names the two fixes. `App.tsx:154` computes the badge once and the JSX tests that result, so the condition and the label cannot drift apart — the alternative was the header deciding to show something and the text deciding what it said.
+The header badges that report *data quality* rather than load failure all come from `meta.json`, and `src/lib/metaBadges.ts` owns their rules. `rules-only` appears when `meta.llm_degraded`; `N% uncategorised` appears only at or above `UNSORTED_TARGET_PCT` (10, the SPEC's M3 target) and its tooltip names the two fixes. `App.tsx:179` computes the badge once and the JSX tests that result, so the condition and the label cannot drift apart — the alternative was the header deciding to show something and the text deciding what it said.
 
 `document.documentElement` gets the `dark` or `light` class from `meta.theme` — `<html>`, not `<body>`, because the tokens are defined on `.dark`/`.light` blocks and `getComputedStyle(document.documentElement)` (which canvas uses) only sees variables inherited down from the root element. `index.html` sets `class="dark"` on `<html>` and runs a two-line inline script that swaps it to `light` when the system prefers light, so the first frame is already in the right palette before `meta.json` arrives. [Theming and Tokens](Theming-and-Tokens.md).
 
@@ -85,9 +87,9 @@ This exists because one `cat: [null]` throws inside `ListView`'s filter and blan
 #/<view?>/<hub?>/<leaf?>?q=<query>&r=<repoId>
 ```
 
-Examples: `#/` graph cold; `#/devtools/cli?q=tui` drilled into a leaf with a query; `#/list/devtools/cli?r=28457823` the list view with a repo selected. `graph` is the default view and gets no prefix, so `#/devtools/cli` is a graph drill.
+Examples: `#/` home (graph on a cursor, List on a touch device — see [Views](Views.md#which-view-you-land-on)); `#/devtools/cli?q=tui` drilled into a leaf with a query; `#/list/devtools/cli?r=28457823` the list view with a repo selected. `graph` is the prefix-less view, so `#/devtools/cli` is a graph drill — which is also why a phone's Graph tab keeps the URL at `#/` rather than writing a `graph` prefix that could be mistaken for a category of that name.
 
-`App.tsx` seeds state from `parseHash(location.hash)` once, then `navigate()` writes back through `history.pushState` (so back/forward work) and a `hashchange` listener keeps state in sync when the user navigates the browser chrome. Anything viewable is shareable — which is why deep-link state is covered by a round-trip test.
+`App.tsx` seeds state from `parseHash(location.hash, homeView())` — the second argument is what makes a bare `#/` device-relative — then `navigate()` writes back through `history.pushState` (so back/forward work) and a `hashchange` listener keeps state in sync when the user navigates the browser chrome. Anything viewable is shareable — which is why deep-link state is covered by a round-trip test, and why a drill never resolves to anything but the graph.
 
 `selected` and `path` are repo IDs and taxonomy paths — strings that survive in a URL, which is why IDs (not indices) are the graph's node keys.
 
@@ -95,23 +97,23 @@ Examples: `#/` graph cold; `#/devtools/cli?q=tui` drilled into a leaf with a que
 
 `/` focuses the box; typing calls `search(query, 500)` on the rehydrated MiniSearch index, and the resulting ID set flows through three surfaces:
 
-- Graph matching nodes grow a sine-wave pulse and a slightly larger radius (`GraphView.tsx:413`).
+- Graph matching nodes grow a sine-wave pulse and a slightly larger radius (`GraphView.tsx:411`).
 - The header dropdown shows the top 8 plus a `+N more` count from the total hit set; picking one sets `path` to its first category and `selected` to the repo, so the camera flies to it and the panel opens.
 - List view filters rows to the hit set.
 
-`App.tsx:116` auto-expands the graph to the top hit as a side effect of the search-result set changing. That's what "search drives the graph" means concretely — it isn't a separate tab.
+`App.tsx:141` auto-expands the graph to the top hit as a side effect of the search-result set changing. That's what "search drives the graph" means concretely — it isn't a separate tab.
 
 `SearchBox` is a proper ARIA combobox rather than a styled input: `role="combobox"` with `aria-expanded`/`aria-controls`/`aria-autocomplete`/`aria-activedescendant` on the input, `role="listbox"` with `role="option"` rows, arrow keys moving a wrap-around highlight, Enter accepting it, Escape closing it, and `onMouseDown`+`preventDefault` on rows so a click wins the race against blur. It is deliberately **not** `role="listbox"` on the container with keyboard handling split across components — half a combobox is worse for a screen reader than none, because the announced state lies.
 
 ## Keyboard
 
-Handled at the window level in `App.tsx:124`, with an `isTypingTarget` guard so keys pressed in an input don't also drive the app.
+Handled at the window level in `App.tsx:149`, with an `isTypingTarget` guard so keys pressed in an input don't also drive the app.
 
 | Key | Action |
 |---|---|
 | `/` | Focus search |
 | `Esc` | Close panel, else walk up one breadcrumb level; inside an input it just blurs |
-| `l` | Toggle list ↔ graph |
+| `l` | Toggle list ↔ graph (via `selectView`, so it also records the preference) |
 | `Enter` | Open the selected repo on GitHub |
 
 The canvas owns its own keys — arrows, Enter/Space, `+`, `-`, `0` — on the element, not at window level; see [Views](Views.md). Where the two overlap on `Enter`, the canvas marks the event and the window handler stands down. `SPEC.md`'s `f`-to-fit became `0`; `f` is not bound.

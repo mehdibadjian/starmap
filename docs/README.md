@@ -49,6 +49,6 @@ Everything that costs time or money happens in CI. The client only reads flat fi
 - **Pipeline:** TypeScript + `tsx`, Octokit, MiniSearch, `d3-force` (headless), Anthropic SDK (opt-in)
 - **Frontend:** Vite + React 18 + Tailwind + Radix UI, graph rendered on Canvas
 - **CI:** two workflows. `ci.yml` validates only (checks + a browser job); `nightly.yml` runs the pipeline and deploys, gated on the same checks. Nightly cron + push + manual dispatch.
-- **Size:** 11 pipeline modules (~970 lines); graph/list/timeline/graveyard/panel/search components (~1.5k); `ui/` primitives (~480); `lib/` (~340); `App.tsx` shell + entry (~310); `shared/` contracts (~140); tests (~640 unit, ~1,030 browser harness); styles (~160)
-- **Verification:** 40 `node:test` cases via `npm test`, `npm run lint` (ESLint flat config over TS and the `.mjs` harness), `npm run typecheck` over three projects, and a 47-check browser smoke test (`npm run smoke`) that drives headless Chromium over CDP. All four run in CI.
+- **Size:** 11 pipeline modules (~970 lines); graph/list/timeline/graveyard/panel/search components (~1,480); `ui/` primitives (~480); `lib/` (~425); `App.tsx` shell + entry (~330); `shared/` contracts (~140); tests (~780 unit, ~1,320 browser harness); styles (~160)
+- **Verification:** 49 `node:test` cases via `npm test`, `npm run lint` (ESLint flat config over TS and the `.mjs` harness, 60 files), `npm run typecheck` over three projects, and a 59-check browser smoke test (`npm run smoke`) that drives headless Chromium over CDP. All four run in CI.
 - **License:** MIT (`LICENSE`, `package.json`). Forking is the intended use.
