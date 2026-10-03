@@ -31,7 +31,7 @@ Two traps worth knowing before you write the generator:
 | `npm run build` | `tsc -p tsconfig.json --noEmit` then `vite build` → `dist/`. |
 | `npm run preview` | Serve `dist/` locally, closest thing to the real Pages deploy. |
 | `npm run sync` | Run the whole pipeline once. |
-| `npm test` | `node --import tsx --test "tests/*.test.ts"` — 27 tests, no test framework. |
+| `npm test` | `node --import tsx --test "tests/*.test.ts"` — 31 tests, no test framework. |
 | `npm run typecheck` | Type-checks `src` (DOM), `pipeline` (Node), and `tests` as three separate projects. |
 
 The test runner is Node 22's built-in `node:test` with `tsx` as a loader, so there is nothing new to install and no config file. Notes on making it work:

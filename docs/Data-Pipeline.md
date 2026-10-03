@@ -53,7 +53,9 @@ An **incremental** run stops at the first repo ID already in the baseline and me
 
 Because `data/` is gitignored, the last full dataset exists only as published JSON. `pipeline/previousData.ts` reconstructs the Pages URL from `PAGES_URL`, or from `GITHUB_REPOSITORY` (with the `owner.github.io` user-site case handled), then loads `data/meta.json` and all `shard_count` repo shards in parallel, plus `history.json` on a best-effort basis. Each request has a 15-second timeout.
 
-If anything is unreachable, the caller logs a warning, sets `baselineAvailable = false`, and forces a full pass. That is why the first run, a run after a rename, or a run while Pages is down always costs a full fetch.
+**The baseline must belong to the same account.** `fetchPreviousDataset(login)` compares the configured `login` against `meta.login` from the live site and throws if they differ. This is not paranoia: the baseline is *merged*, not replaced, on an incremental run (`sync.ts:72`), so after a `login` change the previous owner's repos would otherwise be published alongside yours with nothing logged as an error. Rejecting it makes the next run a clean full pass instead.
+
+If anything is unreachable, the caller logs a warning, sets `baselineAvailable = false`, and forces a full pass. That is why the first run, a run after a rename, a run after changing `login`, or a run while Pages is down always costs a full fetch.
 
 ## Health
 

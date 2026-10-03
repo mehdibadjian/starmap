@@ -29,8 +29,11 @@ Expected. No published site means no merge baseline, so it walks every page and 
 **`GITHUB_TOKEN is required to fetch starred repos`.**
 Locally, `GITHUB_TOKEN=<token> npm run sync`. In CI this means the `env:` block was removed from the sync step.
 
-**`No previous dataset available, running a full pass` on every run.**
+**`No usable previous dataset, running a full pass` on every run.**
 The pipeline cannot reach its own published JSON. Check that `GITHUB_REPOSITORY` is present, that the Pages URL actually serves `/data/meta.json`, and that you are not using a custom domain — set `PAGES_URL` explicitly in that case.
+
+**`published dataset belongs to "X", not "Y"` — and the next run is a full pass.**
+Expected the first time after you change `login` in `config.yml`. The merge baseline is scraped from the live site, and it still holds the *previous* account's stars; merging those would have published both accounts, so the baseline is rejected and rebuilt instead. One full pass, then incremental runs resume. If this appears on every run, `config.yml` and the deployed `data/meta.json` genuinely disagree — the site you are reading as the baseline is not the one this config publishes to, so check `PAGES_URL`.
 
 **`Cannot determine Pages URL`.**
 Neither `PAGES_URL` nor `GITHUB_REPOSITORY` is set. Locally: `PAGES_URL=https://<owner>.github.io/<repo> npm run sync`.

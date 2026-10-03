@@ -18,7 +18,7 @@ Step 5 is the one people skip: workflow permissions only apply to runs started a
 
 ## What the first run does
 
-- The pipeline cannot reach a published site yet, so `fetchPreviousDataset()` throws, the run logs `No previous dataset available, running a full pass`, and it walks your whole star list.
+- The pipeline cannot reach a published site yet, so `fetchPreviousDataset()` throws, the run logs `No usable previous dataset, running a full pass`, and it walks your whole star list.
 - Every repo is classified by the rules tier. With no `ANTHROPIC_API_KEY`, that is the final answer.
 - `graph.json` gets laid out from scratch (no previous positions to seed from) and `cache/positions.json` is written for next time.
 - `dist/` is uploaded and `deploy` publishes it. Your URL appears under Settings → Pages.

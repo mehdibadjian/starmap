@@ -3,7 +3,7 @@
 ## `config.yml`
 
 ```yaml
-login: mb
+login: your-username
 title: "Starmap"
 theme: dark
 taxonomy: default        # or ./my-taxonomy.json
@@ -16,7 +16,7 @@ Parsed in `pipeline/config.ts` with defaults for everything except `login`, whic
 
 | Key | Default | Read by | Effect |
 |---|---|---|---|
-| `login` | **required** | fetch, graph, meta | Whose stars to sync; also the `root` node label. |
+| `login` | **required** | fetch, graph, meta, `previousData.ts` | Whose stars to sync; the `root` node label; and the value the merge baseline is checked against, so a change forces one clean full pass. |
 | `title` | `Starmap` | meta → header | Site title shown in the header. The `<title>` tag in `index.html` is static. |
 | `theme` | `dark` | meta → `document.body` class | `dark` or `light`; see [Theming and Tokens](Theming-and-Tokens.md). |
 | `taxonomy` | `default` | `taxonomyPath()` | `default` → `taxonomy.json`; otherwise a path to your own file. |
