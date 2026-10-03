@@ -3,6 +3,7 @@ import { ChevronRight, GitFork, Network, Rows3, Skull, Star } from "lucide-react
 import { fetchGraph, fetchMeta, fetchSearchIndexRaw, loadAllRepos } from "./lib/data";
 import { loadSearchIndex, search } from "./lib/search";
 import { unsortedBadge, unsortedHint } from "./lib/metaBadges";
+import { defaultView, rememberView, storedView } from "./lib/viewPref";
 import { buildHash, parseHash } from "./lib/url";
 import type { AppState, GraphData, MetaJson, RepoRecord, View } from "./lib/types";
 import GraphView from "./components/GraphView";
@@ -29,6 +30,15 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
 }
 
+/**
+ * What an unnamed home (`#/`) means in this browser: the last view the user
+ * chose, or this device's default if they never chose one. Consulted on every
+ * hash read, so a back/forward to a bare `#/` stays consistent within a session.
+ */
+function homeView(): View {
+  return storedView() ?? defaultView();
+}
+
 export default function App() {
   const [meta, setMeta] = useState<MetaJson | null>(null);
   const [graph, setGraph] = useState<GraphData | null>(null);
@@ -36,7 +46,7 @@ export default function App() {
   const [searchReady, setSearchReady] = useState(false);
   const [searchUnavailable, setSearchUnavailable] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [appState, setAppState] = useState<AppState>(() => parseHash(window.location.hash));
+  const [appState, setAppState] = useState<AppState>(() => parseHash(window.location.hash, homeView()));
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const reposById = useMemo(() => {
@@ -80,7 +90,7 @@ export default function App() {
 
   // URL <-> state sync
   useEffect(() => {
-    const onHashChange = () => setAppState(parseHash(window.location.hash));
+    const onHashChange = () => setAppState(parseHash(window.location.hash, homeView()));
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
@@ -93,6 +103,21 @@ export default function App() {
       return merged;
     });
   }, []);
+
+  /**
+   * Change view, and record it as this browser's stored preference.
+   *
+   * Both the tabs and the `l` toggle go through here, so a choice made by hand is
+   * the choice honoured next time — there is no second path into `view` that
+   * could skip the write while still looking like it worked.
+   */
+  const selectView = useCallback(
+    (view: View) => {
+      rememberView(view);
+      navigate({ view });
+    },
+    [navigate],
+  );
 
   const searchHitIds = useMemo(() => {
     if (!searchReady || !appState.query.trim()) return null;
@@ -134,7 +159,7 @@ export default function App() {
         if (appState.selected) navigate({ selected: null });
         else if (appState.path.length > 0) navigate({ path: appState.path.slice(0, -1) });
       } else if (e.key === "l") {
-        navigate({ view: appState.view === "list" ? "graph" : "list" });
+        selectView(appState.view === "list" ? "graph" : "list");
       } else if (e.key === "Enter" && appState.selected) {
         // GraphView claims Enter on the canvas itself (arrow-key cursor). It
         // marks the event so this window-level handler doesn't open a second tab.
@@ -145,7 +170,7 @@ export default function App() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [appState, navigate, reposById]);
+  }, [appState, navigate, reposById, selectView]);
 
   const selectedRepo = appState.selected ? reposById.get(Number(appState.selected)) ?? null : null;
 
@@ -168,7 +193,7 @@ export default function App() {
           {/* On a phone the nav and search drop to their own row so neither is
               squeezed into 20% of the width; on desktop they join the header. */}
           <div className="order-3 flex w-full items-center gap-2 sm:order-2 sm:w-auto">
-            <Tabs value={appState.view} onValueChange={(v) => navigate({ view: v as View })}>
+            <Tabs value={appState.view} onValueChange={(v) => selectView(v as View)}>
               <TabsList className="h-9 shrink-0 sm:h-8">
                 {VIEWS.map((v) => (
                   <TabsTrigger key={v.id} value={v.id} className="gap-1.5 px-2 sm:px-2.5" aria-label={v.label}>

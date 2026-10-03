@@ -9,7 +9,23 @@ List    ◄── l key / "+N more"
 Timeline · Graveyard · (search filters every one of them)
 ```
 
-The app is phone-first. Anything that differs between a 390px touch screen and a desktop is driven by one signal — `matchMedia("(pointer: coarse)")`, read once in `GraphView` — plus Tailwind's `sm:` breakpoints for the chrome. "Coarse" below means touch.
+The app is phone-first. Anything that differs between a 390px touch screen and a desktop is driven by one signal — `matchMedia("(pointer: coarse)")`, in `src/lib/pointer.ts` — plus Tailwind's `sm:` breakpoints for the chrome. "Coarse" below means touch. The signal decides node radius, hit slop, whether hover exists at all, the visibility cap, and which view a cold open shows (below).
+
+## Which view you land on
+
+`#/` means *home*, and home is device-relative — a deliberate divergence from `SPEC.md`'s "Graph view (default)", recorded in [Known Gaps](Known-Gaps.md). Resolution order, highest first:
+
+| Hash | Desktop | Phone |
+|---|---|---|
+| `#/list/ai-ml`, `#/timeline`, `#/graveyard` | named view | named view |
+| `#/web/frameworks`, `#/ai-ml?r=42` | **graph** | **graph** |
+| `#/`, `#/?q=rust`, no hash at all | stored choice, else graph | stored choice, else **List** |
+
+A path in the hash always means the graph, whatever the device or the preference. That is the load-bearing rule: `#/misc` is a *position* on the map, so a link you send someone has to show them what you were looking at, and a phone default that intercepted shared links would be worse than the problem it solved. The stored choice is the escape hatch — one tab click or one `l` and it wins from then on. `src/lib/viewPref.ts` reads and writes it; a `localStorage` that throws (Safari private mode) is caught and falls back to the device default, because a preference is not worth a white screen.
+
+Only the two controls that *are* the choice write it. `+N more` jumps to List without recording anything, because you were already looking at the graph when you tapped it — that's reading a long tail, not picking a home view. Same reasoning for a search pick.
+
+Nothing about the graph got harder to reach on a phone: the drill-down, `+N more`, `l`, and the tabs all still work exactly as before. What changed is only which of them you see first.
 
 ## Graph (`GraphView.tsx`, Canvas)
 
@@ -20,14 +36,14 @@ The primary surface. Progressive disclosure is the whole design — it never ren
 | Path | Nodes rendered |
 |---|---|
 | `[]` (cold) | `root` + every hub that has repos. Nothing else. |
-| `[hub]` | root, all hubs, that hub's leaves, **and that hub's repos up to the cap** — one `+N` circle per leaf for what it hides. Sibling hubs and their branches stay in place but recede to `globalAlpha 0.22` with their non-hub labels suppressed, so the active branch reads as the subject. `GraphView.tsx:233`. |
+| `[hub]` | root, all hubs, that hub's leaves, **and that hub's repos up to the cap** — one `+N` circle per leaf for what it hides. Sibling hubs and their branches stay in place but recede to `globalAlpha 0.22` with their non-hub labels suppressed, so the active branch reads as the subject. `GraphView.tsx:229`. |
 | `[hub, leaf]` | that leaf, its repos up to the cap, and one overflow node if there are more. |
 
 The hub row is the fix for a defect that made the map look broken: showing only a hub's leaf dots meant tapping a category with hundreds of repos produced a view indistinguishable from tapping an empty one. A hub is a *group* of repos, so its view collects repos from every leaf under it.
 
-The cap is `MAX_VISIBLE_REPOS_FINE = 200` with a cursor and `MAX_VISIBLE_REPOS_COARSE = 60` on touch (`:15`). Two hundred labelled dots are unreadable on a phone, and the cap exists for legibility, not as a ceiling. Repos are sorted by stars before the cut, so what hides behind `+N` is the smallest, not whatever landed last in shard order.
+The cap is `MAX_VISIBLE_REPOS_FINE = 200` with a cursor and `MAX_VISIBLE_REPOS_COARSE = 60` on touch (`:16-17`). Two hundred labelled dots are unreadable on a phone, and the cap exists for legibility, not as a ceiling. Repos are sorted by stars before the cut, so what hides behind `+N` is the smallest, not whatever landed last in shard order.
 
-Because empty categories are pruned from `graph.json` (see [Graph Construction](Graph-Construction.md)), a drilled path can name a node that does not exist — a stale bookmark or a hand-typed hash. That renders an explicit **"Nothing in this category"** card over the canvas, naming the path and offering *Back to all categories*, rather than a blank panel that reads as a failure (`GraphView.tsx:782`, `pathMissing`).
+Because empty categories are pruned from `graph.json` (see [Graph Construction](Graph-Construction.md)), a drilled path can name a node that does not exist — a stale bookmark or a hand-typed hash. That renders an explicit **"Nothing in this category"** card over the canvas, naming the path and offering *Back to all categories*, rather than a blank panel that reads as a failure (`GraphView.tsx:785`, `pathMissing` at :261).
 
 Associative edges render only between currently visible nodes (`visibleEdges = graph.edges.filter(e => visible.has(e.s) && visible.has(e.t))`), which is how the hairball is structurally impossible rather than merely hidden.
 
@@ -55,7 +71,7 @@ A `requestAnimationFrame` loop runs continuously only while a search is active (
 
 The cursor is *drawn*, not just logically present: a dashed accent ring at `radius + 4`, distinct from the solid ring on a selected repo, and it survives the mouse (hover and cursor can both be active). It also borrows the hover affordances — its label always draws, its incident associative edges highlight in accent, and it recedes nothing. Each move writes to an `aria-live="polite"` region: repos announce `nwo, health state, N stars` and select themselves; hubs and leaves announce `label, kind, N repos. Press Enter to open.` The cursor resets when the path changes, so it never points at a node that just left the screen.
 
-`Enter` is a shared key: `App.tsx` opens the selected repo on Enter at window level, which would have made two tabs from one press. The canvas marks the event (`starmapEnterHandled`, `GraphView.tsx:712`) and the app-level handler stands down when it sees the mark. One keypress, one owner.
+`Enter` is a shared key: `App.tsx` opens the selected repo on Enter at window level, which would have made two tabs from one press. The canvas marks the event (`starmapEnterHandled`, `GraphView.tsx:709`) and the app-level handler stands down when it sees the mark. One keypress, one owner.
 
 **Touch chrome.** The legend starts collapsed on coarse pointers — twelve hubs are taller than a phone screen and 220px of a 390px viewport is most of the map — with a `show`/`hide` button carrying `aria-expanded`, and it scrolls when open (`max-h-[50%]`). Zoom controls are 40px on touch, 32px from `sm` up, since `size="icon"` is a poor thumb target and they're the only zoom affordance on glass. The desktop gesture hint (`scroll to zoom · drag to pan · …`) is `hidden sm:block`: on a phone the gestures are the obvious ones and that string would be the widest element on screen.
 
@@ -63,7 +79,7 @@ The cursor is *drawn*, not just logically present: a dashed accent ring at `radi
 
 ## List (`ListView.tsx`)
 
-Dense table over the same filtered set. Filter chain: `repos → path-filtered → search-hit-filtered → language facet → health facet → sort`. Sorts: stars (default), last push, recently starred, name.
+Dense table over the same filtered set, and the view a touch device cold-opens on (see [Which view you land on](#which-view-you-land-on)). Filter chain: `repos → path-filtered → search-hit-filtered → language facet → health facet → sort`. Sorts: stars (default), last push, recently starred, name.
 
 **Rows are windowed.** `ROW_HEIGHT = 33` with `OVERSCAN = 8`, two spacer `<tr>`s carrying the off-screen height, a passive scroll listener. A fork with thousands of stars would otherwise build thousands of table rows on a phone that can show a dozen. Fixed row height is the trade: it keeps the arithmetic to a division, so rows are uniform by design.
 
@@ -85,7 +101,7 @@ Content: title, blurb, Open on GitHub, a 2-column stat grid (stars, forks, lang,
 
 ## App shell states
 
-The shell renders three non-view states rather than a blank page (`App.tsx:246`):
+The shell renders three non-view states rather than a blank page (`App.tsx:270`):
 
 - **Loading** — `meta.json` or `graph.json` in flight.
 - **Error** — either failed: the failing path and message in mono, a hint to run `npm run sync` (or check the nightly build on a fork), and a Retry button that reloads. Without data there is nothing to view, so this is a dead end by design; the old behaviour was a white screen.

@@ -47,7 +47,7 @@ You can tell how much the missing tier is costing you: when 10% or more of your 
 npm install
 GITHUB_TOKEN=<a token with public repo read access> npm run sync   # populates public/data/
 npm run dev                                                        # frontend at localhost:5173
-npm run lint && npm run typecheck && npm test                       # 40 node:test cases, no test framework
+npm run lint && npm run typecheck && npm test                       # 49 node:test cases, no test framework
 npm run fixture && npm run build && npm run smoke                   # browser checks over CDP, no token needed
 ```
 

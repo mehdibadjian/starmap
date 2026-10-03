@@ -91,10 +91,13 @@ Two separate requirements. The shell is `h-[100dvh]` — `100vh` on iOS is the *
 **Something is wider than the screen and the page scrolls sideways.**
 The header wraps to two rows below `sm` rather than squeezing four tab labels and a search box into 390px; the breadcrumb row scrolls horizontally inside its own container instead of pushing the document wide. When adding chrome, check `document.documentElement.scrollWidth === innerWidth` at 390px — that's the assertion the layout is held to.
 
+**The app opens on the list and you want the map.**
+On a touch device a cold `#/` opens List, because the graph's interaction model is built for a pointer. Tapping *Graph* once — or pressing `l` — fixes it for good: the choice is stored and wins over the device default from then on. A link with a path in it (`#/misc`) always opens the graph on any device, so this never affects a link someone sent you. See [Views](Views.md#which-view-you-land-on).
+
 **Tapping a category shows nothing.**
 Three different causes, now distinguishable at a glance:
 - *The category is genuinely empty.* Empty leaves are pruned from `graph.json`, so a dot you can tap should always have repos. If the view says **"Nothing in this category"**, you reached it by a stale bookmark or a hand-typed hash — that message is the fix working, not failing.
-- *You tapped a hub and only leaf dots drew.* That was the bug: the hub view rendered its children but not their repos, so a category with hundreds of stars looked exactly like an empty one. `GraphView.tsx:233` now draws the hub's repos up to the touch cap. If you are on a fork with hand-merged changes and it is back, check that the `else` branch of that memo exists.
+- *You tapped a hub and only leaf dots drew.* That was the bug: the hub view rendered its children but not their repos, so a category with hundreds of stars looked exactly like an empty one. `GraphView.tsx:229` now draws the hub's repos up to the touch cap. If you are on a fork with hand-merged changes and it is back, check that the `else` branch of that memo exists.
 - *The shards haven't landed yet.* See the next entry.
 
 **A category shows "no repos" right after loading.**
@@ -107,7 +110,7 @@ Repo shards load during browser idle time, so `reposById` fills gradually. Wait 
 Same cause — the graph needs only `graph.json`; the list needs shards. If shards 404, your `data/` is stale relative to `meta.json`: re-run `npm run sync` and rebuild.
 
 **Pressing Enter on the map opens two GitHub tabs.**
-It shouldn't: the canvas owns Enter while its node cursor is active and marks the event so the window-level handler in `App.tsx:141` stands down. If you see the doubling again, the mark or the check was lost in a merge.
+It shouldn't: the canvas owns Enter while its node cursor is active and marks the event so the window-level handler in `App.tsx:166` stands down. If you see the doubling again, the mark or the check was lost in a merge.
 
 **Clicking `+N more` goes to a list that seems unfiltered.**
 That is by design: the cap is per leaf and the List view has no cap, so you see every repo in that leaf. Facets in the List header narrow it from there.

@@ -335,17 +335,59 @@ export function report() {
 }
 
 /**
+ * The app's stored view preference, written before its own scripts run.
+ *
+ * `seed` exists because the landing view is stateful now: `"none"` means "a
+ * browser that has never picked a view", `"graph"` / `"list"` / ... mean one
+ * that has, and `false` means "leave whatever is already there" — which is how
+ * the persistence check opens a second tab. It is not merely convenient.
+ * `localStorage` is shared by every tab in this one browser profile, so without
+ * an explicit seed each section would start on whatever view a previous section
+ * left behind, and a suite that only passes in one order is worthless.
+ *
+ * The `sessionStorage` guard is load-bearing, not decoration: this script re-runs
+ * on *every* navigation of the tab, so without it a section could never test
+ * "pick a view, then reload" — the seed would keep overwriting the choice the app
+ * had just stored.
+ */
+function seedSource(seed) {
+  const body =
+    seed === "none"
+      ? `localStorage.removeItem("starmap.view")`
+      : `localStorage.setItem("starmap.view", ${JSON.stringify(seed)})`;
+  return `(() => {
+    try {
+      if (sessionStorage.getItem("starmap.seed")) return;
+      sessionStorage.setItem("starmap.seed", "1");
+      ${body};
+    } catch (e) { /* storage blocked: the app falls back on its own */ }
+  })();`;
+}
+
+/**
  * Open a page under phone emulation: coarse pointer, mobile viewport.
  *
  * `url` defaults to a blank tab with *no* navigation, because a listener
  * attached after the first load misses exactly the errors worth catching — the
  * boot-time ones. Callers navigate through `goto` once `on()` is wired up.
  */
-export async function phone({ width = 390, height = 844, dpr = 3, colorScheme = "dark", url = null, touch = true, mobile = true } = {}) {
+export async function phone({
+  width = 390,
+  height = 844,
+  dpr = 3,
+  colorScheme = "dark",
+  url = null,
+  touch = true,
+  mobile = true,
+  seed = "none",
+} = {}) {
   await ensureBrowser();
   const { send, evaluate, on, tabId } = await cdpConnect(url ?? "about:blank");
   await send("Runtime.enable");
   await send("Page.enable");
+  // A Page-domain registration belongs to this tab and dies with it, so seeds
+  // cannot leak from one section's tab into another's.
+  if (seed !== false) await send("Page.addScriptToEvaluateOnNewDocument", { source: seedSource(seed) });
   await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: dpr, mobile });
   if (touch) await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
   if (colorScheme) {
