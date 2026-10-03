@@ -39,17 +39,19 @@ The workflow also runs automatically on every push to `main` (in addition to the
 
 Add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables → Actions → New repository secret) to enable the LLM classification tier (blurbs, tags, better category coverage on sparse repos). Without it, the site runs rules-only with a visible "rules-only" badge in the header — nothing breaks.
 
+You can tell how much the missing tier is costing you: when 10% or more of your stars land in "misc / other", the header shows `N% uncategorised`, and its tooltip names the two fixes — add the key, or extend `taxonomy.json` with the topics and languages your collection actually uses.
+
 ## Local development
 
 ```bash
 npm install
 GITHUB_TOKEN=<a token with public repo read access> npm run sync   # populates public/data/
 npm run dev                                                        # frontend at localhost:5173
-npm test                                                           # 27 node:test cases, no test framework
-npm run typecheck                                                  # src + pipeline + tests
+npm run lint && npm run typecheck && npm test                       # 40 node:test cases, no test framework
+npm run fixture && npm run build && npm run smoke                   # browser checks over CDP, no token needed
 ```
 
-`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly. Neither `npm test` nor `npm run typecheck` is wired into the workflow yet — see [Known Gaps](./docs/Known-Gaps.md).
+`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly. All four gates above run in CI: `lint`, `typecheck`, and `test` on every pull request *and* before every deploy; `smoke` in a dedicated browser job (`ci.yml`). To work on the UI without a token, `npm run fixture` writes a synthetic dataset through the real pipeline. See [Local Development](./docs/Local-Development.md).
 
 ## How it stays in sync
 
@@ -61,7 +63,7 @@ npm run typecheck                                                  # src + pipel
 
 - **Pipeline** (`pipeline/`): TypeScript + `tsx`, Octokit, MiniSearch, `d3-force` (headless layout), the Anthropic SDK for the opt-in LLM tier.
 - **Frontend** (`src/`): Vite + React + Tailwind. Graph view renders on Canvas (SVG falls over past ~2k nodes).
-- **CI**: a single GitHub Actions workflow — sync, build, and `deploy-pages` run as sequential jobs, because commits authored by `GITHUB_TOKEN` don't trigger new workflow runs.
+- **CI**: two GitHub Actions workflows. `ci.yml` validates on pull requests — lint, type-check, unit tests, and a browser job that drives the built site over CDP. `nightly.yml` runs sync, build, and `deploy-pages` as sequential jobs in one workflow, because commits authored by `GITHUB_TOKEN` don't trigger new workflow runs. It gates the deploy on the same checks, and **Run workflow** has a `full_pass` checkbox to force a full re-walk on demand.
 
 ## Config surface (`config.yml`)
 

@@ -59,7 +59,7 @@ This file is committed back by the workflow every run. It is the reason the LLM 
 
 `ai-ml` (6), `devtools` (6), `web` (5), `backend` (5), `data` (5), `infra-devops` (5), `security` (5), `mobile-desktop` (3), `languages-compilers` (4), `learning-reference` (4), `design-media` (3), `misc` (4).
 
-Leaf IDs are `root/leaf` strings — `devtools/cli`, `ai-ml/llm-tooling` — and that string is simultaneously the facet value in the data, the graph node ID (`leaf:devtools/cli`), and a URL path segment (`#/devtools/cli`). The frontend derives breadcrumbs from it by splitting on `/`.
+Leaf IDs are `root/leaf` strings — `devtools/cli`, `ai-ml/llm-tooling` — and that string is simultaneously the facet value in the data, the graph node ID (`leaf:devtools/cli`), and a URL path segment (`#/devtools/cli`). The frontend derives breadcrumbs from it by splitting on `/`. All 55 exist as facets whether or not you have stars in them; only the populated ones become graph nodes, so a leaf with nothing in it is absent from the map rather than a dead-end dot. See [Graph Construction](Graph-Construction.md).
 
 Point `config.yml`'s `taxonomy` at your own file to fork the tree. Two hard requirements: keep `misc/other` (it is the fallback for unmatched repos and for a repo with no categories when building graph edges), and bump `version` whenever leaf IDs change.
 

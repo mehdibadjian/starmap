@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, GitFork, Network, Rows3, Skull, Star } from "lucide-react";
 import { fetchGraph, fetchMeta, fetchSearchIndexRaw, loadAllRepos } from "./lib/data";
 import { loadSearchIndex, search } from "./lib/search";
+import { unsortedBadge, unsortedHint } from "./lib/metaBadges";
 import { buildHash, parseHash } from "./lib/url";
 import type { AppState, GraphData, MetaJson, RepoRecord, View } from "./lib/types";
 import GraphView from "./components/GraphView";
@@ -148,6 +149,10 @@ export default function App() {
 
   const selectedRepo = appState.selected ? reposById.get(Number(appState.selected)) ?? null : null;
 
+  // Derived once: the badge is shown only when there is something to show, so
+  // the condition and the label cannot drift apart.
+  const uncategorised = meta ? unsortedBadge(meta.unsorted_pct) : null;
+
   const breadcrumb = ["Home", ...appState.path];
   const showBreadcrumb = appState.view === "graph" || appState.view === "list";
 
@@ -193,6 +198,13 @@ export default function App() {
             {meta?.llm_degraded && (
               <Badge variant="outline" title="LLM classification unavailable; using rules-only categories.">
                 rules-only
+              </Badge>
+            )}
+            {meta && uncategorised && (
+              // The M3 metric used to be a `meta.json` field nobody could see
+              // while the site quietly filed most stars into `misc / other`.
+              <Badge variant="outline" className="font-mono" title={unsortedHint(meta.unsorted_pct)}>
+                {uncategorised}
               </Badge>
             )}
             {meta && (

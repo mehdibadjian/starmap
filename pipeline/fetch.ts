@@ -20,7 +20,7 @@ export interface RawStar {
 interface FetchOptions {
   login: string;
   token: string;
-  /** Repo IDs already known from a previous run (from the classification cache). */
+  /** Repo IDs already published, i.e. from the merge baseline (`sync.ts:46`) — not the classification cache. */
   knownIds: Set<number>;
   /** Full pass walks every page to detect unstars; incremental stops at the first known repo. */
   full: boolean;

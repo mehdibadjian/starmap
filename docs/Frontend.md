@@ -7,11 +7,13 @@
 ```
 shared/
   searchSchema.ts         MiniSearch field list + query options — the build↔browser contract
+  dataSchema.ts           Every shape in the published JSON — the same contract for the data itself
 src/
   main.tsx                React root
   App.tsx                 loads data, wires keyboard + URL state, routes views, error/degraded states
+  assets/fonts/           IBM Plex woff2 subsets, self-hosted
   components/
-    GraphView.tsx         Canvas renderer, camera, pointer + keyboard input, legend (largest file, 832 lines)
+    GraphView.tsx         Canvas renderer, camera, pointer + keyboard input, legend (largest file, 892 lines)
     ListView.tsx          Faceted, sortable, windowed table
     Timeline.tsx          Stars-per-month bars
     Graveyard.tsx         Archived + dead (wraps ListView)
@@ -22,20 +24,24 @@ src/
     data.ts               Fetch helpers, shard-row guard, idle shard loading
     search.ts             MiniSearch loadJSON + query
     canvasTheme.ts        Resolves theme tokens to literals for canvas
+    metaBadges.ts         Header badge rules derived from meta.json (uncategorised rate)
     url.ts                Hash ↔ state
-    types.ts              Frontend mirror of pipeline types
+    types.ts              Re-exports @shared/dataSchema + the frontend-only view/state types
     palette.ts            12 categorical colours + health `var()` strings (DOM only)
     styles/
       index.css           Tailwind directives + base rules
+      fonts.css           @font-face for the self-hosted subsets
       tokens.css          The theme. Everything else references it.
-tests/                    node:test suites, run through tsx — no test framework dependency
+tests/
+  *.test.ts               node:test suites, run through tsx — no test framework dependency
+  browser/                CDP smoke suite (`smoke.mjs`), driver (`cdp.mjs`), fixtures (`fixture.mjs`)
 ```
 
-`shared/` exists because one contract spans both halves of the repo. A serialized MiniSearch index carries its field-name → field-id map in the payload, so a client that rehydrates with a different field list doesn't error — it silently stops matching on the fields only it knows about. That was the most consequential bug in this codebase; sharing the list makes the divergence unrepresentable rather than merely unlikely. See [Output Data Format](Output-Data-Format.md).
+`shared/` exists because some contracts span both halves of the repo. A serialized MiniSearch index carries its field-name → field-id map in the payload, so a client that rehydrates with a different field list doesn't error — it silently stops matching on the fields only it knows about. That was the most consequential bug in this codebase; sharing the list makes the divergence unrepresentable rather than merely unlikely. `dataSchema.ts` is the same treatment for the published JSON: `src/lib/types.ts` and `pipeline/types.ts` used to keep hand-written copies of `RepoRecord`, `MetaJson`, and `GraphData`, which agreed only by discipline. See [Output Data Format](Output-Data-Format.md).
 
 ## Boot sequence
 
-`App.tsx:47`:
+`App.tsx:49`:
 
 ```ts
 useEffect(() => {
@@ -60,6 +66,8 @@ Three things fetch concurrently on mount; shard loading waits for `meta.shard_co
 - Timeline and Graveyard read from `repos`, so both are empty at first paint and populate as shards arrive.
 
 The two failure paths are deliberately different: a missing `meta.json`/`graph.json` is fatal and renders a recovery screen, a missing `search.json` is not and renders a `search off` badge. Details in [Views](Views.md).
+
+The header badges that report *data quality* rather than load failure all come from `meta.json`, and `src/lib/metaBadges.ts` owns their rules. `rules-only` appears when `meta.llm_degraded`; `N% uncategorised` appears only at or above `UNSORTED_TARGET_PCT` (10, the SPEC's M3 target) and its tooltip names the two fixes. `App.tsx:154` computes the badge once and the JSX tests that result, so the condition and the label cannot drift apart — the alternative was the header deciding to show something and the text deciding what it said.
 
 `document.documentElement` gets the `dark` or `light` class from `meta.theme` — `<html>`, not `<body>`, because the tokens are defined on `.dark`/`.light` blocks and `getComputedStyle(document.documentElement)` (which canvas uses) only sees variables inherited down from the root element. `index.html` sets `class="dark"` on `<html>` and runs a two-line inline script that swaps it to `light` when the system prefers light, so the first frame is already in the right palette before `meta.json` arrives. [Theming and Tokens](Theming-and-Tokens.md).
 
@@ -87,11 +95,11 @@ Examples: `#/` graph cold; `#/devtools/cli?q=tui` drilled into a leaf with a que
 
 `/` focuses the box; typing calls `search(query, 500)` on the rehydrated MiniSearch index, and the resulting ID set flows through three surfaces:
 
-- Graph matching nodes grow a sine-wave pulse and a slightly larger radius (`GraphView.tsx:375`).
+- Graph matching nodes grow a sine-wave pulse and a slightly larger radius (`GraphView.tsx:413`).
 - The header dropdown shows the top 8 plus a `+N more` count from the total hit set; picking one sets `path` to its first category and `selected` to the repo, so the camera flies to it and the panel opens.
 - List view filters rows to the hit set.
 
-`App.tsx:114` auto-expands the graph to the top hit as a side effect of the search-result set changing. That's what "search drives the graph" means concretely — it isn't a separate tab.
+`App.tsx:116` auto-expands the graph to the top hit as a side effect of the search-result set changing. That's what "search drives the graph" means concretely — it isn't a separate tab.
 
 `SearchBox` is a proper ARIA combobox rather than a styled input: `role="combobox"` with `aria-expanded`/`aria-controls`/`aria-autocomplete`/`aria-activedescendant` on the input, `role="listbox"` with `role="option"` rows, arrow keys moving a wrap-around highlight, Enter accepting it, Escape closing it, and `onMouseDown`+`preventDefault` on rows so a click wins the race against blur. It is deliberately **not** `role="listbox"` on the container with keyboard handling split across components — half a combobox is worse for a screen reader than none, because the announced state lies.
 
@@ -125,4 +133,4 @@ Phone-first, not desktop-with-shrinking. The concrete rules, each with a reason:
 
 The spec's targets are under 2 s to interactive on 4G and under 3 MB initial payload. Mechanisms: relative `./data/*` fetches, `base: './'` so the app shell is cacheable, graph + search index first, shards in idle, Canvas rather than SVG for the graph (SVG collapses past roughly 2k nodes), and a windowed list so a large star set costs a constant number of DOM rows.
 
-Nothing is code-split — the whole app is one bundle, currently ~350 kB raw / ~114 kB gzipped. At this size that's the right call; if you add heavy dependencies, revisit it.
+Nothing is code-split — the whole app is one bundle, currently ~352 kB raw / ~114 kB gzipped, with the three woff2 subsets adding ~74 kB of their own (they are fetched in parallel and `display: swap`, so they are not render-blocking). At this size that's the right call; if you add heavy dependencies, revisit it.

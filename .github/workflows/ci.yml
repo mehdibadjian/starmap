@@ -1,0 +1,68 @@
+name: CI
+
+# Validation only — this workflow never deploys. The nightly workflow publishes,
+# so a pull request gets its verdict here instead of waiting for a run on `main`.
+
+on:
+  pull_request:
+  push:
+    branches: [main, qoder/**, fix/**, claude/**]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check src, pipeline, and tests
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+  # The reason this job exists: every layout, canvas-painting, and keyboard
+  # regression found so far passed type-checking and the unit suite. Those bugs
+  # live in what gets *drawn*, which only a browser can attest to. No Playwright
+  # dependency — `tests/browser/` speaks raw CDP over Node's global WebSocket,
+  # so this costs one binary that the runner already has.
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - run: npm ci
+
+      # `data/` is gitignored, so a PR checkout has no dataset. The fixture is
+      # generated through the real pipeline (graph build, sharding, MiniSearch
+      # serialization) so the browser is testing published-shaped JSON rather
+      # than a hand-written approximation of it.
+      - name: Generate fixture dataset
+        run: npm run fixture
+
+      - name: Build site
+        run: npm run build
+
+      - name: Browser smoke test
+        run: npm run smoke

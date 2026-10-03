@@ -5,7 +5,12 @@ on:
     branches: [main]
   schedule:
     - cron: "0 18 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      full_pass:
+        type: boolean
+        default: false
+        description: "Force a full pass (re-walk every page, prune unstars now)"
 
 permissions:
   contents: write
@@ -29,10 +34,26 @@ jobs:
 
       - run: npm ci
 
+      # Gate the deploy on the checks. This workflow publishes to Pages, so a
+      # classification or graph regression should stop here rather than go live;
+      # `npm run build` alone only type-checks `src`. See ci.yml for the PR-side
+      # equivalent, which additionally runs the browser smoke test.
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check src, pipeline, and tests
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
       - name: Sync stars, classify, build data
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Without this input the only ways to force a full pass were editing
+          # the YAML or waiting for Sunday (UTC).
+          FORCE_FULL: ${{ inputs.full_pass && '1' || '' }}
         run: npm run sync
 
       - name: Build site
