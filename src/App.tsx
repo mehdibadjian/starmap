@@ -33,6 +33,8 @@ export default function App() {
   const [graph, setGraph] = useState<GraphData | null>(null);
   const [repos, setRepos] = useState<RepoRecord[]>([]);
   const [searchReady, setSearchReady] = useState(false);
+  const [searchUnavailable, setSearchUnavailable] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [appState, setAppState] = useState<AppState>(() => parseHash(window.location.hash));
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,15 +46,23 @@ export default function App() {
 
   // Initial load: graph + search index first (perf budget), repo shards during idle time.
   useEffect(() => {
-    fetchMeta().then((m) => {
-      setMeta(m);
-      document.body.classList.remove("dark", "light");
-      document.body.classList.add(m.theme);
-    });
-    fetchGraph().then(setGraph);
+    fetchMeta()
+      .then((m) => {
+        setMeta(m);
+        const root = document.documentElement;
+        root.classList.remove("dark", "light");
+        root.classList.add(m.theme);
+      })
+      .catch((err: Error) => setLoadError(`Could not load data/meta.json — ${err.message}`));
+    fetchGraph()
+      .then(setGraph)
+      .catch((err: Error) => setLoadError(`Could not load data/graph.json — ${err.message}`));
+    // A missing search index degrades the app rather than breaking it: the map
+    // and every view still render, only the search box stops finding things.
     fetchSearchIndexRaw()
       .then(loadSearchIndex)
-      .then(() => setSearchReady(true));
+      .then(() => setSearchReady(true))
+      .catch(() => setSearchUnavailable(true));
   }, []);
 
   const reposLoadStarted = useRef(false);
@@ -125,6 +135,9 @@ export default function App() {
       } else if (e.key === "l") {
         navigate({ view: appState.view === "list" ? "graph" : "list" });
       } else if (e.key === "Enter" && appState.selected) {
+        // GraphView claims Enter on the canvas itself (arrow-key cursor). It
+        // marks the event so this window-level handler doesn't open a second tab.
+        if ((e as KeyboardEvent & { starmapEnterHandled?: boolean }).starmapEnterHandled) return;
         const repo = reposById.get(Number(appState.selected));
         if (repo) window.open(`https://github.com/${repo.nwo}`, "_blank");
       }
@@ -140,33 +153,43 @@ export default function App() {
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="flex h-screen flex-col bg-background text-foreground">
-        <header className="flex flex-wrap items-center gap-3 border-b border-border bg-card px-4 py-2">
-          <div className="flex items-center gap-1.5 font-mono text-sm font-semibold">
-            <Star className="h-4 w-4 text-primary" />
-            {meta?.title ?? "Starmap"}
+      <div className="flex h-[100dvh] flex-col bg-background text-foreground">
+        <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-card px-3 py-2 sm:px-4">
+          <div className="order-1 flex min-w-0 items-center gap-1.5 font-mono text-sm font-semibold">
+            <Star className="h-4 w-4 shrink-0 text-primary" />
+            <span className="truncate">{meta?.title ?? "Starmap"}</span>
           </div>
 
-          <Tabs value={appState.view} onValueChange={(v) => navigate({ view: v as View })}>
-            <TabsList>
-              {VIEWS.map((v) => (
-                <TabsTrigger key={v.id} value={v.id} className="gap-1.5">
-                  <v.icon className="h-3.5 w-3.5" />
-                  {v.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          {/* On a phone the nav and search drop to their own row so neither is
+              squeezed into 20% of the width; on desktop they join the header. */}
+          <div className="order-3 flex w-full items-center gap-2 sm:order-2 sm:w-auto">
+            <Tabs value={appState.view} onValueChange={(v) => navigate({ view: v as View })}>
+              <TabsList className="h-9 shrink-0 sm:h-8">
+                {VIEWS.map((v) => (
+                  <TabsTrigger key={v.id} value={v.id} className="gap-1.5 px-2 sm:px-2.5" aria-label={v.label}>
+                    <v.icon className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline">{v.label}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
 
-          <SearchBox
-            ref={searchInputRef}
-            value={appState.query}
-            onChange={(query) => navigate({ query })}
-            results={searchDropdownResults}
-            onPick={pickSearchResult}
-          />
+            <SearchBox
+              ref={searchInputRef}
+              value={appState.query}
+              onChange={(query) => navigate({ query })}
+              results={searchDropdownResults}
+              totalResults={searchHitIds?.size}
+              onPick={pickSearchResult}
+            />
+          </div>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="order-2 ml-auto flex items-center gap-2 sm:order-3">
+            {searchUnavailable && (
+              <Badge variant="outline" title="Search index failed to load; the views below still work.">
+                search off
+              </Badge>
+            )}
             {meta?.llm_degraded && (
               <Badge variant="outline" title="LLM classification unavailable; using rules-only categories.">
                 rules-only
@@ -187,15 +210,15 @@ export default function App() {
         </header>
 
         {showBreadcrumb && (
-          <div className="flex items-center gap-1 border-b border-border bg-card/60 px-4 py-1.5 font-mono text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 overflow-x-auto border-b border-border bg-card/60 px-3 py-1 font-mono text-xs text-muted-foreground sm:px-4 sm:py-1.5">
             {breadcrumb.map((seg, i) => (
-              <span key={i} className="flex items-center gap-1">
+              <span key={i} className="flex shrink-0 items-center gap-1">
                 {i > 0 && <ChevronRight className="h-3 w-3" />}
                 <Button
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-5 px-1.5 font-mono text-xs text-muted-foreground hover:text-primary",
+                    "h-8 min-w-[28px] px-1.5 font-mono text-xs text-muted-foreground hover:text-primary sm:h-6",
                     i === breadcrumb.length - 1 && "text-foreground",
                   )}
                   onClick={() => navigate({ path: appState.path.slice(0, i) })}
@@ -208,7 +231,19 @@ export default function App() {
         )}
 
         <main className="relative min-h-0 flex-1">
-          {!graph || !meta ? (
+          {loadError ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+              <p className="font-mono text-sm text-destructive">{loadError}</p>
+              <p className="max-w-md text-xs text-muted-foreground">
+                This site reads only static files from <code className="font-mono">data/</code>. If it was built
+                locally, run <code className="font-mono">npm run sync</code> and refresh; on a fork, check that the
+                nightly build succeeded and that Pages is serving the latest deployment.
+              </p>
+              <Button size="sm" variant="outline" onClick={() => window.location.reload()}>
+                Retry
+              </Button>
+            </div>
+          ) : !graph || !meta ? (
             <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
               Loading…

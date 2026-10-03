@@ -44,6 +44,8 @@ Written first in importance: the client reads it to know how many shards to load
 
 Array of `RepoRecord`, `SHARD_SIZE = 500` per file, zero-padded names (`000.json`, `001.json`, …). Records are sorted newest-starred first.
 
+The client does not trust these files blindly. `isUsableRepo` in `src/lib/data.ts` drops any row missing a numeric `id`, a string `nwo`, string-array `cat`/`topics`/`tags`, or a `health.state`, before the views ever see it — one malformed record from a partial or hand-edited publish would otherwise throw inside `ListView`'s filter and blank the site. A shard whose rows are all valid is untouched, so this costs nothing in the normal case.
+
 ```json
 {
   "id": 28457823, "nwo": "owner/name", "desc": "…", "lang": "TypeScript",
@@ -68,7 +70,17 @@ storeFields: ["nwo", "stars", "lang", "cat", "tags", "health", "archived", "push
 
 The `topicsText`/`tagsText` copies exist because MiniSearch tokenizes on spaces — joining arrays into strings is what makes individual topics and tags searchable. Shadowing rather than a custom `extractField` matters: field extraction also runs for stored fields, so joining `topics`/`tags` in place would flatten those real arrays into strings in the results. `cat` and `health` therefore stay genuine arrays and objects.
 
-The client reloads it with `MiniSearch.loadJSON` in `src/lib/search.ts`, which rehydrates without re-indexing — **but** it passes `fields: ["nwo", "desc", "blurb", "topics", "tags"]` instead of the `topicsText`/`tagsText` names the index was built with. MiniSearch restores its field-name→id map from the serialized payload, so the client's `"topics"`/`"tags"` lookups resolve to nothing at query time and **topics/tags searches return zero hits**. `zebra` indexed only as a topic is unfindable; the same query against a freshly built index hits. This is the most consequential open bug in the repo — mechanism and reproduction in [Known Gaps](Known-Gaps.md).
+**The field list is a published contract, not just an indexing detail.** `toJSON()` writes the build-time field-name → field-id map into the payload, and `loadJSON` restores `_fieldIds` *from that payload* — the options the client passes in do not rebuild it. Query-time lookups go through that restored map, so if the client lists a field name the builder didn't use, that field resolves to `undefined`, contributes nothing, and reports no error whatever. A `topics`/`tags` mismatch on a deployed site looks like "this repo just isn't tagged well", not like a broken index.
+
+So both sides import one definition from `shared/searchSchema.ts`:
+
+| Export | Used by |
+|---|---|
+| `SEARCH_FIELDS` / `SEARCH_STORE_FIELDS` | the shadow-field contract above |
+| `SEARCH_OPTIONS` | `pipeline/buildIndex.ts` (index) **and** `src/lib/search.ts` (`loadJSON`) |
+| `SEARCH_BOOST` / `SEARCH_QUERY_OPTIONS` | `search()` at query time — `prefix: true`, `fuzzy: 0.2`, `nwo` ×3, `tagsText` ×2 |
+
+Boosts are built from the *indexer's* field names, which is another way the mismatch used to be invisible: `boost: { tags: 2 }` targeted a field the index never had, so it did nothing even when tags matched through another field. Changing a field name now means changing it in one file, and `tests/search.test.ts` asserts a term present only in `topics` still hits after a real serialize → rehydrate → query round trip.
 
 ## `graph.json`
 

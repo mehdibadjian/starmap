@@ -22,8 +22,31 @@ export function fetchSearchIndexRaw(): Promise<string> {
   return fetch("./data/search.json").then((r) => r.text());
 }
 
+/**
+ * Published JSON is written by CI, so one malformed row must not blank the
+ * whole site: a record is only usable if it has a numeric id, an owner/name,
+ * and string arrays where the views index into them.
+ *
+ * Exported only so the boundary rule can be tested without a network.
+ */
+export function isUsableRepo(r: unknown): r is RepoRecord {
+  return (
+    r !== null &&
+    typeof r === "object" &&
+    typeof (r as RepoRecord).id === "number" &&
+    typeof (r as RepoRecord).nwo === "string" &&
+    Array.isArray((r as RepoRecord).cat) &&
+    (r as RepoRecord).cat.every((c) => typeof c === "string") &&
+    Array.isArray((r as RepoRecord).topics) &&
+    Array.isArray((r as RepoRecord).tags) &&
+    (r as RepoRecord).health !== null &&
+    typeof (r as RepoRecord).health?.state === "string"
+  );
+}
+
 async function fetchShard(index: number): Promise<RepoRecord[]> {
-  return getJson<RepoRecord[]>(`./data/repos/${String(index).padStart(3, "0")}.json`);
+  const rows = await getJson<unknown[]>(`./data/repos/${String(index).padStart(3, "0")}.json`);
+  return rows.filter(isUsableRepo);
 }
 
 /** Loads repo shards sequentially during idle time so the graph/search index isn't blocked. */

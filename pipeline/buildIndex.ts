@@ -1,22 +1,19 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import MiniSearch from "minisearch";
+import { SEARCH_OPTIONS } from "../shared/searchSchema.js";
 import type { Config, GraphData, HistoryEntry, MetaJson, RepoRecord } from "./types.js";
 
 const SHARD_SIZE = 500;
 
-function buildSearchIndex(repos: RepoRecord[]): string {
-  const mini = new MiniSearch({
-    idField: "id",
-    // Index shadow text fields so array values (topics/tags) tokenize into
-    // multiple searchable words. storeFields below reference the original
-    // properties directly, so cat/tags/health stay real arrays/objects for
-    // the frontend — MiniSearch's field extraction runs for stored fields
-    // too, so joining topics/tags in place (rather than via a custom
-    // extractField) would otherwise collapse those arrays into strings.
-    fields: ["nwo", "desc", "blurb", "topicsText", "tagsText"],
-    storeFields: ["nwo", "stars", "lang", "cat", "tags", "health", "archived", "pushed_at", "blurb"],
-  });
+/**
+ * Exported only so the build→rehydrate→query round trip can be tested against
+ * the real indexer; `sync.ts` reaches it through `buildOutputs`.
+ */
+export function buildSearchIndex(repos: RepoRecord[]): string {
+  // Options come from shared/searchSchema so the client rehydrates against the
+  // identical field-name → field-id map. See there for why the shadow fields.
+  const mini = new MiniSearch(SEARCH_OPTIONS);
   const docs = repos.map((r) => ({ ...r, topicsText: r.topics.join(" "), tagsText: r.tags.join(" ") }));
   mini.addAll(docs);
   return JSON.stringify(mini);

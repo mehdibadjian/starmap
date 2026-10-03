@@ -14,7 +14,9 @@ Pages source is not set to GitHub Actions. Settings → Pages → Build and depl
 The `on: push` trigger is `branches: [main]` only. Push to the default branch or use **Run workflow**.
 
 **Blank page, or a 404 on the deployed site.**
-Almost always an absolute path. The app must use `base: "./"` and relative `./data/...` fetches; project Pages sites serve from `/<repo>/`. Check the browser network tab for requests to `/data/meta.json` (wrong) versus `/<repo>/data/meta.json` (right). Also confirm `public/.nojekyll` made it into `dist/`.
+A genuinely blank page is now rare: if `meta.json` or `graph.json` fails to load the app renders the failing path, a hint, and a Retry button. So start from the network tab. A 404 is almost always an absolute path — the app must use `base: "./"` and relative `./data/...` fetches; project Pages sites serve from `/<repo>/`. Check for requests to `/data/meta.json` (wrong) versus `/<repo>/data/meta.json` (right). Also confirm `public/.nojekyll` made it into `dist/`.
+
+If the page is blank *with* no console error and the data files all return 200, that points at a JS throw during render rather than a missing file. Reproduce with the browser console open; published rows are validated at the shard boundary, so if you find a render-time throw, the likely cause is a field the views index into that the guard doesn't cover yet.
 
 **Deploy job is skipped or never fires.**
 `deploy` has `needs: build`. If `build` failed — including the type-check inside `npm run build` — there is no artifact. Read the `build` log, not the deploy one.
@@ -45,7 +47,7 @@ The run bailed before writing output — by design, so the previous night's site
 Either no `ANTHROPIC_API_KEY` secret, or at least one LLM batch failed. The workflow log distinguishes them: look for `LLM classification batch failed, keeping rules-tier results`. Rules-only is a supported mode, not an error state.
 
 **I added a key but categories didn't improve.**
-The cache already holds rules-tier entries with matching hashes for those repos, so they are never re-sent. Bump `taxonomy.json`'s `version` to invalidate the whole cache, or delete the specific IDs from `cache/classifications.json`. See [Known Gaps](Known-Gaps.md) — a failed LLM batch is cached as rules-only permanently, which makes this the expected failure mode after a transient API error.
+Since the pending-hash fix, a batch that failed is retried automatically on the next run — a persistent `rules-only` badge after adding the key means the LLM calls are still failing, so read the workflow log for `LLM classification batch failed` rather than clearing the cache by hand. Two cases where manual intervention *is* correct: entries classified before the fix, which carry a real hash and will never be re-queued, and renamed or removed leaf IDs. For those, bump `taxonomy.json`'s `version` to invalidate the whole cache, or delete the specific IDs from `cache/classifications.json`.
 
 **`unsorted_pct` is high.**
 Expected without the LLM tier: repos with no GitHub topics cannot be matched by rules. First try adding keywords to `taxonomy.json` leaf `topics` — free and deterministic. Accept roughly a 5% floor; sparse repos have nothing to classify from.
@@ -56,24 +58,47 @@ You changed leaf IDs without bumping `version`. Old IDs in the cache no longer e
 ## Search
 
 **Searching a topic or tag returns nothing but the repo is clearly in the list.**
-This is a bug, not misconfiguration — the index is built with `topicsText`/`tagsText` fields and rehydrated with `topics`/`tags`, so those fields contribute nothing to matches. Workaround: search words that appear in the repo name or description. Fix in [Known Gaps](Known-Gaps.md).
+This was a bug and is fixed: the indexer and the client now share `shared/searchSchema.ts`, and `tests/search.test.ts` fails if the field names diverge again. If it happens on *your* fork, the cause is almost always a stale `search.json` published from an older build — re-run `npm run sync` and rebuild, and don't hand-edit one side of the schema.
+
+If a specific term still misses, check what field it lives in: search covers `nwo`, `desc`, `blurb`, and the joined `topics`/`tags`. It does not cover `lang`, license, or the homepage.
 
 **Search finds nothing at all.**
-`searchReady` is false until `data/search.json` loads. Check the network tab; a 404 on that file usually means `npm run sync` was skipped before `npm run build`.
+`searchReady` is false until `data/search.json` loads; the header then shows a `search off` badge and the rest of the app keeps working. A 404 on that file usually means `npm run sync` was skipped before `npm run build`.
 
 ## Graph
 
-**Health rings all look the same colour instead of a green→grey ramp.**
-Also a bug: canvas `strokeStyle` does not accept `var(--…)`. See [Known Gaps](Known-Gaps.md). The DOM dots in List and Graveyard are correct — use them to read health for now.
+**The map looks grey and flat, with no terracotta anywhere.**
+Two distinct causes. If the *health rings* are all the same colour, that is the `var()`-on-canvas bug — fixed, and `src/lib/canvasTheme.ts` now resolves tokens to literals; a fork carrying hand-merged changes should check nothing assigns `ctx.fillStyle = "var(…)"`. If the whole palette is wrong, the theme class is probably on `<body>` instead of `<html>`: canvas reads `getComputedStyle(document.documentElement)`, so a class on `<body>` leaves every token unresolved and the fallbacks show through.
+
+**Colours or sizes don't update after changing the theme, or after rotating the phone.**
+The canvas only repaints when a React dependency changes. `GraphView`'s `themeTick` effect (`:106`) covers the three things that don't: a class change on `<html>`, a `prefers-color-scheme` switch, and `window.resize`. If you replace that effect, keep all three — the resize case in particular has no other trigger.
+
+**Pinching the map zooms the whole page, or one finger scrolls the list instead of panning.**
+`touch-action: none` on the canvas is what hands those gestures to the pointer handlers. It is on the element's class list (`touch-none`) — losing it makes both gestures fall through to the browser.
+
+**Taps select nothing, or select the wrong dot.**
+Touch hit-testing uses `radius + 12` slop and a 10px drag threshold. Both are tuned for fingers; shrinking either makes taps feel dead on glass. Repo nodes also have a 6px minimum radius on touch, so a two-star repo stays tappable.
 
 **The whole map reshuffled after a normal night.**
 `cache/positions.json` was deleted, never committed, or the workflow lost write permission and could not save it. Positions are the only thing keeping the layout stable between runs.
 
+**The bottom of the map is cut off, or the page scrolls when you drag the graph, on a phone.**
+Two separate requirements. The shell is `h-[100dvh]` — `100vh` on iOS is the *large* viewport, taller than what's actually visible once the URL bar is in the way, so controls end up underneath it. And `touch-action: none` on the canvas is what stops a one-finger drag being read as page scroll.
+
+**Something is wider than the screen and the page scrolls sideways.**
+The header wraps to two rows below `sm` rather than squeezing four tab labels and a search box into 390px; the breadcrumb row scrolls horizontally inside its own container instead of pushing the document wide. When adding chrome, check `document.documentElement.scrollWidth === innerWidth` at 390px — that's the assertion the layout is held to.
+
 **A category shows "no repos" right after loading.**
 Repo shards load during browser idle time, so `reposById` fills gradually. Wait for the shards, or check that `shard_count` in `meta.json` matches the files actually served.
 
+**Rows seem to be missing from the list, and the count is lower than the graph.**
+`src/lib/data.ts` drops shard rows that fail validation (`id`/`nwo`/`cat`/`topics`/`tags`/`health.state`) rather than letting one bad record blank the page. That is intentional, but it is silent — if the header total and the visible rows disagree, compare `meta.json.total` against `jq 'length'` on the shards to find which file has the malformed entries.
+
 **The list is empty but the graph looks fine.**
 Same cause — the graph needs only `graph.json`; the list needs shards. If shards 404, your `data/` is stale relative to `meta.json`: re-run `npm run sync` and rebuild.
+
+**Pressing Enter on the map opens two GitHub tabs.**
+It shouldn't: the canvas owns Enter while its node cursor is active and marks the event so the window-level handler in `App.tsx:140` stands down. If you see the doubling again, the mark or the check was lost in a merge.
 
 **Clicking `+N more` goes to a list that seems unfiltered.**
 That is by design: the cap is per leaf and the List view has no cap, so you see every repo in that leaf. Facets in the List header narrow it from there.

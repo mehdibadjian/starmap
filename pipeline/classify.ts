@@ -137,12 +137,28 @@ export interface ClassifyResult {
   llmFailed: boolean;
 }
 
-export async function classifyAll(
+/**
+ * A rules-tier entry is only *final* when no LLM pass is going to replace it.
+ * Otherwise it is a stand-in for this run's output, and it must not carry the
+ * repo's real content hash: the cache-hit check in the loop below compares that
+ * hash, so a matching one would make the placeholder permanent and no future
+ * run would retry a batch that failed on a network error, a rate limit, or a
+ * refused tool call. This string can never collide with a sha1 hex digest.
+ */
+const PENDING_HASH = "pending";
+
+/**
+ * Split `raws` into cache hits and repos that need classifying, seeding the
+ * latter with a rules-tier result. Pure and exported for tests: deciding what
+ * hash a placeholder carries is the whole of the bug this function exists to
+ * prevent, and it should not require a network round trip to prove.
+ */
+export function planClassifications(
   raws: RawStar[],
-  taxonomy: Taxonomy,
   cache: ClassificationCache,
-  classifierMode: Config["classifier"],
-): Promise<ClassifyResult> {
+  taxonomy: Taxonomy,
+  llmWillRun: boolean,
+): { next: ClassificationCache; needsClassify: RawStar[] } {
   const next: ClassificationCache = { ...cache };
   const needsClassify: RawStar[] = [];
 
@@ -153,13 +169,24 @@ export async function classifyAll(
       next[String(raw.id)] = existing;
       continue;
     }
-    next[String(raw.id)] = ruleClassify(raw, taxonomy);
+    next[String(raw.id)] = { ...ruleClassify(raw, taxonomy), hash: llmWillRun ? PENDING_HASH : hash };
     needsClassify.push(raw);
   }
 
+  return { next, needsClassify };
+}
+
+export async function classifyAll(
+  raws: RawStar[],
+  taxonomy: Taxonomy,
+  cache: ClassificationCache,
+  classifierMode: Config["classifier"],
+): Promise<ClassifyResult> {
   const wantsLlm = classifierMode === "auto" || classifierMode === "llm";
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!wantsLlm || !apiKey || needsClassify.length === 0) {
+  const apiKey = wantsLlm ? process.env.ANTHROPIC_API_KEY : undefined;
+  const { next, needsClassify } = planClassifications(raws, cache, taxonomy, !!apiKey);
+
+  if (!apiKey || needsClassify.length === 0) {
     return { cache: next, llmUsed: false, llmFailed: false };
   }
 

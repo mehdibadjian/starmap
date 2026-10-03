@@ -26,6 +26,16 @@ The model must answer through a forced tool call (`classify_repos`), and the too
 
 A batch that throws is caught: that batch keeps its rules-tier result, `llmFailed` is set, and the run logs a warning instead of failing. `llmDegraded` (no key, or any batch failure) is published in `meta.json` and surfaces as the `rules-only` badge in the site header.
 
+**A rules-tier placeholder is not final until the LLM tier is out of the picture.** `planClassifications` (`pipeline/classify.ts:156`) decides, per repo, whether the cached rules result should carry its real content hash or the sentinel `"pending"`:
+
+| Situation | Hash written | Consequence |
+|---|---|---|
+| No key, or `classifier: rules` | real hash | Rules result is final. Correct — nothing will ever overwrite it. |
+| An LLM pass is going to run | `"pending"` | The repo is re-queued on the next run, so a rate limit, a network error, or a refused tool call costs one night, not the classification. |
+| The LLM answered for this repo | real hash, `source: "llm"` | Overwrites the placeholder. Stable from here on. |
+
+`"pending"` can never collide with a `sha1` hex digest, which is the only reason the sentinel is safe as a hash value. Before this, every miss was seeded with its real hash and overwritten only on success — so a failed batch left a permanently matching entry, and the repo never reached the LLM again without someone hand-deleting cache keys. The decision is a pure function precisely so it can be tested without an API call; `tests/classify.test.ts` feeds a pending placeholder back in as an existing entry and asserts it comes out queued.
+
 ## The cache
 
 `cache/classifications.json`:

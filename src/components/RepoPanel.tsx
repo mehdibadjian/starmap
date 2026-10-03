@@ -36,7 +36,7 @@ export default function RepoPanel({ repo, graph, reposById, onClose, onSelectRel
         {repo && (
           <>
             <SheetHeader>
-              <SheetTitle className="break-all pr-6">{repo.nwo}</SheetTitle>
+              <SheetTitle className="break-all pr-11">{repo.nwo}</SheetTitle>
               <p className="text-sm text-muted-foreground">{repo.blurb}</p>
             </SheetHeader>
 
@@ -45,7 +45,7 @@ export default function RepoPanel({ repo, graph, reposById, onClose, onSelectRel
                 href={`https://github.com/${repo.nwo}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-link hover:text-link"
+                className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-link hover:text-link"
               >
                 Open on GitHub
                 <ExternalLink className="h-3 w-3" />
@@ -117,7 +117,7 @@ export default function RepoPanel({ repo, graph, reposById, onClose, onSelectRel
                         <button
                           key={r.id}
                           onClick={() => onSelectRelated(r.id)}
-                          className="truncate rounded px-1 py-1 text-left font-mono text-xs text-link transition-colors hover:bg-accent hover:text-primary"
+                          className="min-h-9 truncate rounded px-1 text-left font-mono text-xs text-link transition-colors hover:bg-accent hover:text-primary"
                         >
                           {r.repo.nwo}
                         </button>

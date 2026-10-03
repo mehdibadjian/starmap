@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Starmap</title>
+    <script>
+      // Paint the system preference before the first frame, so a light-theme
+      // phone does not flash dark on load. meta.json's `theme` replaces this
+      // once it arrives (src/App.tsx); "dark" is only the fallback.
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+        document.documentElement.classList.replace("dark", "light");
+      }
+    </script>
   </head>
-  <body class="dark">
+  <body>
     <div id="root"></div>
     <script type="module" src="./src/main.tsx"></script>
   </body>

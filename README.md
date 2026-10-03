@@ -45,9 +45,11 @@ Add an `ANTHROPIC_API_KEY` repository secret (Settings → Secrets and variables
 npm install
 GITHUB_TOKEN=<a token with public repo read access> npm run sync   # populates public/data/
 npm run dev                                                        # frontend at localhost:5173
+npm test                                                           # 27 node:test cases, no test framework
+npm run typecheck                                                  # src + pipeline + tests
 ```
 
-`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly.
+`npm run sync` is the single pipeline entrypoint — fetch → classify → enrich → build graph → build search index → write shards. It's the same command CI runs nightly. Neither `npm test` nor `npm run typecheck` is wired into the workflow yet — see [Known Gaps](./docs/Known-Gaps.md).
 
 ## How it stays in sync
 
@@ -78,3 +80,7 @@ exclude_forks: false
 ## Taxonomy
 
 `taxonomy.json` is versioned (`version` field). Bump it to force a full reclassification — otherwise the LLM cache treats existing classifications as still valid. Fork your own by pointing `config.yml`'s `taxonomy` at a different file.
+
+## License
+
+MIT — see [LICENSE](./LICENSE). Forking and reusing this is the point of it: keep the copyright and permission notice, do whatever you like with the rest. Your star list, your copy.

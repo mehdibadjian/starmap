@@ -34,10 +34,10 @@ Linking convention: page-to-page links are bare relative filenames (`Views.md`),
 
 | Page | Covers |
 |---|---|
-| [Frontend](Frontend.md) | Loading order, state-in-URL, keyboard control, perf budget. |
-| [Views](Views.md) | Graph, List, Timeline, Graveyard, the repo panel. |
+| [Frontend](Frontend.md) | Loading order, state-in-URL, data boundaries, keyboard control, mobile rules, perf budget. |
+| [Views](Views.md) | Graph, List, Timeline, Graveyard, the repo panel — pointer, touch, and keyboard behaviour. |
 | [Theming and Tokens](Theming-and-Tokens.md) | Restyling without touching a component. |
-| [Known Gaps](Known-Gaps.md) | Spec-vs-code differences and open items. |
+| [Known Gaps](Known-Gaps.md) | Fixed bugs and why, spec-vs-code differences, and what's still missing. |
 
 ## Core idea
 
@@ -49,5 +49,6 @@ Everything that costs time or money happens in CI. The client only reads flat fi
 - **Pipeline:** TypeScript + `tsx`, Octokit, MiniSearch, `d3-force` (headless), Anthropic SDK (opt-in)
 - **Frontend:** Vite + React 18 + Tailwind + Radix UI, graph rendered on Canvas
 - **CI:** one workflow, two sequential jobs (`build` → `deploy`); nightly cron + push + manual dispatch
-- **Size:** 11 pipeline modules (~960 lines); graph/list/timeline/graveyard/panel/search components + `lib/` (~1,170 lines); `App.tsx` shell (~260); `ui/` primitives (~480); styles (~110)
-- **Not present yet:** tests, lint config, `LICENSE` — see [Known Gaps](Known-Gaps.md)
+- **Size:** 11 pipeline modules (~980 lines); graph/list/timeline/graveyard/panel/search components (~1.9k); `App.tsx` shell + entry (~295); `lib/` (~350); `ui/` primitives (~480); `shared/` contracts (~53); tests (~454); styles (~110)
+- **Verification:** 27 `node:test` cases via `npm test`, plus `npm run typecheck` over three projects. No linter, and neither command runs in CI yet — see [Known Gaps](Known-Gaps.md).
+- **License:** MIT (`LICENSE`, `package.json`). Forking is the intended use.

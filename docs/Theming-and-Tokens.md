@@ -12,9 +12,12 @@ tokens.css  →  CSS custom properties (--color-*, --health-*, --font-*)
 tailwind.config.js  →  background, foreground, card, primary, muted, accent, border, ring, link…
    ↓ (utility classes)
 components + ui/primitives
+   ↘ (getComputedStyle → literals)  canvas: src/lib/canvasTheme.ts
 ```
 
 `tailwind.config.js` maps shadcn/ui's semantic aliases onto the tokens, and `tokens.css` defines the same aliases inside `.dark` / `.light`. There is exactly one place to change each colour.
+
+**Two families of names, and they are not interchangeable.** The design tokens are `--color-*`; the shadcn aliases are bare (`--accent`, `--border`, `--ring`). `--accent` is `var(--color-surface-2)` — a hover surface — *not* the terracotta brand colour, which is `--color-accent`. Anything that resolves a token programmatically must name it explicitly. `canvasTheme.ts` keeps a literal `TOKENS` map for exactly this reason, and deriving a name from a field (`--${key}`) silently produces the wrong colour or none at all.
 
 ## Palette
 
@@ -37,9 +40,9 @@ Health colours are a five-step ramp from green to grey, so decay reads as a fade
 
 `src/lib/palette.ts` holds `CATEGORY_PALETTE`: twelve desaturated, low-chroma fills, one per taxonomy root in taxonomy order (steel blue for `ai-ml`, tan for `devtools`, olive for `web`, … plum for `misc`). Comments name the intended root, so reordering `taxonomy.json` shifts the colours with it — keep them aligned if you add or reorder roots.
 
-`colorForHubIndex(index)` is modulo-based, so a taxonomy with more than 12 roots reuses colours rather than breaking. `colorForNode` in the graph walks a node's `parent` chain up to its hub and indexes by hub order, which is how leaves and repos inherit the right colour for free.
+`colorForHubIndex(index)` is modulo-based, so a taxonomy with more than 12 roots reuses colours rather than breaking. The graph resolves a node's hub by walking `parent`, then indexes by hub order, which is how leaves and repos inherit the right colour for free.
 
-`healthColor(state)` returns `var(--health-*)` strings rather than hex, so canvas strokes and DOM dots follow the active theme from the same tokens.
+`healthColor(state)` returns `var(--health-*)` strings rather than hex. That is correct for DOM use (`style={{ background: healthColor(s) }}`, the legend dots, the list's health column) and **wrong for canvas**, which is why the graph doesn't call it — it reads `theme.health[state]` from the resolved palette instead.
 
 ## Fonts
 
@@ -51,19 +54,44 @@ Mono is used for identifiers everywhere (`nwo`, category badges, counts, timesta
 
 ## Applying a theme
 
-`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx` swaps the class on `document.body`:
+`theme: dark | light` in `config.yml` reaches the browser as `meta.json.theme`, and `App.tsx:52` swaps the class on **`document.documentElement`**:
 
 ```ts
-document.body.classList.remove("dark", "light");
-document.body.classList.add(m.theme);
+const root = document.documentElement;
+root.classList.remove("dark", "light");
+root.classList.add(m.theme);
 ```
 
-`index.html` ships `<body class="dark">` so the first paint before `meta.json` arrives is already dark. `tailwind.config.js` uses `darkMode: ["class"]`.
+`<html>`, not `<body>`, for two reasons. The token blocks are `.dark { … }` / `.light { … }`, so a custom property is only inherited by everything under the element that carries the class — and canvas reads them with `getComputedStyle(document.documentElement)`, which sees nothing set on `<body>`. Applying the class to `<body>` meant the graph silently used the fallback literals in `canvasTheme.ts` instead of the fork's palette.
 
-To add a third theme: define a `.yourtheme` block in `tokens.css`, allow the value in `Config["theme"]` and `MetaJson["theme"]` in both `pipeline/types.ts` and `src/lib/types.ts`, and validate it in `pipeline/config.ts`.
+`index.html` puts `class="dark"` on `<html>` and runs a small inline script first:
 
-## Canvas gotcha
+```html
+<script>
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+    document.documentElement.classList.replace("dark", "light");
+  }
+</script>
+```
 
-Canvas 2D does not resolve `var()` in `fillStyle`/`strokeStyle` — the assignment is silently ignored and the property keeps its previous valid value. `GraphView` currently assigns `"var(--…)"` strings in several places (`colorForNode` for the root, `healthColor(state)` for the repo rings, the accent selection and focus-edge strokes, the `+N` circle), so those specific elements do not render in their intended colours. `healthColor` returning `var(--health-*)` is correct for DOM use and wrong for canvas; only the canvas call sites are affected.
+So a light-preferring phone gets a light first frame rather than a dark flash, and `meta.json`'s explicit choice still wins once it arrives. `tailwind.config.js` uses `darkMode: ["class"]`.
 
-The file already handles it correctly at `GraphView.tsx:248` and `:304` — `getComputedStyle(document.documentElement).getPropertyValue("--color-bg")` with a hex fallback — which is the pattern to follow. Details and verified pixel values in [Known Gaps](Known-Gaps.md).
+To add a third theme: define a `.yourtheme` block in `tokens.css`, add its token names to `TOKENS`/`FALLBACK` in `src/lib/canvasTheme.ts`, allow the value in `Config["theme"]` and `MetaJson["theme"]` in both `pipeline/types.ts` and `src/lib/types.ts`, and validate it in `pipeline/config.ts`.
+
+## Canvas: the gotcha that shaped this
+
+Canvas 2D parses `fillStyle`, `strokeStyle`, and `font` as CSS **values**. A custom property is not a value. `ctx.fillStyle = "var(--color-accent)"` throws nothing, is silently rejected, and leaves the property at whatever it last validly was — which produces very specific, very confusing symptoms depending on draw order (a root node painted in the background colour is simply invisible; health rings take the previous edge stroke and look uniformly grey). Verified again in headless Chromium 152, including for `font`:
+
+```js
+const c = document.createElement("canvas").getContext("2d");
+const before = c.font;
+c.font = "600 12px var(--font-sans)";
+c.font === before;                    // true — the assignment did nothing
+c.font = '600 12px "IBM Plex Sans", system-ui, sans-serif';   // works
+```
+
+So `src/lib/canvasTheme.ts` resolves the whole palette once per draw into `{ bg, surface, border, text, textDim, accent, health{}, fontSans, fontMono }` with literal values, and `GraphView` never touches a `var()` string. The fallbacks mirror the `.dark` block, which is what renders before `meta.json` has applied a theme. **If you add a token the canvas needs, add it to the `TOKENS` map — do not derive the name.**
+
+**Repainting on theme change.** The canvas only redraws when a React dependency changes, and a theme swap is a class change on an element React doesn't own. `GraphView`'s `themeTick` (`:95`) is bumped by a `MutationObserver` on `<html>`'s class, a `prefers-color-scheme` change listener, and `window.resize` — the last of which was its own bug: rotating a phone or collapsing the URL bar changed the container size without ever triggering a paint, so the canvas kept the old backing-store dimensions and stretched.
+
+`tests/themeTokens.test.ts` guards all of this without a browser: it parses the blocks out of `tokens.css`, stubs `getComputedStyle`, and asserts `readCanvasTheme()` returns exactly the expected literals in each theme — including that `accent` is `--color-accent`. Renaming a token in CSS without updating the map fails the suite.
