@@ -199,7 +199,7 @@ Fork checklist, target: under 2 minutes.
 
 Config surface:
 ```yaml
-login: mb
+login: your-username
 title: "Starmap"
 theme: dark
 taxonomy: default        # or ./my-taxonomy.json

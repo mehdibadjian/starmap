@@ -4,7 +4,7 @@ The difference between what the code does, what `SPEC.md` describes, and what a 
 
 ## Fixed
 
-Four defects that this page used to document as open are now closed, each with a regression test in `tests/`. They are kept here in short form because the mechanism is the lesson — and because a forker who pulls an older tag should be able to read what was wrong.
+Five defects that this page used to document as open are now closed, each with a regression test in `tests/`. They are kept here in short form because the mechanism is the lesson — and because a forker who pulls an older tag should be able to read what was wrong.
 
 ### 1. Topics and tags were not searchable
 
@@ -27,6 +27,12 @@ The tokens live on `.dark`/`.light` blocks, and canvas resolved them with `getCo
 In `classifyAll`, every cache miss was pre-populated with a rules result carrying the *current* content hash, then overwritten on success. If the batch threw — rate limit, network error, refused tool call — that repo kept a rules entry whose hash already matched, so no later run ever re-sent it. Fixing it meant hand-deleting cache keys.
 
 `planClassifications()` (`pipeline/classify.ts:156`) now seeds a miss with `hash: PENDING_HASH` (`"pending"`) when an LLM pass is going to run, and the real hash is written only when the LLM result actually lands. `"pending"` can never collide with a sha1 digest, so a placeholder is re-queued next run. `tests/classify.test.ts` feeds a pending placeholder back in as an existing cache entry and asserts it is queued again.
+
+### 5. Changing `login` merged the previous owner's stars into yours
+
+`data/` is gitignored, so the merge baseline is scraped from the live Pages site. Nothing checked *whose* dataset that was. On an incremental run `sync.ts` merges baseline with fresh (`sync.ts:72`), so the first run after a `login` change would publish both accounts side by side. The shipped placeholder made this real rather than theoretical: `mb` is an unrelated GitHub user with 2 stars, so the site published *their* stars and looked almost empty instead of erroring.
+
+`fetchPreviousDataset(login)` now compares the configured login against `meta.login` from the live site and throws on mismatch, which routes through the existing `baselineAvailable = false` path and forces one clean full pass. `tests/previousData.test.ts` covers same-account, other-account, missing login, and case-only differences. The placeholder in every copy-pasteable doc example is now `your-username`, which is not a GitHub account.
 
 ### Also closed
 
@@ -57,7 +63,7 @@ In `classifyAll`, every cache miss was pre-populated with a rules result carryin
 ## Missing entirely
 
 - **No lint or format config.** Two `// eslint-disable-next-line react-hooks/exhaustive-deps` suppressions exist (`App.tsx:120`, `GraphView.tsx:265`), each deliberate — they key an effect on a derived string rather than a fresh array — but with no ESLint installed nothing verifies they are still the right call.
-- **CI runs neither `npm test` nor `npm run typecheck`.** The workflow calls `npm run build`, which type-checks `src` only. Twenty-seven unit tests exist and would catch a regression in minutes, and `pipeline/**` type errors still surface only as a mid-run `tsx` failure. Adding a step is a two-line change.
+- **CI runs neither `npm test` nor `npm run typecheck`.** The workflow calls `npm run build`, which type-checks `src` only. Thirty-one unit tests exist and would catch a regression in minutes, and `pipeline/**` type errors still surface only as a mid-run `tsx` failure. Adding a step is a two-line change.
 - **No webfont delivery** — see [Theming and Tokens](Theming-and-Tokens.md).
 - **No CI job runs the browser checks.** The phone-first layout, canvas painting, and keyboard path were verified by driving headless Chromium over CDP against a built site with a synthetic dataset. That harness is not in the repo and not in the pipeline; it is a strong candidate for a `playwright` job on the workflow, since these are precisely the bugs type-checking cannot see.
 

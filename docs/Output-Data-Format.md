@@ -32,7 +32,7 @@ Written first in importance: the client reads it to know how many shards to load
 
 | Field | Meaning |
 |---|---|
-| `login`, `title`, `theme` | From `config.yml`; the only place the account name reaches the UI. |
+| `login`, `title`, `theme` | From `config.yml`; the only place the account name reaches the UI. `login` is also the merge-baseline guard — see [Data Pipeline](Data-Pipeline.md). |
 | `total` | Repo count after merge. Shown as the header badge. |
 | `last_sync` | ISO timestamp of this build; shown as `synced YYYY-MM-DD`. |
 | `taxonomy_version` | From `taxonomy.json`. |

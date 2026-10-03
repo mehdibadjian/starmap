@@ -34,12 +34,12 @@ async function main(): Promise<void> {
   let previousHistory: HistoryEntry[] = [];
   let baselineAvailable = true;
   try {
-    const prev = await fetchPreviousDataset();
+    const prev = await fetchPreviousDataset(config.login);
     baseline = prev.repos;
     previousHistory = prev.history;
   } catch (err) {
     baselineAvailable = false;
-    console.warn(`No previous dataset available, running a full pass: ${(err as Error).message}`);
+    console.warn(`No usable previous dataset, running a full pass: ${(err as Error).message}`);
   }
 
   const cache = await loadCache(CLASSIFICATIONS_PATH, taxonomy.version);

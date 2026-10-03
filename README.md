@@ -66,7 +66,7 @@ npm run typecheck                                                  # src + pipel
 ## Config surface (`config.yml`)
 
 ```yaml
-login: mb
+login: your-username
 title: "Starmap"
 theme: dark
 taxonomy: default        # or ./my-taxonomy.json
