@@ -123,6 +123,9 @@ The harness byte-compares `public/data/graph.json` against `dist/data/graph.json
 **`npm run smoke` can't find a browser.**
 It looks for `chromium`, `chromium-browser`, `google-chrome`, and `google-chrome-stable`. If yours is named something else, `CHROME_PATH=/path/to/browser npm run smoke`.
 
+**`npm run smoke` passes locally but fails in CI (or the reverse) at `vite preview is not serving …`.**
+The harness only starts its own preview server when nothing already answers `SMOKE_BASE`, so a stray `npm run preview` left on 4173 makes the local run test a server it didn't start. `pkill -f "vite preview"` and re-run before believing a green. The failure message now quotes the server's own output, which distinguishes a missing `dist/` from a port clash from a slow machine.
+
 **`npm run smoke` reports `no Chromium found` on a machine that clearly has Chrome.**
 Check it can actually launch: the harness needs `--headless=new --remote-debugging-port`, and a sandboxed or snap-confined build refuses the debugging port. In CI this is not a concern; on a locked-down laptop, point `CHROME_PATH` at a plain binary.
 

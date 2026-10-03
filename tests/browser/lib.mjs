@@ -117,21 +117,47 @@ const results = [];
  * Start `vite preview` if nothing is serving `BASE` yet, so `npm run smoke` is
  * one command instead of a build, a server, a port, and a remember-to-kill.
  * An already-running preview (a dev's `npm run preview`) is used as-is.
+ *
+ * The host is pinned to the one in `BASE`, which is a real fix rather than
+ * tidiness: Vite resolves a default `localhost` through the OS, and on a clean
+ * machine that means `::1` — a server running perfectly and answering nothing
+ * on the `127.0.0.1` this file probes. The first CI run of this harness failed
+ * exactly that way while passing locally, because locally a previous run had
+ * already left a server on the port.
+ *
+ * The child's output is captured rather than discarded, because a server that
+ * exits immediately (no `dist/`, `--strictPort` finding the port taken, an
+ * unparsable config) is otherwise indistinguishable from one that is merely
+ * slow, and "vite preview did not come up" is not a failure anyone can act on.
  */
 export async function ensureSite() {
   if (await reachable()) return;
-  const port = new URL(BASE).port || "4173";
-  const proc = spawn(
-    process.execPath,
-    [new URL("../../node_modules/vite/bin/vite.js", import.meta.url).pathname, "preview", "--port", port, "--strictPort"],
-    { cwd: ROOT, stdio: "ignore", detached: true },
-  );
+  const url = new URL(BASE);
+  const host = url.hostname || "127.0.0.1";
+  const port = url.port || "4173";
+  const vite = new URL("../../node_modules/vite/bin/vite.js", import.meta.url).pathname;
+  const proc = spawn(process.execPath, [vite, "preview", "--host", host, "--port", port, "--strictPort"], {
+    cwd: ROOT,
+    stdio: ["ignore", "pipe", "pipe"],
+    detached: true,
+  });
   track("preview", proc);
+
+  let output = "";
+  proc.stdout.on("data", (b) => (output += b));
+  proc.stderr.on("data", (b) => (output += b));
+  let exit = null;
+  proc.on("exit", (code, signal) => (exit = signal ? `signal ${signal}` : `code ${code}`));
+
   for (let i = 0; i < 80; i++) {
     if (await reachable()) return;
+    // A dead child will never answer; don't spend 20 seconds pretending.
+    if (exit !== null) break;
     await sleep(250);
   }
-  throw new Error(`vite preview did not come up on ${BASE} (did you run \`npm run build\`?)`);
+  throw new Error(
+    `vite preview is not serving ${BASE} (${exit === null ? "never came up" : `exited with ${exit}`}; did \`npm run build\` produce dist/?)\n${output.trim() || "<no output from the server>"}`,
+  );
 }
 
 async function reachable() {
