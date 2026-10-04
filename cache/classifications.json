@@ -7350,7 +7350,7 @@
     },
     "1040968879": {
       "id": 1040968879,
-      "hash": "312c6919ad9ba89796f26a32ff555e91bc9df06e",
+      "hash": "92ebee3ea7bc6b26ac95178a3bb49272fcfb5d48",
       "cat": [
         "misc/other"
       ],
@@ -7535,6 +7535,23 @@
         "skills"
       ],
       "blurb": "Official, Anthropic-managed directory of high quality Claude Code Plugins.",
+      "source": "rules"
+    },
+    "1104332987": {
+      "id": 1104332987,
+      "hash": "eaac82810b9413175cfbf2223768a3502e1d7fab",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-memory",
+        "financial-forecasting",
+        "future-prediction",
+        "knowledge-graph",
+        "llms",
+        "multi-agent-simulation"
+      ],
+      "blurb": "A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物",
       "source": "rules"
     },
     "1106924851": {
@@ -8245,17 +8262,17 @@
     },
     "1202549948": {
       "id": 1202549948,
-      "hash": "0de6700f776e9d6bf19ac662c1454d07a9652802",
+      "hash": "709aa5718634fcadfb43814159323668c61d2637",
       "cat": [
-        "misc/other"
+        "misc/productivity"
       ],
       "tags": [
+        "agent-memory",
         "agent-skills",
         "brain",
-        "knowledge-base",
-        "knowledge-graph",
-        "llm-tools",
-        "memory"
+        "claude-code",
+        "claude-skills",
+        "codex"
       ],
       "blurb": "Framework for AI agents to build and maintain a digital brain through Obsidian wiki | M...",
       "source": "rules"
