@@ -6722,6 +6722,23 @@
       "blurb": "Generative Models by Stability AI",
       "source": "rules"
     },
+    "668673665": {
+      "id": 668673665,
+      "hash": "66e2aa3374c3ef425ca2e51bf0a365b84cff4e74",
+      "cat": [
+        "data/database"
+      ],
+      "tags": [
+        "cloud-database",
+        "database",
+        "database-as-a-service",
+        "developer-tools",
+        "devtools",
+        "graph-database"
+      ],
+      "blurb": "A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matr...",
+      "source": "rules"
+    },
     "676676006": {
       "id": 676676006,
       "hash": "b4252e24797ae1c0bfa8b17e014f97f30fba29b0",
@@ -7052,6 +7069,23 @@
         "chatgpt"
       ],
       "blurb": "AI coworker with memory and collaboration",
+      "source": "rules"
+    },
+    "932580333": {
+      "id": 932580333,
+      "hash": "6b3cf801087961b9a509fdd3d787647992367ed6",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "dovecot",
+        "email",
+        "email-marketing",
+        "mail",
+        "mailserver",
+        "newsletter"
+      ],
+      "blurb": "BillionMail gives you open-source MailServer, NewsLetter,  Email Marketing — fully self...",
       "source": "rules"
     },
     "940296815": {
