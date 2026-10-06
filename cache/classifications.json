@@ -7071,6 +7071,16 @@
       "blurb": "AI coworker with memory and collaboration",
       "source": "rules"
     },
+    "932038801": {
+      "id": 932038801,
+      "hash": "5639027790fa31dde1f431f634d1e0afcdd15c7c",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "DeepGEMM: clean and efficient BLAS kernel library on GPU",
+      "source": "rules"
+    },
     "932580333": {
       "id": 932580333,
       "hash": "6b3cf801087961b9a509fdd3d787647992367ed6",
@@ -8363,6 +8373,23 @@
         "headless"
       ],
       "blurb": "The headless browser for AI agents and web scraping",
+      "source": "rules"
+    },
+    "1209966933": {
+      "id": 1209966933,
+      "hash": "d413764741f6af642384234ad788b57031aee6a3",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agent-tools",
+        "ai-agents",
+        "binary-analysis",
+        "cli",
+        "coding-agents"
+      ],
+      "blurb": "Reverse engineer anything with agents, from app behavior down to native binaries.",
       "source": "rules"
     },
     "1215473958": {
