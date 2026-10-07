@@ -8440,6 +8440,16 @@
       "blurb": "Lightweight (7MB) Terminal-first AI-native dev workspace",
       "source": "rules"
     },
+    "1231148626": {
+      "id": 1231148626,
+      "hash": "01f1daeee9614988a363a1c0f258f65b455effcd",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "DeepSeek 4 Flash and PRO local inference engine for Metal, CUDA and ROCm",
+      "source": "rules"
+    },
     "1233680465": {
       "id": 1233680465,
       "hash": "cc00e3d16e2c54c81567b2426d0da902405ab1a9",
