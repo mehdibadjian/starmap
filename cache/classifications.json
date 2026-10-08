@@ -8392,6 +8392,23 @@
       "blurb": "Reverse engineer anything with agents, from app behavior down to native binaries.",
       "source": "rules"
     },
+    "1211139949": {
+      "id": 1211139949,
+      "hash": "5502cd95932c8bbb4feacb510f14d3729314d959",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "architecture-diagram",
+        "claude-code",
+        "claude-skills",
+        "codex"
+      ],
+      "blurb": "Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent skill f...",
+      "source": "rules"
+    },
     "1215473958": {
       "id": 1215473958,
       "hash": "eec7893e9621f4aaa146d72fb71e2adf3f54611d",
