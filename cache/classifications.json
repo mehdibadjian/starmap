@@ -116,9 +116,9 @@
     },
     "667006": {
       "id": 667006,
-      "hash": "63dc1f6028e4bca10634821704d59c09fe1380d3",
+      "hash": "83fe4794a349ee86e1beed27c43272f0655675de",
       "cat": [
-        "design-media/audio-video"
+        "web/frontend-framework"
       ],
       "tags": [
         "dash",
@@ -128,7 +128,7 @@
         "html5-audio",
         "html5-video"
       ],
-      "blurb": "Video.js - open source HTML5 video player",
+      "blurb": "Video.js v10 - open source media player framework for HTML and React.",
       "source": "rules"
     },
     "704320": {
@@ -1586,7 +1586,7 @@
     },
     "16089035": {
       "id": 16089035,
-      "hash": "a422e4897efc66b16e6ba074c6ec7851f60e7583",
+      "hash": "261ec5cdedc5e2595ac299ba6e7cc296202a74e2",
       "cat": [
         "misc/other"
       ],
@@ -1598,7 +1598,7 @@
         "meteor",
         "real-time"
       ],
-      "blurb": "The Open Source kanban, built with Meteor. GitHub issues/PRs are only for FLOSS Develop...",
+      "blurb": "FLOSS kanban, built with Meteor. Official Public Support at GitHub issues only. Officia...",
       "source": "rules"
     },
     "16381579": {
@@ -2678,7 +2678,7 @@
     },
     "29887499": {
       "id": 29887499,
-      "hash": "7f071f6ad5671a7a39d598d187daeb94e1df3881",
+      "hash": "26b3d77aed7cf2832eefaff69319a982415c5117",
       "cat": [
         "mobile-desktop/mobile"
       ],
@@ -2687,8 +2687,8 @@
         "apple",
         "apple-tv",
         "apple-vision-pro",
-        "apple-watch",
-        "awesome"
+        "awesome",
+        "cocoapods"
       ],
       "blurb": ":iphone: Collaborative List of Open-Source iOS Apps",
       "source": "rules"
@@ -6472,17 +6472,17 @@
     },
     "585146387": {
       "id": 585146387,
-      "hash": "9efa795e33345a8327ebf81095e7a77df1743f32",
+      "hash": "a0105120e53988deff4289dee1759fc625878b3a",
       "cat": [
         "web/css-ui"
       ],
       "tags": [
+        "ai",
         "base-ui",
         "components",
-        "laravel",
-        "nextjs",
-        "radix-ui",
-        "react"
+        "gen-ui",
+        "generative-ai",
+        "generative-ui"
       ],
       "blurb": "Composable, accessible components with thoughtful defaults. Build your own component li...",
       "source": "rules"
@@ -7100,7 +7100,7 @@
     },
     "940296815": {
       "id": 940296815,
-      "hash": "34221bd2e8db6e32b25e5a0d5ce0e068296c09f8",
+      "hash": "9113ad495ce635ad0de3872c3b4dd340253a3379",
       "cat": [
         "design-media/audio-video"
       ],
@@ -7110,9 +7110,9 @@
         "flux2",
         "generative-ai",
         "hunyuan-video",
-        "ltx-2"
+        "krea"
       ],
-      "blurb": "A fast AI Video Generator for the GPU Poor. Supports Wan 2.1/2.2, LTX-2, Qwen Image, Hu...",
+      "blurb": "A fast AI Video Generator for the GPU Poor. Supports Minimax H3, LTX-2.3/2.5, Wan 2.1/2...",
       "source": "rules"
     },
     "942114501": {
@@ -7233,17 +7233,17 @@
     },
     "979560403": {
       "id": 979560403,
-      "hash": "38153a8c08b830b18f3d0427d2493522ef9670ae",
+      "hash": "988fac5ff326c5817b900129939520caa5458470",
       "cat": [
-        "web/frontend-framework"
+        "ai-ml/llm-tooling"
       ],
       "tags": [
-        "automation",
-        "control-plane",
-        "devops",
-        "event-driven",
-        "go",
-        "kubernetes"
+        "agent-orchestration",
+        "agentic-workflows",
+        "ai-agents",
+        "ai-coding",
+        "ai-software-engineering",
+        "developer-tools"
       ],
       "blurb": "Open source factory for one-shot engineering",
       "source": "rules"
@@ -7890,7 +7890,7 @@
     },
     "1148783826": {
       "id": 1148783826,
-      "hash": "3a03baec46bf5cfc28402f413a7a459d5b78d090",
+      "hash": "8e3d25652925118a7a15f43edb4ba2f29036dd24",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7899,7 +7899,7 @@
         "agentskills",
         "ai-agents"
       ],
-      "blurb": "One source of truth for your AI coding rules. AgentSync generates them for 14 tools in ...",
+      "blurb": "One source of truth for your AI coding rules. Exuno generates them for 15 tools in each...",
       "source": "rules"
     },
     "1149707767": {
@@ -8377,17 +8377,17 @@
     },
     "1209966933": {
       "id": 1209966933,
-      "hash": "d413764741f6af642384234ad788b57031aee6a3",
+      "hash": "3379d63e71f0c12f9131c07aadc5183da23c7f40",
       "cat": [
         "ai-ml/llm-tooling"
       ],
       "tags": [
         "agent-skills",
-        "ai-agent-tools",
         "ai-agents",
         "binary-analysis",
+        "claude-code",
         "cli",
-        "coding-agents"
+        "codex"
       ],
       "blurb": "Reverse engineer anything with agents, from app behavior down to native binaries.",
       "source": "rules"
