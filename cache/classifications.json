@@ -8078,6 +8078,23 @@
       "blurb": "Orca is the ADE for working with a fleet of parallel agents. Run any coding agent with ...",
       "source": "rules"
     },
+    "1185590488": {
+      "id": 1185590488,
+      "hash": "6fa8b8df3dc6e70e220c4385536c66159f0f0c0f",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agents",
+        "ai",
+        "ai-agents",
+        "ai-engineering",
+        "computer-vision",
+        "course"
+      ],
+      "blurb": "Learn AI Engineering! Learn it. Build it. Ship it for others.",
+      "source": "rules"
+    },
     "1188521544": {
       "id": 1188521544,
       "hash": "f8bd5bd24c5f2acd61e899883a484ddcd36a1e1e",
