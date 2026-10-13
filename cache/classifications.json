@@ -6932,6 +6932,16 @@
       "blurb": "Close-Circuit Telegram Vision revolutionizes location tracking with its open-source des...",
       "source": "rules"
     },
+    "793784055": {
+      "id": 793784055,
+      "hash": "acf7032cbfaa697348591471c62d8ffafef782c3",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "TimesFM (Time Series Foundation Model) is a pretrained time-series foundation model dev...",
+      "source": "rules"
+    },
     "824874689": {
       "id": 824874689,
       "hash": "1d702c56a7ab8cc728531bdc4eaa83892be38929",
