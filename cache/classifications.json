@@ -7064,6 +7064,20 @@
       "blurb": "Build your autonomous hedge fund in minutes. AutoHedge harnesses the power of swarm int...",
       "source": "rules"
     },
+    "902402084": {
+      "id": 902402084,
+      "hash": "404c77b61f0315b7fdec6ee46830706532bf779a",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "allure",
+        "reporting",
+        "reporting-engine"
+      ],
+      "blurb": "Allure Report is a flexible multi-language test report tool to show you a detailed repr...",
+      "source": "rules"
+    },
     "916009087": {
       "id": 916009087,
       "hash": "0844d463603552a8a22141ad06fcfceb9f498d2e",
