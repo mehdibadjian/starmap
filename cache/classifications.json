@@ -988,7 +988,7 @@
     },
     "8681349": {
       "id": 8681349,
-      "hash": "27a00b1dfe6a75999fc1a9ad82b42b8ac1f5efd1",
+      "hash": "c405b15b0f3fb76d9cf08bf1815c6b956c6e7a37",
       "cat": [
         "infra-devops/monitoring"
       ],
@@ -6665,7 +6665,7 @@
     },
     "646426100": {
       "id": 646426100,
-      "hash": "596d6d3e35703a1b7ea55372b30420df5b2510ff",
+      "hash": "5626a52e32918ffe9d1b278ad14e3705f1905214",
       "cat": [
         "misc/other"
       ],
@@ -6675,7 +6675,7 @@
         "sandbox",
         "sandboxing"
       ],
-      "blurb": "A minimal, secure Python interpreter written in Rust for use by AI",
+      "blurb": "A secure Python sandbox, written in Rust, for code written by AI.",
       "source": "rules"
     },
     "649170660": {
@@ -6768,7 +6768,7 @@
     },
     "681211986": {
       "id": 681211986,
-      "hash": "134c324ba22f3ccad34463174124a15e0342fd45",
+      "hash": "c49338652df02fe127b9a851eceb7c8f53dce935",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -6780,7 +6780,7 @@
         "code-generation",
         "code-review"
       ],
-      "blurb": "Open-source AI coding assistant for VS Code. Code completion, chat, edits and reviews w...",
+      "blurb": "Open-source AI coding assistant for VS Code. Coding agent, code completion, chat, edits...",
       "source": "rules"
     },
     "684031003": {
@@ -7707,7 +7707,7 @@
     },
     "1128204614": {
       "id": 1128204614,
-      "hash": "dbc0447ae04abeb03a4e77245ef98a47b305a9d5",
+      "hash": "dc6d661e5143ad2eb72c2d7717f84325f13faf53",
       "cat": [
         "devtools/cli"
       ],
@@ -7719,7 +7719,7 @@
         "cli",
         "coding-agent"
       ],
-      "blurb": "High performance coding agent harness written in rust",
+      "blurb": "High performance coding agent harness written in Rust, built for heavy multi-agent dev ...",
       "source": "rules"
     },
     "1129940957": {
@@ -7812,7 +7812,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "6cd26784d225667396e815a863d41103d298c489",
+      "hash": "02b11dc7d459fee9fabf3d6111dd8b5c1b130823",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8033,11 +8033,18 @@
     },
     "1170821064": {
       "id": 1170821064,
-      "hash": "76cab72fe08db85e320285b1496ecab1b1e60f80",
+      "hash": "e337f286ac9d35be79b0b2713ad20e1f918dada1",
       "cat": [
-        "misc/other"
+        "ai-ml/llm-tooling"
       ],
-      "tags": [],
+      "tags": [
+        "acpx",
+        "agent-orchestration",
+        "agent-skills",
+        "agentic-ai",
+        "ai-agents",
+        "ai-engineering"
+      ],
       "blurb": "The open-source app everyone uses to manage agents at work",
       "source": "rules"
     },
@@ -8087,24 +8094,24 @@
     },
     "1183888342": {
       "id": 1183888342,
-      "hash": "4716fb544fae10322f645b262bf90b44cd39d201",
+      "hash": "347f5d1cf451fcb428b581060af1cfa800c77a4c",
       "cat": [
-        "devtools/cli"
+        "ai-ml/llm-tooling"
       ],
       "tags": [
         "ade",
         "agent-ide",
         "ai-agents",
-        "claude-code",
-        "cli",
-        "codex"
+        "automation",
+        "bot",
+        "claude-code"
       ],
-      "blurb": "Orca is the ADE for working with a fleet of parallel agents. Run any coding agent with ...",
+      "blurb": "Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run ...",
       "source": "rules"
     },
     "1185590488": {
       "id": 1185590488,
-      "hash": "6fa8b8df3dc6e70e220c4385536c66159f0f0c0f",
+      "hash": "4b61d23f59d4f6af71a059f158cc5888144f6fb2",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8219,17 +8226,17 @@
     },
     "1196447493": {
       "id": 1196447493,
-      "hash": "95735e45365eb32b5ae9856237a2f5491d6f0ca9",
+      "hash": "7a4eaf52eb2101b75d3aab5cf2c304ae58324d51",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "Google's open agentic orchestration runtime",
+      "blurb": "Agent Executor (AX) is Google's open agentic orchestration runtime",
       "source": "rules"
     },
     "1197515131": {
       "id": 1197515131,
-      "hash": "4edd68db9bf1de8786875c10d32106e2414c0125",
+      "hash": "f6f508d5a3f69ba7f14d03c90ffb73445e39c281",
       "cat": [
         "web/css-ui"
       ],
@@ -8239,7 +8246,7 @@
         "design-system",
         "design-tokens",
         "figma",
-        "google-stitch"
+        "landing-page"
       ],
       "blurb": "A collection of DESIGN.md files analysis by popular brand design systems. Drop one into...",
       "source": "rules"
@@ -8418,7 +8425,7 @@
     },
     "1209966933": {
       "id": 1209966933,
-      "hash": "3379d63e71f0c12f9131c07aadc5183da23c7f40",
+      "hash": "515d0da99d9db0c16155f17e4d4f7b40fb4fd161",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8483,7 +8490,7 @@
     },
     "1217291538": {
       "id": 1217291538,
-      "hash": "7fd27430631f3f22a7a2dfd25c07376097c0a2d7",
+      "hash": "d683a781a9fb2cd60b405195a2497de7f410a682",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8491,11 +8498,11 @@
         "agents",
         "ai",
         "code-editor",
+        "libghostty",
         "linux",
-        "macos",
-        "reactjs"
+        "macos"
       ],
-      "blurb": "Lightweight (7MB) Terminal-first AI-native dev workspace",
+      "blurb": "Lightweight (7MB) terminal-first AI-native development environment",
       "source": "rules"
     },
     "1231148626": {
@@ -8902,12 +8909,12 @@
     },
     "1384094559": {
       "id": 1384094559,
-      "hash": "adc83b19e793491b1c6ea0fd8b46cd9f32e592fc",
+      "hash": "6d1878f308cbbf07e119dfda1d650d50a921d989",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "No description provided.",
+      "blurb": "Contrastive Language Models (CLMs) are a new class of System One model trained with a c...",
       "source": "rules"
     },
     "1396117711": {
@@ -8935,6 +8942,16 @@
         "llm"
       ],
       "blurb": "A free pit crew for your expensive coding agent: the superpowers development workflow, ...",
+      "source": "rules"
+    },
+    "1407951147": {
+      "id": 1407951147,
+      "hash": "adc83b19e793491b1c6ea0fd8b46cd9f32e592fc",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "No description provided.",
       "source": "rules"
     }
   }
