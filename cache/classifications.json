@@ -7479,6 +7479,16 @@
       "blurb": "An agentic skills framework & software development methodology that works.",
       "source": "rules"
     },
+    "1075372545": {
+      "id": 1075372545,
+      "hash": "088527ba2574be803c0db73181bf22d8711d40fb",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "A complete AI agency at your fingertips - From frontend wizards to Reddit community nin...",
+      "source": "rules"
+    },
     "1076043819": {
       "id": 1076043819,
       "hash": "f33e6e3c105197aed4305fea9802c80ebde8fdf0",
@@ -7686,6 +7696,23 @@
         "exchange"
       ],
       "blurb": "Open-source AI Trading OS, agent trading, and vibe trading, with Jev System One integra...",
+      "source": "rules"
+    },
+    "1125856365": {
+      "id": 1125856365,
+      "hash": "55fc24ee07b57520d7cbd50d0e4e558b058bb028",
+      "cat": [
+        "devtools/cli"
+      ],
+      "tags": [
+        "ai-agent",
+        "ai-coding-agent",
+        "anthropic",
+        "bun",
+        "claude",
+        "cli"
+      ],
+      "blurb": "⌥ Coding agent with the IDE wired in. Built by Stencil Labs.",
       "source": "rules"
     },
     "1126947080": {
@@ -8813,6 +8840,18 @@
       ],
       "tags": [],
       "blurb": "A terminal client (TUI and CLI) for searching and downloading from Library Genesis",
+      "source": "rules"
+    },
+    "1324949198": {
+      "id": 1324949198,
+      "hash": "cb17f2b33cab3560977fff45bb1281e68d7accef",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "dsh-plugin"
+      ],
+      "blurb": "A context-compression plugin for month-long single sessions (billions of tokens) ,small...",
       "source": "rules"
     },
     "1333065091": {
