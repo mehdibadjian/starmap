@@ -8869,6 +8869,23 @@
       "blurb": "DeepSeek Harness: Everything is a Plugin.",
       "source": "rules"
     },
+    "1336502227": {
+      "id": 1336502227,
+      "hash": "a93ecf8a7aadd40476d9c41d6d6f3d4a731868ec",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ag-ui",
+        "agent-governance",
+        "ai-agents",
+        "browser-automation",
+        "copilotkit",
+        "generative-ui"
+      ],
+      "blurb": "Open-source AI coworkers that each get a computer of their own: a browser, files and to...",
+      "source": "rules"
+    },
     "1340646366": {
       "id": 1340646366,
       "hash": "62f27f24d3528723b418e3f0b8ef874ea8e71827",
@@ -8991,6 +9008,16 @@
       ],
       "tags": [],
       "blurb": "No description provided.",
+      "source": "rules"
+    },
+    "1421473890": {
+      "id": 1421473890,
+      "hash": "d73797f219627f350bb593cba31a74fa7c6841de",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Blazing fast Apple Silicon optimized inference engine built for Qwen and Nemotron. Open...",
       "source": "rules"
     }
   }
