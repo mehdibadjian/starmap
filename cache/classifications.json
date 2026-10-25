@@ -4983,7 +4983,7 @@
     },
     "110684325": {
       "id": 110684325,
-      "hash": "e0252abcb1cd03a4db12d5ddb50432420312f18a",
+      "hash": "84f67bc6bbba15e740e22aa48d4fe3e478676603",
       "cat": [
         "misc/finance"
       ],
@@ -4995,7 +4995,7 @@
         "data-science",
         "data-visualization"
       ],
-      "blurb": "The backtesting engine that gives you an unfair advantage. Run thousands of trading ide...",
+      "blurb": "The research engine that gives you an unfair advantage. Run thousands of trading ideas ...",
       "source": "rules"
     },
     "111648229": {
@@ -6360,19 +6360,19 @@
     },
     "488804911": {
       "id": 488804911,
-      "hash": "75f37470587227bdb337e3dea0fce82d936f2c5d",
+      "hash": "02a1001f935786e105c17c0e5e7a68687a070cc7",
       "cat": [
-        "data/database"
+        "ai-ml/llm-tooling"
       ],
       "tags": [
-        "low-code",
+        "ai-agents",
+        "airflow-alternative",
+        "internal-tools",
         "open-source",
-        "platform",
-        "postgresql",
-        "python",
-        "self-hostable"
+        "orchestration",
+        "postgresql"
       ],
-      "blurb": "Open-source developer platform to power your entire infra and turn scripts into webhook...",
+      "blurb": "Code-first platform for workflows, apps and AI agents, on the fastest self-hostable orc...",
       "source": "rules"
     },
     "519859998": {
@@ -6629,9 +6629,26 @@
       "blurb": "Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one coll...",
       "source": "rules"
     },
+    "633262635": {
+      "id": 633262635,
+      "hash": "575cc4b84b1db6214c37e4bccd2e672c616c1638",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai",
+        "ai-chat",
+        "chatgpt",
+        "chatui",
+        "enterprise-search",
+        "gen-ai"
+      ],
+      "blurb": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+      "source": "rules"
+    },
     "638513786": {
       "id": 638513786,
-      "hash": "fb4f7acd16d82049087884dd7579fa29364d85c2",
+      "hash": "3766be2696bb524b11f7d7fd18621bd15ecd09d4",
       "cat": [
         "misc/other"
       ],
@@ -6639,9 +6656,9 @@
         "ai-art-generator",
         "ai-image-generation",
         "ai-video-generation",
-        "creative-tools",
         "fal-ai-alternative",
-        "generative-ai"
+        "generative-ai",
+        "image-to-video"
       ],
       "blurb": "Unrestricted Open-source alternative to AI video platforms — Free AI image & video gene...",
       "source": "rules"
@@ -7013,6 +7030,23 @@
         "search-engine"
       ],
       "blurb": "Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you f...",
+      "source": "rules"
+    },
+    "842982339": {
+      "id": 842982339,
+      "hash": "17b581f845d2a58eb47050e2aab8cfc8db38a372",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai",
+        "classification",
+        "cpu-inference",
+        "decision-model",
+        "edge-ai",
+        "gguf"
+      ],
+      "blurb": "jevos: an open-source alternative to Jev and Microsoft-Decision-1. Yes/no decisions, ch...",
       "source": "rules"
     },
     "846698999": {
@@ -7553,6 +7587,16 @@
       "blurb": "A refined collection of Hypervelocity Engineering components (instructions, prompts, ag...",
       "source": "rules"
     },
+    "1097346685": {
+      "id": 1097346685,
+      "hash": "9a834df187b451448d04cda7477518ea9fe6533c",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "The design language that makes your AI harness better at design.",
+      "source": "rules"
+    },
     "1098852899": {
       "id": 1098852899,
       "hash": "f05737c5feac82f6ca134aa47749c2b2f95ad082",
@@ -7683,17 +7727,17 @@
     },
     "1124295269": {
       "id": 1124295269,
-      "hash": "018c8b3e5d9448bbf892532c4b1bfe40026f6731",
+      "hash": "0d41c678c0d1c9a4d5749ca6c66fd3fee4ae1171",
       "cat": [
         "security/crypto"
       ],
       "tags": [
         "agent",
-        "alpaca",
         "backtesting",
         "binance",
         "crypto",
-        "exchange"
+        "exchange",
+        "finance"
       ],
       "blurb": "Open-source AI Trading OS, agent trading, and vibe trading, with Jev System One integra...",
       "source": "rules"
@@ -7839,7 +7883,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "02b11dc7d459fee9fabf3d6111dd8b5c1b130823",
+      "hash": "2031eaf42a31e3852b08d8be0b693746a308698f",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7871,6 +7915,23 @@
       "blurb": "The agent harness performance optimization system. Skills, instincts, memory, security,...",
       "source": "rules"
     },
+    "1136666433": {
+      "id": 1136666433,
+      "hash": "1574ea1801bae7aff2381ff8cfe1042a2d964022",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-humanizer",
+        "ai-writing",
+        "chatgpt",
+        "claude",
+        "claude-code"
+      ],
+      "blurb": "Agent skill that removes signs of AI-generated writing from text",
+      "source": "rules"
+    },
     "1142983825": {
       "id": 1142983825,
       "hash": "0fd116d40a115a1bff3ab547ce950b7dc44f68c2",
@@ -7883,12 +7944,12 @@
     },
     "1144520675": {
       "id": 1144520675,
-      "hash": "cc1b1f8ea9b03cb3461acbbfa1cfc4688bcbdddd",
+      "hash": "94bbdeed089da5a8520b8516acf0163a7241b4c4",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "Use Claude Code, Codex, VSCode, Pi, and OpenCode (and 6 other harnesses) for free (1.3B...",
+      "blurb": "Use Claude Code, Codex, Antigravity, VSCode, Pi, and OpenCode (and 6 other harnesses) f...",
       "source": "rules"
     },
     "1146591936": {
@@ -8331,9 +8392,9 @@
     },
     "1201476594": {
       "id": 1201476594,
-      "hash": "f55d057a128d1fc9d1aabde513eecc944c58fe68",
+      "hash": "f3076a2253defebffde8e616be4683999555af7f",
       "cat": [
-        "devtools/cli"
+        "learning-reference/interview-prep"
       ],
       "tags": [
         "agent-skills",
@@ -8433,6 +8494,23 @@
       "blurb": "Build and Search a knowledge base for your projects—bringing together code, PDFs, Markd...",
       "source": "rules"
     },
+    "1209020591": {
+      "id": 1209020591,
+      "hash": "da03fafbafd5f0765a27c72c6ed9fd4f9d5dfead",
+      "cat": [
+        "ai-ml/machine-learning"
+      ],
+      "tags": [
+        "agentic-rl",
+        "distributed-training",
+        "grpo",
+        "multi-agent",
+        "multimodal",
+        "post-training"
+      ],
+      "blurb": "An Asynchronous Reinforcement Learning Engine for Omni-Modal Post-Training at Scale",
+      "source": "rules"
+    },
     "1209343409": {
       "id": 1209343409,
       "hash": "1b4325756f0b35e609b762771aaf684005ad47d7",
@@ -8484,6 +8562,23 @@
       "blurb": "Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent skill f...",
       "source": "rules"
     },
+    "1212769188": {
+      "id": 1212769188,
+      "hash": "90db22eb7aa4b2588c11a1a72c09f3b042922dfe",
+      "cat": [
+        "data/analytics-bi"
+      ],
+      "tags": [
+        "agent-skills",
+        "claude-code",
+        "codex",
+        "data-visualization",
+        "diagrams",
+        "drawio"
+      ],
+      "blurb": "Editorial diagram design for Claude Code, Codex, GitHub Copilot, Cursor, Factory Droid,...",
+      "source": "rules"
+    },
     "1215473958": {
       "id": 1215473958,
       "hash": "eec7893e9621f4aaa146d72fb71e2adf3f54611d",
@@ -8530,6 +8625,16 @@
         "macos"
       ],
       "blurb": "Lightweight (7MB) terminal-first AI-native development environment",
+      "source": "rules"
+    },
+    "1222917575": {
+      "id": 1222917575,
+      "hash": "9f67f043399f39f2b2649afe5704d7e414074542",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Anti-AI-slop design skill for Claude Code, Cursor, and Codex.",
       "source": "rules"
     },
     "1231148626": {
@@ -8640,6 +8745,23 @@
         "mimo-code"
       ],
       "blurb": "MiMo Code: Where Models and Agents Co-Evolve",
+      "source": "rules"
+    },
+    "1266797999": {
+      "id": 1266797999,
+      "hash": "27f0f0dbf3fd7873bb2f708f68970b1904eaa6d9",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "claude",
+        "claude-code",
+        "claude-code-plugin",
+        "cursor-rules"
+      ],
+      "blurb": "Makes your AI agent think like the laziest senior dev in the room. The best code is the...",
       "source": "rules"
     },
     "1272487463": {
@@ -9012,12 +9134,12 @@
     },
     "1421473890": {
       "id": 1421473890,
-      "hash": "d73797f219627f350bb593cba31a74fa7c6841de",
+      "hash": "c7d5b50fc0682d39ef55be7c2947af0c5f34e0f0",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "Blazing fast Apple Silicon optimized inference engine built for Qwen and Nemotron. Open...",
+      "blurb": "Blazing fast Apple Silicon optimized inference engine built for Qwen & Nemotron. OpenAI...",
       "source": "rules"
     }
   }
