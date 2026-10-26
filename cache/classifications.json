@@ -8731,6 +8731,23 @@
       "blurb": "Self-hosted AI workspace.",
       "source": "rules"
     },
+    "1258301311": {
+      "id": 1258301311,
+      "hash": "4cac9f1849ad167f44525989d887255175613347",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "agent",
+        "ai",
+        "ai-agent",
+        "ai-tools",
+        "claude-code",
+        "codex"
+      ],
+      "blurb": "The coding intelligence and skills for Hermes Agent ⚚ just install once. then type 'dag...",
+      "source": "rules"
+    },
     "1265025028": {
       "id": 1265025028,
       "hash": "d9e1fbbaa7cd35decbe2415fc9c7718043415453",
@@ -9132,6 +9149,23 @@
       "blurb": "No description provided.",
       "source": "rules"
     },
+    "1411523628": {
+      "id": 1411523628,
+      "hash": "220e30a5b107324280b1219859ffd51a3ddd7e0a",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-framework",
+        "agentic-os",
+        "ai-agents",
+        "chatgpt",
+        "codex",
+        "computer-use"
+      ],
+      "blurb": "A self-evolving agentic OS. A new architecture for agent execution, built on operating-...",
+      "source": "rules"
+    },
     "1421473890": {
       "id": 1421473890,
       "hash": "c7d5b50fc0682d39ef55be7c2947af0c5f34e0f0",
@@ -9140,6 +9174,23 @@
       ],
       "tags": [],
       "blurb": "Blazing fast Apple Silicon optimized inference engine built for Qwen & Nemotron. OpenAI...",
+      "source": "rules"
+    },
+    "1431869627": {
+      "id": 1431869627,
+      "hash": "08efb471d6bbffcdfbcfc1e897111c24ddef6047",
+      "cat": [
+        "languages-compilers/wasm"
+      ],
+      "tags": [
+        "binance",
+        "bybit",
+        "candlestick-chart",
+        "crypto-trading",
+        "cryptocurrency",
+        "footprint-chart"
+      ],
+      "blurb": "Open-source crypto trading terminal in the browser: TradingView-style charts, TPO marke...",
       "source": "rules"
     }
   }
