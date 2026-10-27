@@ -7350,6 +7350,23 @@
       "blurb": "A fully local Loveable, Replit, Bolt, v0 alternative that you can run with your own LLM...",
       "source": "rules"
     },
+    "995029641": {
+      "id": 995029641,
+      "hash": "d360d857fd770ee1b9820976fe11f5476080b734",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agentic-ai",
+        "agentic-framework",
+        "agentic-workflow",
+        "agents",
+        "ai-agents",
+        "ai-assistant"
+      ],
+      "blurb": "🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinate auton...",
+      "source": "rules"
+    },
     "997737944": {
       "id": 997737944,
       "hash": "b0898f9d8a99cab9bbae1e7f6cc190b66dd79a74",
@@ -7401,6 +7418,23 @@
       "blurb": "The agent that grows with you",
       "source": "rules"
     },
+    "1025856648": {
+      "id": 1025856648,
+      "hash": "2a8789ad59205eeb3b20ed3df4d96282e1906900",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "agentic-ai",
+        "ai-agents",
+        "anthropic",
+        "antigravity",
+        "claude"
+      ],
+      "blurb": "Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCode, GitH...",
+      "source": "rules"
+    },
     "1028492186": {
       "id": 1028492186,
       "hash": "0dffdb53093444760e7cde0c95bda358e97dcc89",
@@ -7416,6 +7450,23 @@
         "claude-cowork-alternative"
       ],
       "blurb": "Eigent: The Open Source Cowork Desktop - Local and Free Alternative to Claude Cowork an...",
+      "source": "rules"
+    },
+    "1031912724": {
+      "id": 1031912724,
+      "hash": "76b5574a5060f457d3ef2b1efa781eb147b5208b",
+      "cat": [
+        "mobile-desktop/desktop"
+      ],
+      "tags": [
+        "ai-tools",
+        "claude-code",
+        "codex",
+        "desktop-app",
+        "grok",
+        "grokbuild"
+      ],
+      "blurb": "A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenCla...",
       "source": "rules"
     },
     "1032808806": {
@@ -7465,6 +7516,23 @@
         "gov-tech"
       ],
       "blurb": "StenographAI is the secure privacy-first AI notepad & notetaker for confidential conver...",
+      "source": "rules"
+    },
+    "1048065319": {
+      "id": 1048065319,
+      "hash": "6e0c88bd23b2f32f2550fe3f895925bc150d1dcd",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai",
+        "ai-agents",
+        "ai-memory",
+        "anthropic",
+        "artificial-intelligence",
+        "chromadb"
+      ],
+      "blurb": "Persistent Context Across Sessions for Every Agent –  Captures everything your agent do...",
       "source": "rules"
     },
     "1057664813": {
@@ -7538,6 +7606,23 @@
         "claude-code"
       ],
       "blurb": "The Enterprise Architecture Governance Harness — strategy, architecture, delivery, and ...",
+      "source": "rules"
+    },
+    "1079084637": {
+      "id": 1079084637,
+      "hash": "2d783e61db33ddbdde4160cbf08547ff317d3bb4",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-plugins",
+        "agent-skills",
+        "agentic-ai",
+        "ai-coding-agent",
+        "anthropic-claude",
+        "claude-ai"
+      ],
+      "blurb": "380 Claude Code skills & agent skills & plugins (30+ Agents, 70+ custom commands, 380+ ...",
       "source": "rules"
     },
     "1079456184": {
@@ -7693,6 +7778,23 @@
       "blurb": "🎭 AI Avatar / digital human platform — upload a photo, clone a voice, talk to any face...",
       "source": "rules"
     },
+    "1106996539": {
+      "id": 1106996539,
+      "hash": "3c2c72fac4b7f0e406589d31e8aedcb4d3f7f975",
+      "cat": [
+        "devtools/cli"
+      ],
+      "tags": [
+        "ai-skills",
+        "antigravity",
+        "claude",
+        "claude-code",
+        "codex",
+        "command-line"
+      ],
+      "blurb": "An AI skill that provides design intelligence for building professional UI/UX across mu...",
+      "source": "rules"
+    },
     "1110874991": {
       "id": 1110874991,
       "hash": "b1f0ed94a3d2a095269969fc930b7f51e74b81a8",
@@ -7774,6 +7876,23 @@
         "cli"
       ],
       "blurb": "Agent skills for Obsidian. Teach your agent to use Obsidian CLI and open formats includ...",
+      "source": "rules"
+    },
+    "1127110039": {
+      "id": 1127110039,
+      "hash": "83a4176f0d1d14d949aeb0917f434222b7b4276f",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "agent-skills",
+        "autonomous-agents",
+        "claude",
+        "claude-code",
+        "claude-code-skills",
+        "claude-skills"
+      ],
+      "blurb": "Persistent file-based planning for AI coding agents and long-running tasks. Crash-proof...",
       "source": "rules"
     },
     "1128204614": {
@@ -7932,6 +8051,23 @@
       "blurb": "Agent skill that removes signs of AI-generated writing from text",
       "source": "rules"
     },
+    "1139971460": {
+      "id": 1139971460,
+      "hash": "ca9a3144acba83f2ee2428bb87876dd4ce641c1c",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agentic-coding",
+        "ai-coding",
+        "anthropic",
+        "claude-code",
+        "cli",
+        "command-line-tool"
+      ],
+      "blurb": "CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single R...",
+      "source": "rules"
+    },
     "1142983825": {
       "id": 1142983825,
       "hash": "0fd116d40a115a1bff3ab547ce950b7dc44f68c2",
@@ -8041,6 +8177,23 @@
       "blurb": "Native GUI for Homebrew Casks",
       "source": "rules"
     },
+    "1158722119": {
+      "id": 1158722119,
+      "hash": "b137ce00389ad7dc6615a6a340cb9bcc8c190519",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "agent-skills",
+        "antigravity",
+        "claude-code",
+        "codex",
+        "cursor",
+        "skills"
+      ],
+      "blurb": "Production-grade engineering skills for AI coding agents.",
+      "source": "rules"
+    },
     "1158799392": {
       "id": 1158799392,
       "hash": "8e01efbaa76b735da3e0bfdcbc63287118f3a309",
@@ -8056,6 +8209,23 @@
         "microkernel"
       ],
       "blurb": "Astrid is a portable, capability-secure operating system for composable software.",
+      "source": "rules"
+    },
+    "1162099055": {
+      "id": 1162099055,
+      "hash": "3eeb737e0b5a890d6b5f743adfcc4cfbc7bb9c1b",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "anti-slop",
+        "claude-code",
+        "codex",
+        "cursor"
+      ],
+      "blurb": "Agent skills that give coding agents taste: art direction, reference images and a brows...",
       "source": "rules"
     },
     "1162209902": {
@@ -8119,6 +8289,23 @@
       "blurb": "A framework-agnostic, git-native standard for defining AI agents",
       "source": "rules"
     },
+    "1170266927": {
+      "id": 1170266927,
+      "hash": "f55c18f515c617e699812108cbf5994c55981fff",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "agent-skill-repository",
+        "agent-skills",
+        "agentic-skills",
+        "claude-code-marketplace",
+        "claude-code-plugins",
+        "claude-cowork-plugin"
+      ],
+      "blurb": "PM Skills Marketplace: 100+ agentic skills, commands, and plugins — from discovery to s...",
+      "source": "rules"
+    },
     "1170821064": {
       "id": 1170821064,
       "hash": "e337f286ac9d35be79b0b2713ad20e1f918dada1",
@@ -8178,6 +8365,23 @@
       ],
       "tags": [],
       "blurb": "Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Design...",
+      "source": "rules"
+    },
+    "1182081931": {
+      "id": 1182081931,
+      "hash": "362cbae4cde9f34a6e8e36fb4f0057a8f495728a",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "antigravity-skills",
+        "business-knowledge",
+        "claude-code",
+        "claude-skills",
+        "codebase-analysis",
+        "codex"
+      ],
+      "blurb": "Graphs that teach > graphs that impress. Turn any code into an interactive knowledge gr...",
       "source": "rules"
     },
     "1183888342": {
@@ -8354,6 +8558,23 @@
         "developer-tools"
       ],
       "blurb": "A structured 3-agent AI dev team — Architect, Builder, Reviewer. Built from production ...",
+      "source": "rules"
+    },
+    "1200597263": {
+      "id": 1200597263,
+      "hash": "87885862187c8f90309d784fc79189fc75d8b8e9",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai-agents",
+        "antigravity",
+        "ast",
+        "claude-code",
+        "code-analysis",
+        "code-search"
+      ],
+      "blurb": "Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryable know...",
       "source": "rules"
     },
     "1201098277": {
@@ -8942,6 +9163,23 @@
         "llm"
       ],
       "blurb": "Gemma 4 26B-A4B inference in ~2 GB of RAM on any M-series MacBook",
+      "source": "rules"
+    },
+    "1305663861": {
+      "id": 1305663861,
+      "hash": "5a25aff4ff32f028418990fa3f5cb2e95e99f017",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "ai-video",
+        "claude-code",
+        "claude-code-skills",
+        "claude-skills"
+      ],
+      "blurb": "AI video skill for Claude Code & Codex — cinematic, editable product promos with Remoti...",
       "source": "rules"
     },
     "1307160977": {
