@@ -9231,6 +9231,23 @@
       "blurb": "A context-compression plugin for month-long single sessions (billions of tokens) ,small...",
       "source": "rules"
     },
+    "1332461149": {
+      "id": 1332461149,
+      "hash": "14fe63d8cfa31785414bd970b8ded0601588ef05",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai-agents",
+        "bun",
+        "codex",
+        "electron",
+        "local-first",
+        "macos"
+      ],
+      "blurb": "A local-first desktop workspace for persistent AI teammates. Run Codex, Claude, and Gro...",
+      "source": "rules"
+    },
     "1333065091": {
       "id": 1333065091,
       "hash": "74a15c5d60144e5b3b9e427ce555cad4cc17a1e7",
