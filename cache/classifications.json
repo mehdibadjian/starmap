@@ -7454,7 +7454,7 @@
     },
     "1031912724": {
       "id": 1031912724,
-      "hash": "76b5574a5060f457d3ef2b1efa781eb147b5208b",
+      "hash": "6c931ff9a7c32b95bf99549085bec132be2ee30c",
       "cat": [
         "mobile-desktop/desktop"
       ],
@@ -7462,11 +7462,11 @@
         "ai-tools",
         "claude-code",
         "codex",
+        "deepseek-harness",
         "desktop-app",
-        "grok",
-        "grokbuild"
+        "grok"
       ],
-      "blurb": "A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenCla...",
+      "blurb": "A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode,DeepSeek...",
       "source": "rules"
     },
     "1032808806": {
@@ -7674,12 +7674,18 @@
     },
     "1097346685": {
       "id": 1097346685,
-      "hash": "9a834df187b451448d04cda7477518ea9fe6533c",
+      "hash": "c46e6a3405154a0b56d42cab6653e3264185a18a",
       "cat": [
-        "misc/other"
+        "design-media/graphics-design"
       ],
-      "tags": [],
-      "blurb": "The design language that makes your AI harness better at design.",
+      "tags": [
+        "agent-skills",
+        "ai",
+        "anti-slop",
+        "design",
+        "slop"
+      ],
+      "blurb": "The design vocabulary for your coding agent. Steer with polish and bolder, review with ...",
       "source": "rules"
     },
     "1098852899": {
@@ -7797,17 +7803,17 @@
     },
     "1110874991": {
       "id": 1110874991,
-      "hash": "b1f0ed94a3d2a095269969fc930b7f51e74b81a8",
+      "hash": "a44eb8543261a0dc2d7bab3d2ad77d5fd0db8b98",
       "cat": [
         "ai-ml/llm-tooling"
       ],
       "tags": [
-        "ai",
         "ai-gateway",
-        "ai-proxy",
         "anthropic",
         "go",
-        "golang"
+        "golang",
+        "groq",
+        "litellm"
       ],
       "blurb": "AI gateway / AI control plane / AI proxy written in Go. Unified OpenAI-compatible and A...",
       "source": "rules"
@@ -8002,7 +8008,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "2031eaf42a31e3852b08d8be0b693746a308698f",
+      "hash": "f8886fb2766d7bdfef0f7ee21751713b285c203c",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8014,7 +8020,7 @@
         "ai-coding",
         "ai-workflows"
       ],
-      "blurb": "AAS Core is the local, agent-first control plane for complete catalog discovery, agent-...",
+      "blurb": "2,884+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
       "source": "rules"
     },
     "1136590548": {
@@ -8471,12 +8477,12 @@
     },
     "1190363679": {
       "id": 1190363679,
-      "hash": "2d65f91a176f2755c6850bc07f433a8612a99436",
+      "hash": "1d266cddeeddee4319f0fad2f4b4fed10d9abe61",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "\"OpenSpace: The Skill Management Layer for AI Agents\" -- https://open-space.cloud/",
+      "blurb": "AgentPilot: Better Next Moves for Your Agent. Get Things Done Faster.",
       "source": "rules"
     },
     "1190959626": {
@@ -8579,17 +8585,17 @@
     },
     "1201098277": {
       "id": 1201098277,
-      "hash": "5d2cc8a44128984a192dff066228edceaa962a62",
+      "hash": "e7fbf0dbd8cde874dd19f89ebcb8b25f748e91cc",
       "cat": [
         "devtools/dotfiles"
       ],
       "tags": [
         "cross-platform",
+        "gpui",
         "launcher",
         "linux",
         "macos",
-        "made-in-vietnam",
-        "opensource"
+        "made-in-vietnam"
       ],
       "blurb": "An open-source, cross OS, community-driven launcher. A lightweight alternative to Spotl...",
       "source": "rules"
@@ -8613,7 +8619,7 @@
     },
     "1201476594": {
       "id": 1201476594,
-      "hash": "f3076a2253defebffde8e616be4683999555af7f",
+      "hash": "abae0fdf84722f76e0328fffcd86d85da75ce8ed",
       "cat": [
         "learning-reference/interview-prep"
       ],
@@ -8680,16 +8686,16 @@
     },
     "1202875287": {
       "id": 1202875287,
-      "hash": "b2ec62076236e6e48620035e26d3348c7222662d",
+      "hash": "4db562b74542d9ae3d32f7b555d0b8c305d85abe",
       "cat": [
         "misc/other"
       ],
       "tags": [
         "ai-tools",
-        "antigravity",
         "claude-code",
         "code-analysis",
         "code-assistant",
+        "codex",
         "context-window"
       ],
       "blurb": "High-performance code-intelligence engine for AI agents and IDE, supports 257 languages...",
@@ -8697,12 +8703,12 @@
     },
     "1203503423": {
       "id": 1203503423,
-      "hash": "adc83b19e793491b1c6ea0fd8b46cd9f32e592fc",
+      "hash": "9d654d200236a788d0cb28cbcf6774560d397baf",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "No description provided.",
+      "blurb": "The open-source project HeyClicky grew out of. The official HeyClicky app, an AI buddy ...",
       "source": "rules"
     },
     "1207156786": {
@@ -8751,17 +8757,17 @@
     },
     "1209966933": {
       "id": 1209966933,
-      "hash": "515d0da99d9db0c16155f17e4d4f7b40fb4fd161",
+      "hash": "9c95841fce7bda5c8ea4fddcaa6a64b4b7e14c38",
       "cat": [
-        "ai-ml/llm-tooling"
+        "devtools/cli"
       ],
       "tags": [
         "agent-skills",
-        "ai-agents",
-        "binary-analysis",
+        "ai",
+        "android",
         "claude-code",
         "cli",
-        "codex"
+        "cpp"
       ],
       "blurb": "Reverse engineer anything with agents, from app behavior down to native binaries.",
       "source": "rules"
@@ -8954,7 +8960,7 @@
     },
     "1258301311": {
       "id": 1258301311,
-      "hash": "4cac9f1849ad167f44525989d887255175613347",
+      "hash": "6f36ebde9ef54d0cd443a77aa941ef36add1e875",
       "cat": [
         "misc/other"
       ],
@@ -8966,7 +8972,7 @@
         "claude-code",
         "codex"
       ],
-      "blurb": "The coding intelligence and skills for Hermes Agent ⚚ just install once. then type 'dag...",
+      "blurb": "⚚ The coding harness with Hermes Agent wired into IDE.",
       "source": "rules"
     },
     "1265025028": {
