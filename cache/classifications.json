@@ -5643,24 +5643,24 @@
     },
     "268070496": {
       "id": 268070496,
-      "hash": "212ceac3ccec69c79f2b93656f6b04cd3cc381a4",
+      "hash": "7ccf213348f30c37c54a161018ccd96d962c8e9a",
       "cat": [
         "backend/api-framework"
       ],
       "tags": [
+        "agentic",
         "api",
         "async-await",
         "blogging",
         "cms",
-        "engine",
-        "feather"
+        "engine"
       ],
-      "blurb": "Feather is a modern Swift-based Content Management System.",
+      "blurb": "A modern, opinionated, agentic CMS for Swift.",
       "source": "rules"
     },
     "277621205": {
       "id": 277621205,
-      "hash": "45e7793239256740f212203eeac78810837c222f",
+      "hash": "e52098a5605a233e79a2d5cac022682067059edf",
       "cat": [
         "infra-devops/containers"
       ],
@@ -5672,7 +5672,7 @@
         "lightning",
         "openclaw"
       ],
-      "blurb": "An elegant home server OS. Run OpenClaw, store your files and, and do more with over 30...",
+      "blurb": "An elegant home server OS. Run AI agents, store your files, backup your photos, and do ...",
       "source": "rules"
     },
     "279677883": {
@@ -6648,7 +6648,7 @@
     },
     "638513786": {
       "id": 638513786,
-      "hash": "3766be2696bb524b11f7d7fd18621bd15ecd09d4",
+      "hash": "ddf5cd64a44e5944466c7354c02800d708de4554",
       "cat": [
         "misc/other"
       ],
@@ -6660,7 +6660,7 @@
         "generative-ai",
         "image-to-video"
       ],
-      "blurb": "Unrestricted Open-source alternative to AI video platforms — Free AI image & video gene...",
+      "blurb": "Uncensored Open-source alternative to AI video platforms — Free AI image & video genera...",
       "source": "rules"
     },
     "638951438": {
@@ -6802,7 +6802,7 @@
     },
     "684031003": {
       "id": 684031003,
-      "hash": "d1d65c86bd6339d04c707d6bad8075c73dc8ef42",
+      "hash": "f0f1b2e58e065fc8aac46ab79687ac8d8ea76471",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -6810,11 +6810,11 @@
         "agent",
         "ai",
         "chatbot",
-        "enterprise",
-        "finetune",
-        "genai"
+        "dsh",
+        "dsh-plugin",
+        "enterprise"
       ],
-      "blurb": "BISHENG is an open LLM devops platform for next generation Enterprise AI applications. ...",
+      "blurb": "BISHENG is an open-source enterprise Agent platform for building, deploying, and managi...",
       "source": "rules"
     },
     "732124850": {
@@ -7420,7 +7420,7 @@
     },
     "1025856648": {
       "id": 1025856648,
-      "hash": "2a8789ad59205eeb3b20ed3df4d96282e1906900",
+      "hash": "a5403ba6d004aac1ebe93ecb3f4fd926125be1c4",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7432,7 +7432,7 @@
         "antigravity",
         "claude"
       ],
-      "blurb": "Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCode, GitH...",
+      "blurb": "Plugins, agents, skills, and commands for Claude Code, Codex CLI, Cursor, OpenCode, Ant...",
       "source": "rules"
     },
     "1028492186": {
@@ -7610,7 +7610,7 @@
     },
     "1079084637": {
       "id": 1079084637,
-      "hash": "2d783e61db33ddbdde4160cbf08547ff317d3bb4",
+      "hash": "6944457bbe8123c7f44f157edd7f209b0c260683",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7622,7 +7622,7 @@
         "anthropic-claude",
         "claude-ai"
       ],
-      "blurb": "380 Claude Code skills & agent skills & plugins (30+ Agents, 70+ custom commands, 380+ ...",
+      "blurb": "410 Claude Code skills & agent skills & plugins (120+ Agents, custom commands, 410+ ski...",
       "source": "rules"
     },
     "1079456184": {
@@ -7835,19 +7835,19 @@
     },
     "1124295269": {
       "id": 1124295269,
-      "hash": "0d41c678c0d1c9a4d5749ca6c66fd3fee4ae1171",
+      "hash": "6efda51dccc3600d2144f952e2feaa91f28372a4",
       "cat": [
-        "security/crypto"
+        "ai-ml/llm-tooling"
       ],
       "tags": [
-        "agent",
+        "agentic-ai",
+        "ai-agents",
         "backtesting",
-        "binance",
         "crypto",
-        "exchange",
-        "finance"
+        "finance",
+        "fintech"
       ],
-      "blurb": "Open-source AI Trading OS, agent trading, and vibe trading, with Jev System One integra...",
+      "blurb": "The most complete open-source, self-hosted Agentic Trading OS—AI research, Python strat...",
       "source": "rules"
     },
     "1125856365": {
@@ -8008,7 +8008,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "f8886fb2766d7bdfef0f7ee21751713b285c203c",
+      "hash": "f9f30ed15eea20d1fe74b4fa6d354cc7ac4e9839",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8020,7 +8020,7 @@
         "ai-coding",
         "ai-workflows"
       ],
-      "blurb": "2,884+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
+      "blurb": "2,926+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
       "source": "rules"
     },
     "1136590548": {
@@ -8246,7 +8246,7 @@
     },
     "1164477708": {
       "id": 1164477708,
-      "hash": "f00ddaf63a8d9f3fd554fd6da5596155e40fa8dc",
+      "hash": "147528e1d3cc7d58372816f0c39b7c0f9b7b3f14",
       "cat": [
         "misc/other"
       ],
@@ -8258,7 +8258,7 @@
         "claude-code-plugins",
         "claude-code-skill"
       ],
-      "blurb": "Context window optimization for AI coding agents. Sandboxes tool output (98% reduction)...",
+      "blurb": "Free, local plugin that keeps tool output out of your coding agent's context window. Sa...",
       "source": "rules"
     },
     "1165277268": {
@@ -8392,19 +8392,19 @@
     },
     "1183888342": {
       "id": 1183888342,
-      "hash": "347f5d1cf451fcb428b581060af1cfa800c77a4c",
+      "hash": "6531292c2b4228d92e8684c5baf3b5cc445aad68",
       "cat": [
         "ai-ml/llm-tooling"
       ],
       "tags": [
-        "ade",
         "agent-ide",
         "ai-agents",
         "automation",
         "bot",
-        "claude-code"
+        "claude-code",
+        "codex"
       ],
-      "blurb": "Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run ...",
+      "blurb": "Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subs...",
       "source": "rules"
     },
     "1185590488": {
@@ -8477,12 +8477,12 @@
     },
     "1190363679": {
       "id": 1190363679,
-      "hash": "1d266cddeeddee4319f0fad2f4b4fed10d9abe61",
+      "hash": "63d018ebb34525878fa107177b235f3047deb699",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "AgentPilot: Better Next Moves for Your Agent. Get Things Done Faster.",
+      "blurb": "AgentPilot: Make Your Agents Move Better and Faster",
       "source": "rules"
     },
     "1190959626": {
@@ -9112,17 +9112,17 @@
     },
     "1286080397": {
       "id": 1286080397,
-      "hash": "55c63ff477cc745adef29b5ab23fbf47652b6748",
+      "hash": "558da7d7f82595c413837d0095801b82efde313b",
       "cat": [
         "misc/other"
       ],
       "tags": [],
-      "blurb": "Run frontier MoE models on hardware you already own — pure C, zero deps, experts stream...",
+      "blurb": "A hierarchical inference engine for frontier MoE models: hot experts on the GPU (CUDA, ...",
       "source": "rules"
     },
     "1288325627": {
       "id": 1288325627,
-      "hash": "0657c37e35b4bbf787063391cba2acf4ff1a0811",
+      "hash": "7f9c4acae348b560427985d554ff70f452f2a5fd",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -9134,7 +9134,7 @@
         "code-graph",
         "codex"
       ],
-      "blurb": "Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, cheaper, w...",
+      "blurb": "One shared memory for every coding agent on your team. Claude Code, Cursor and Codex ge...",
       "source": "rules"
     },
     "1290061411": {
@@ -9223,6 +9223,23 @@
       ],
       "tags": [],
       "blurb": "A terminal client (TUI and CLI) for searching and downloading from Library Genesis",
+      "source": "rules"
+    },
+    "1316923296": {
+      "id": 1316923296,
+      "hash": "5d46e2d6aae2ed4322d7b78a2089c2ef20012074",
+      "cat": [
+        "devtools/cli"
+      ],
+      "tags": [
+        "ade",
+        "agent-development-environment",
+        "agent-ide",
+        "ai-agents",
+        "android",
+        "claude-code"
+      ],
+      "blurb": "Dure — every coding agent, one workspace across desktop and mobile.",
       "source": "rules"
     },
     "1324949198": {
@@ -9429,12 +9446,19 @@
     },
     "1421473890": {
       "id": 1421473890,
-      "hash": "c7d5b50fc0682d39ef55be7c2947af0c5f34e0f0",
+      "hash": "a7895d604d11bce27f68065dd647aeda552b9574",
       "cat": [
         "misc/other"
       ],
-      "tags": [],
-      "blurb": "Blazing fast Apple Silicon optimized inference engine built for Qwen & Nemotron. OpenAI...",
+      "tags": [
+        "apple-silicon",
+        "clover",
+        "coding-agents",
+        "decision-models",
+        "drex",
+        "drex-max"
+      ],
+      "blurb": "Blazing fast Apple Silicon inference engine optimized for Qwen & Nemotron. OpenAI + Ant...",
       "source": "rules"
     },
     "1431869627": {
