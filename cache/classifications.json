@@ -7818,6 +7818,23 @@
       "blurb": "AI gateway / AI control plane / AI proxy written in Go. Unified OpenAI-compatible and A...",
       "source": "rules"
     },
+    "1118085970": {
+      "id": 1118085970,
+      "hash": "fe30f71d46a7e168dca6e6a7f8ae25e4cd269c81",
+      "cat": [
+        "infra-devops/containers"
+      ],
+      "tags": [
+        "aaif",
+        "ai",
+        "ai-agent",
+        "ai-infra",
+        "kubernetes",
+        "sandbox"
+      ],
+      "blurb": "Secure, Fast, and Extensible Sandbox runtime for AI agents.",
+      "source": "rules"
+    },
     "1123338559": {
       "id": 1123338559,
       "hash": "f8825de21cd4ab2db7baecca0ab1d60608f1cfcc",
