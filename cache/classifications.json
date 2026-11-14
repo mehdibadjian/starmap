@@ -7129,6 +7129,23 @@
       "blurb": "AI coworker with memory and collaboration",
       "source": "rules"
     },
+    "925270205": {
+      "id": 925270205,
+      "hash": "9b69f977effad424ebb8ef47fb3b4a7cec4c77d1",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [
+        "agent",
+        "ai-agent",
+        "apple",
+        "computer-use",
+        "computer-use-agent",
+        "containerization"
+      ],
+      "blurb": "Scale computer-use 2.0 with open-source drivers, cross-OS sandboxes, and benchmarks for...",
+      "source": "rules"
+    },
     "932038801": {
       "id": 932038801,
       "hash": "5639027790fa31dde1f431f634d1e0afcdd15c7c",
@@ -9493,6 +9510,26 @@
         "footprint-chart"
       ],
       "blurb": "Open-source crypto trading terminal in the browser: TradingView-style charts, TPO marke...",
+      "source": "rules"
+    },
+    "1440705679": {
+      "id": 1440705679,
+      "hash": "2b83904add7c5f99178ff032088303441da78073",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Towards a More Autonomous Agent System",
+      "source": "rules"
+    },
+    "1440956372": {
+      "id": 1440956372,
+      "hash": "c5cdbb76d2fc7c9bcd2262a8bdb74af7adfc8c11",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Craft Anything: understand how any software works, and craft your own.",
       "source": "rules"
     }
   }
