@@ -6648,7 +6648,7 @@
     },
     "638513786": {
       "id": 638513786,
-      "hash": "ddf5cd64a44e5944466c7354c02800d708de4554",
+      "hash": "a14c13a98a592b74b6ec7e6dc3e4ce2ec224da9d",
       "cat": [
         "misc/other"
       ],
@@ -7114,7 +7114,7 @@
     },
     "916009087": {
       "id": 916009087,
-      "hash": "0844d463603552a8a22141ad06fcfceb9f498d2e",
+      "hash": "f7854de1afaac7dc9f3eb660cda937017683176f",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7126,7 +7126,7 @@
         "ai-agents-automation",
         "chatgpt"
       ],
-      "blurb": "AI coworker with memory and collaboration",
+      "blurb": "Your agent team, in one group chat.",
       "source": "rules"
     },
     "925270205": {
@@ -7369,34 +7369,34 @@
     },
     "995029641": {
       "id": 995029641,
-      "hash": "d360d857fd770ee1b9820976fe11f5476080b734",
+      "hash": "9b2f95404b57f3c7687885ee59d35f3d23fa5644",
       "cat": [
         "ai-ml/llm-tooling"
       ],
       "tags": [
+        "agent-memory",
+        "agent-orchestration",
         "agentic-ai",
-        "agentic-framework",
         "agentic-workflow",
-        "agents",
         "ai-agents",
-        "ai-assistant"
+        "autonomous-agents"
       ],
       "blurb": "🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinate auton...",
       "source": "rules"
     },
     "997737944": {
       "id": 997737944,
-      "hash": "b0898f9d8a99cab9bbae1e7f6cc190b66dd79a74",
+      "hash": "7a9f7ee3e02e5224f6ec996489a27a2dfe9255ae",
       "cat": [
         "web/frontend-framework"
       ],
       "tags": [
-        "awesome",
         "claude",
-        "densepose",
+        "claude-code",
         "esp32",
         "firmware",
-        "home-assistant"
+        "home-assistant",
+        "home-automation"
       ],
       "blurb": "π RuView turns commodity WiFi signals into real-time spatial intelligence, vital sign m...",
       "source": "rules"
@@ -7903,7 +7903,7 @@
     },
     "1126947080": {
       "id": 1126947080,
-      "hash": "d99fa18020f2ef602490c7955d5b9298777de6b4",
+      "hash": "558669d7ba93246462fe1ef47d18e1a8d297c25c",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7911,9 +7911,9 @@
         "agents",
         "agentskills",
         "bases",
+        "chatgpt",
         "claude",
-        "clawdbot",
-        "cli"
+        "claude-code"
       ],
       "blurb": "Agent skills for Obsidian. Teach your agent to use Obsidian CLI and open formats includ...",
       "source": "rules"
@@ -8042,7 +8042,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "f9f30ed15eea20d1fe74b4fa6d354cc7ac4e9839",
+      "hash": "783466beca4e5195858d973a4d0b43e5687888b0",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8054,7 +8054,7 @@
         "ai-coding",
         "ai-workflows"
       ],
-      "blurb": "2,926+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
+      "blurb": "2,955+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
       "source": "rules"
     },
     "1136590548": {
@@ -8280,7 +8280,7 @@
     },
     "1164477708": {
       "id": 1164477708,
-      "hash": "147528e1d3cc7d58372816f0c39b7c0f9b7b3f14",
+      "hash": "90b3e32b9fe094d88f2e48dc71f94f3475190c98",
       "cat": [
         "misc/other"
       ],
@@ -8994,7 +8994,7 @@
     },
     "1258301311": {
       "id": 1258301311,
-      "hash": "6f36ebde9ef54d0cd443a77aa941ef36add1e875",
+      "hash": "bf7c42bc3ca3d271e1b11ccaf95e68d27e2b6aeb",
       "cat": [
         "misc/other"
       ],
@@ -9006,7 +9006,7 @@
         "claude-code",
         "codex"
       ],
-      "blurb": "⚚ The coding harness with Hermes Agent wired into IDE.",
+      "blurb": "⚚ The ultrawork agent with AI coworkers wired into you",
       "source": "rules"
     },
     "1265025028": {
@@ -9276,16 +9276,24 @@
       "blurb": "Dure — every coding agent, one workspace across desktop and mobile.",
       "source": "rules"
     },
-    "1324949198": {
-      "id": 1324949198,
-      "hash": "cb17f2b33cab3560977fff45bb1281e68d7accef",
+    "1318768894": {
+      "id": 1318768894,
+      "hash": "1b3cb32b76f473080030195a202438d49f7538ae",
       "cat": [
         "misc/other"
       ],
-      "tags": [
-        "dsh-plugin"
+      "tags": [],
+      "blurb": "Comp AI CRM is an open source, CRM designed for AI agents. Agentic-first CRM.",
+      "source": "rules"
+    },
+    "1324949198": {
+      "id": 1324949198,
+      "hash": "610327c5a970417cea1c193ce5bdce05a9e588a3",
+      "cat": [
+        "misc/other"
       ],
-      "blurb": "A context-compression plugin for month-long single sessions (billions of tokens) ,small...",
+      "tags": [],
+      "blurb": "A context-compression plugin for month-long single sessions (billions of tokens)  and s...",
       "source": "rules"
     },
     "1332461149": {
@@ -9495,9 +9503,19 @@
       "blurb": "Blazing fast Apple Silicon inference engine optimized for Qwen & Nemotron. OpenAI + Ant...",
       "source": "rules"
     },
+    "1429303647": {
+      "id": 1429303647,
+      "hash": "77a9f52267fcbe1c26265a5ff35bd0dfc4043750",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Rune: Native UI framework",
+      "source": "rules"
+    },
     "1431869627": {
       "id": 1431869627,
-      "hash": "08efb471d6bbffcdfbcfc1e897111c24ddef6047",
+      "hash": "e0b51993fd6e4a3aa8c5bc959b36ab26073192ad",
       "cat": [
         "languages-compilers/wasm"
       ],
@@ -9509,7 +9527,7 @@
         "cryptocurrency",
         "footprint-chart"
       ],
-      "blurb": "Open-source crypto trading terminal in the browser: TradingView-style charts, TPO marke...",
+      "blurb": "Open-source crypto trading terminal in the browser: charts, DOM, footprint, TPO market ...",
       "source": "rules"
     },
     "1440705679": {
