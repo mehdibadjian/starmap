@@ -9134,6 +9134,23 @@
       "blurb": "Official DESIGN.md files published by companies themselves. First-party design systems ...",
       "source": "rules"
     },
+    "1284653133": {
+      "id": 1284653133,
+      "hash": "b223aa09de4665731b1f0edccaeb4fc0f5a05708",
+      "cat": [
+        "data/search-index"
+      ],
+      "tags": [
+        "agent-memory",
+        "ai-agents",
+        "bm25",
+        "claude-code",
+        "cli",
+        "code-search"
+      ],
+      "blurb": "AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs...",
+      "source": "rules"
+    },
     "1285643489": {
       "id": 1285643489,
       "hash": "3818c87dfb77e4a8d70a7bc92350dbedd2b31e6b",
