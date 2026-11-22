@@ -5155,7 +5155,7 @@
     },
     "136163130": {
       "id": 136163130,
-      "hash": "b87efebab462ea72ac8fcd5660d5df2e0ec9cc22",
+      "hash": "eea06d2bdb51fd1bd27513c16db1adb146b62338",
       "cat": [
         "web/frontend-framework"
       ],
@@ -5167,7 +5167,7 @@
         "feature-flag",
         "feature-flaggers"
       ],
-      "blurb": "Flagsmith is an open-source feature flag platform with remote config, experimentation, ...",
+      "blurb": "Flagsmith is an open-source feature flag platform with remote config and experimentatio...",
       "source": "rules"
     },
     "138552196": {
@@ -5579,17 +5579,17 @@
     },
     "254832799": {
       "id": 254832799,
-      "hash": "abbb687333d61ed64b249c597213942642676020",
+      "hash": "782939ed2586113a0e85150c112f158e59107c93",
       "cat": [
         "misc/other"
       ],
       "tags": [
+        "ai-all-in-one-hackingtool",
+        "ai-hacking",
+        "ai-security-tool",
+        "ai-security-tools",
         "allinonehackingtool",
-        "besthackingtool",
-        "ctf-tools",
-        "ddos-attack-tool",
-        "hacker",
-        "hacking"
+        "besthackingtool"
       ],
       "blurb": "ALL IN ONE Hacking Tool For Hackers",
       "source": "rules"
@@ -6648,34 +6648,34 @@
     },
     "638513786": {
       "id": 638513786,
-      "hash": "a14c13a98a592b74b6ec7e6dc3e4ce2ec224da9d",
+      "hash": "87972cdd482803bc2d4bc4e57e819de08428f276",
       "cat": [
         "misc/other"
       ],
       "tags": [
-        "ai-art-generator",
         "ai-image-generation",
         "ai-video-generation",
         "fal-ai-alternative",
         "generative-ai",
-        "image-to-video"
+        "image-to-video",
+        "invideo-alternative"
       ],
       "blurb": "Uncensored Open-source alternative to AI video platforms — Free AI image & video genera...",
       "source": "rules"
     },
     "638951438": {
       "id": 638951438,
-      "hash": "0cf868894a399f25884b52189d7b4707408930f5",
+      "hash": "74b25621a5fae78de98105745e467d3adf68e67e",
       "cat": [
         "ai-ml/llm-tooling"
       ],
       "tags": [
         "evaluation",
-        "hacktoberfest",
-        "hacktoberfest2025",
         "langchain",
         "llama-index",
-        "llm"
+        "llm",
+        "llm-evaluation",
+        "llm-observability"
       ],
       "blurb": "Debug, evaluate, and monitor your LLM applications, RAG systems, and agentic workflows ...",
       "source": "rules"
@@ -7066,17 +7066,17 @@
     },
     "849406496": {
       "id": 849406496,
-      "hash": "7804365377d013f0139e6e86f4e77e3e039a0c45",
+      "hash": "76fbbe27a26f2900135b384515af5b2e38f10655",
       "cat": [
-        "misc/finance"
+        "ai-ml/llm-tooling"
       ],
       "tags": [
+        "agent",
+        "agents",
         "ai-agents",
         "algorithmic-trading",
         "bloomberg-terminal",
-        "cpp",
-        "finance",
-        "financial-markets"
+        "finance"
       ],
       "blurb": "FinceptTerminal is a modern finance application offering advanced market analytics, inv...",
       "source": "rules"
@@ -7110,6 +7110,19 @@
         "reporting-engine"
       ],
       "blurb": "Allure Report is a flexible multi-language test report tool to show you a detailed repr...",
+      "source": "rules"
+    },
+    "906251482": {
+      "id": 906251482,
+      "hash": "a5fbe91bb6fda47d4dbc5b9d369ff2e12ebebceb",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "ai-agents",
+        "genai"
+      ],
+      "blurb": "The 500 AI Agents Projects is a curated collection of AI agent use cases across various...",
       "source": "rules"
     },
     "916009087": {
@@ -7610,7 +7623,7 @@
     },
     "1076043819": {
       "id": 1076043819,
-      "hash": "f33e6e3c105197aed4305fea9802c80ebde8fdf0",
+      "hash": "d017907b35eebb62419a2855da086eb47a340675",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7622,7 +7635,7 @@
         "arckit",
         "claude-code"
       ],
-      "blurb": "The Enterprise Architecture Governance Harness — strategy, architecture, delivery, and ...",
+      "blurb": "Enterprise architecture governance for Claude Code and other AI coding assistants. 76 c...",
       "source": "rules"
     },
     "1079084637": {
@@ -7724,7 +7737,7 @@
     },
     "1099328966": {
       "id": 1099328966,
-      "hash": "41b92d6e93182df3b44d0d0e185431a825c3ae28",
+      "hash": "b785ef22247eaf67c064f1bae1a0e102b5638cd5",
       "cat": [
         "misc/other"
       ],
@@ -7733,7 +7746,7 @@
         "claude-code-system-prompts",
         "system-prompts"
       ],
-      "blurb": "All parts of Claude Code's system prompt, 27 builtin tool descriptions, sub agent promp...",
+      "blurb": "All parts of Claude Code's system prompt, builtin tool descriptions, subagent prompts (...",
       "source": "rules"
     },
     "1099811418": {
@@ -7903,7 +7916,7 @@
     },
     "1126947080": {
       "id": 1126947080,
-      "hash": "558669d7ba93246462fe1ef47d18e1a8d297c25c",
+      "hash": "cfb60e63302c9d1e06c5eba8371610a3e211725c",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -7915,7 +7928,7 @@
         "claude",
         "claude-code"
       ],
-      "blurb": "Agent skills for Obsidian. Teach your agent to use Obsidian CLI and open formats includ...",
+      "blurb": "Teach your agent to use Obsidian and open formats including Markdown, Bases, JSON Canvas.",
       "source": "rules"
     },
     "1127110039": {
@@ -7933,6 +7946,23 @@
         "claude-skills"
       ],
       "blurb": "Persistent file-based planning for AI coding agents and long-running tasks. Crash-proof...",
+      "source": "rules"
+    },
+    "1128123594": {
+      "id": 1128123594,
+      "hash": "e8aba34af0a5fda2761e4561b9c5613b5d1b2e1b",
+      "cat": [
+        "data/search-index"
+      ],
+      "tags": [
+        "agent-context",
+        "agent-memory",
+        "agent-plugins",
+        "agentic-rag",
+        "context-database",
+        "dsh-plugin"
+      ],
+      "blurb": "Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Ski...",
       "source": "rules"
     },
     "1128204614": {
@@ -8042,7 +8072,7 @@
     },
     "1134426800": {
       "id": 1134426800,
-      "hash": "783466beca4e5195858d973a4d0b43e5687888b0",
+      "hash": "dab0f718fd6984c7c3e2fba8ed5d7ecf84a952ec",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8054,7 +8084,7 @@
         "ai-coding",
         "ai-workflows"
       ],
-      "blurb": "2,955+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
+      "blurb": "3,000+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core...",
       "source": "rules"
     },
     "1136590548": {
@@ -8126,6 +8156,23 @@
       ],
       "tags": [],
       "blurb": "Use Claude Code, Codex, Antigravity, VSCode, Pi, and OpenCode (and 6 other harnesses) f...",
+      "source": "rules"
+    },
+    "1144946140": {
+      "id": 1144946140,
+      "hash": "19808b74f5efc9e19eb32bba1a335df806375884",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agent-skills",
+        "ai-agents",
+        "ai-tools",
+        "anthropic",
+        "chatgpt",
+        "claude"
+      ],
+      "blurb": "1,310 professional Agent Skills for Claude, Claude Duet, ChatGPT, Gemini, Cursor & Code...",
       "source": "rules"
     },
     "1146591936": {
@@ -8426,7 +8473,7 @@
     },
     "1183888342": {
       "id": 1183888342,
-      "hash": "6531292c2b4228d92e8684c5baf3b5cc445aad68",
+      "hash": "efdbcc58663bb938cafac0c6e382638835a431e4",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8438,7 +8485,7 @@
         "claude-code",
         "codex"
       ],
-      "blurb": "Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subs...",
+      "blurb": "Orca lets you run a fleet of bots with your own subscription (e.g. Claude Code, Grok, A...",
       "source": "rules"
     },
     "1185590488": {
@@ -8636,7 +8683,7 @@
     },
     "1201173969": {
       "id": 1201173969,
-      "hash": "44524253335aac46945c0ea497ddc810f6ba41f8",
+      "hash": "b4c314ba2865a7ce4498d9299522791d019cc457",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -8648,7 +8695,7 @@
         "claude-code",
         "llm"
       ],
-      "blurb": "🪨 why use many token when few token do trick. Viral skill + proxy for coding agents th...",
+      "blurb": "why use many token when few token do trick. Skill + local proxy for coding agents: shor...",
       "source": "rules"
     },
     "1201476594": {
@@ -8821,6 +8868,16 @@
         "codex"
       ],
       "blurb": "Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent skill f...",
+      "source": "rules"
+    },
+    "1212243193": {
+      "id": 1212243193,
+      "hash": "8946f025801269ee13ab7ec2743707ce6305b0cd",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Unsloth Studio is a web UI for training and running open models like Gemma 4, Qwen3.5, ...",
       "source": "rules"
     },
     "1212769188": {
@@ -9117,6 +9174,23 @@
       "blurb": "👾 A sleek, zero-setup torrent finder and downloader that lives right in your terminal.",
       "source": "rules"
     },
+    "1281682343": {
+      "id": 1281682343,
+      "hash": "e7cefbcb404afbb2267f19e7b1540aa89a88fa6e",
+      "cat": [
+        "ai-ml/llm-tooling"
+      ],
+      "tags": [
+        "agentic-ai",
+        "ai-agents",
+        "amazon-bedrock",
+        "deepagents",
+        "electron",
+        "human-in-the-loop"
+      ],
+      "blurb": "A local-first inbox for long-running AI agents, built with DeepAgents and LangGraph.",
+      "source": "rules"
+    },
     "1282360547": {
       "id": 1282360547,
       "hash": "1ea7bde5bc0c39244dcadd6967e68601f030fe7f",
@@ -9347,7 +9421,7 @@
     },
     "1336502227": {
       "id": 1336502227,
-      "hash": "a93ecf8a7aadd40476d9c41d6d6f3d4a731868ec",
+      "hash": "b43ef956594aa427ba60f65391f5b258bd8042fd",
       "cat": [
         "ai-ml/llm-tooling"
       ],
@@ -9359,7 +9433,7 @@
         "copilotkit",
         "generative-ui"
       ],
-      "blurb": "Open-source AI coworkers that each get a computer of their own: a browser, files and to...",
+      "blurb": "The open, self-hostable alternative to closed AI bots. Production-ready, fully customiz...",
       "source": "rules"
     },
     "1340646366": {
@@ -9532,7 +9606,7 @@
     },
     "1431869627": {
       "id": 1431869627,
-      "hash": "e0b51993fd6e4a3aa8c5bc959b36ab26073192ad",
+      "hash": "363eeb0d9f0cbdee541c2b21a5230e6c3ece5409",
       "cat": [
         "languages-compilers/wasm"
       ],
@@ -9565,6 +9639,16 @@
       ],
       "tags": [],
       "blurb": "Craft Anything: understand how any software works, and craft your own.",
+      "source": "rules"
+    },
+    "1466922883": {
+      "id": 1466922883,
+      "hash": "bdde8e0e75b69211053541a3e1b18443b72ea82c",
+      "cat": [
+        "misc/other"
+      ],
+      "tags": [],
+      "blurb": "Build and simulate EM circuits right on your browser with NobuRF. Fully local and fully...",
       "source": "rules"
     }
   }
